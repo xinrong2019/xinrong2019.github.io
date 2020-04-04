@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<meta HTTP-EQUIV="expires" CONTENT="0"> 
+<title>[死磕Spring]--IOC之获取Document 对象 | Eucaly</title>	
+
+<link rel="stylesheet" href="https://xinrong2019.github.io//styles/main.css">
+<script type="text/javascript">
+function getCSS()
+{
+        datetoday = new Date();
+        timenow=datetoday.getTime();
+        datetoday.setTime(timenow);
+        thehour = datetoday.getHours();
+
+            display = "https://xinrong2019.github.io//media/css/night.css";
+
+            display = "https://xinrong2019.github.io//media/css/night.css";   
+      
+            display = "https://xinrong2019.github.io//media/css/day.css";
+
+            display = "https://xinrong2019.github.io//media/css/day.css";
+      
+
+var css = '<';
+        css+='link rel="stylesheet" href='+display+' \/';
+        css+='>';
+        document.write(css);
+}
+</script>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Noto+Sans+SC:300|Montserrat&display=swap" rel="stylesheet">
+<link href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css" rel="stylesheet" />
+<link href="https://at.alicdn.com/t/font_1651848_tf0hnpbyjfj.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/script.js'></script>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet" />
+  <script src="https://cdn.bootcss.com/wow/1.1.2/wow.min.js"></script>
+  <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>wow=new WOW({boxClass:'wow',animateClass:'animated',offset:0,mobile:true,live:true});wow.init();</script>
+
+<script type="text/javascript">
+window.onload=getCSS();
+</script>
+
+
+</head>
+
+<body class="post-template-default single single-post postid-70 single-format-standard">
+	<div id="wrapper">
+				<header id="header" class="site-header" >
+			<div class="site-branding">
+				<h1 class="site-title">
+					<div class="post-title-name">
+						<a href="https://xinrong2019.github.io/" rel="home">[死磕Spring]--IOC之获取Document 对象</a>
+					</div>
+				</h1>
+				<h2 class="site-description">Time waits for no one.</h2>
+			</div>
+			<nav id="nav-wrapper">
+				<div class="container">
+					<div class="nav-toggle">
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<ul id="" class="dove">
+						
+
+						<li>
+
+							<a href="/"> 首页</a></li>
+
+						
+
+						<li>
+
+							<a href="/archives"> 归档</a></li>
+
+						
+
+						<li>
+
+							<a href="/tags"> 标签</a></li>
+
+						
+
+						<li>
+
+							<a href="/friends"> 友链</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mysql"> MySQL</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/dubbo"> Dubbo</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mq"> MQ</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/spring"> Spring</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/about"> 关于</a></li>
+
+						
+
+					</ul>
+					</li>
+
+					</ul>
+				</div>
+			</nav>
+
+			<div class="jingge">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			<form id="gridea-search-form" data-update="1585982810028" action="/search/index.html">
+				<div class="search-box">
+					<input class="search-txt" name="q" placeholder="Type to search" />
+					<a class="search-btn">
+						<i class="iconfont icon-search1" action="/search/index.html"></i>
+					</a>
+				</div>
+			</form>
+		</header>
+		<div id="content" class="container">
+			<div class="row">
+				<div class="col-md-8 site-main">
+					<article id="post-70"
+						class="post-70 post type-post status-publish format-standard hentry category-5 tag-10 tag-9 tag-11">
+						<div class="entry-content">
+							<div class="entry-meta">
+								<div class="entry-info">
+									<time>
+										2020-01-17
+									</time>
+									<span>
+										16 min read
+									</span>
+								</div>
+							</div>
+							<div class="wow slideInLeft entry-summary song">
+								<p><strong>本文主要基于 Spring 5.0.6.RELEASE</strong></p>
+<p>摘要: 原创出处 http://cmsblogs.com/?p=2695 「小明哥」，谢谢！</p>
+<p>在 <code>XmlBeanDefinitionReader#doLoadDocument(InputSource inputSource, Resource resource)</code> 方法，中做了两件事情：</p>
+<ul>
+<li>
+<p>调用 <code>#getValidationModeForResource(Resource resource)</code> 方法，获取指定资源（xml）的<strong>验证模式</strong>。</p>
+<ul>
+<li>上篇博客，我们已经详细解析。</li>
+</ul>
+</li>
+<li>
+<p>调用 DocumentLoader#loadDocument(InputSource inputSource, EntityResolver entityResolver, ErrorHandler errorHandler, int validationMode, boolean namespaceAware) 方法，获取 XML Document 实例。</p>
+<ul>
+<li>本篇博客，我们来详细解析。</li>
+</ul>
+</li>
+</ul>
+<h1 id="1-documentloader">1. DocumentLoader</h1>
+<p>获取 Document 的策略，由接口 <code>org.springframework.beans.factory.xml.DocumentLoader</code> 定义。代码如下：</p>
+<blockquote>
+<p>FROM 《Spring 源码深度解析》P16 页</p>
+<p>定义从资源文件加载到转换为 Document 的功能。</p>
+</blockquote>
+<pre><code class="language-java">public interface DocumentLoader {
+
+	Document loadDocument(
+			InputSource inputSource, EntityResolver entityResolver,
+			ErrorHandler errorHandler, int validationMode, boolean namespaceAware)
+			throws Exception;
+
+}
+</code></pre>
+<ul>
+<li><code>inputSource</code> 方法参数，加载 Document 的 Resource 资源。</li>
+<li><code>entityResolver</code> 方法参数，解析文件的解析器。</li>
+<li><code>errorHandler</code> 方法参数，处理加载 Document 对象的过程的错误。</li>
+<li><code>validationMode</code> 方法参数，验证模式。</li>
+<li><code>namespaceAware</code> 方法参数，命名空间支持。如果要提供对 XML 名称空间的支持，则需要值为 <code>true</code> 。</li>
+</ul>
+<h2 id="11-defaultdocumentloader">1.1 DefaultDocumentLoader</h2>
+<p>该方法由 DocumentLoader 的默认实现类 <code>org.springframework.beans.factory.xml.DefaultDocumentLoader</code> 实现。代码如下：</p>
+<pre><code class="language-java">/**
+ * Load the {@link Document} at the supplied {@link InputSource} using the standard JAXP-configured
+ * XML parser.
+ */
+@Override
+public Document loadDocument(InputSource inputSource, EntityResolver entityResolver,
+		ErrorHandler errorHandler, int validationMode, boolean namespaceAware) throws Exception {
+	// &lt;1&gt; 创建 DocumentBuilderFactory
+	DocumentBuilderFactory factory = createDocumentBuilderFactory(validationMode, namespaceAware);
+	if (logger.isTraceEnabled()) {
+		logger.trace(&quot;Using JAXP provider [&quot; + factory.getClass().getName() + &quot;]&quot;);
+	}
+	// &lt;2&gt; 创建 DocumentBuilder
+	DocumentBuilder builder = createDocumentBuilder(factory, entityResolver, errorHandler);
+	// &lt;3&gt; 解析 XML InputSource 返回 Document 对象
+	return builder.parse(inputSource);
+}
+</code></pre>
+<ul>
+<li>首先，调用 #<code>createDocumentBuilderFactory(...)</code> 方法，创建 <code>javax.xml.parsers.DocumentBuilderFactory</code> 对象。代码如下：</li>
+</ul>
+<pre><code class="language-java">/**
+ * JAXP attribute used to configure the schema language for validation.
+ */
+private static final String SCHEMA_LANGUAGE_ATTRIBUTE = &quot;http://java.sun.com/xml/jaxp/properties/schemaLanguage&quot;;
+/**
+ * JAXP attribute value indicating the XSD schema language.
+ */
+private static final String XSD_SCHEMA_LANGUAGE = &quot;http://www.w3.org/2001/XMLSchema&quot;;
+protected DocumentBuilderFactory createDocumentBuilderFactory(int validationMode, boolean namespaceAware)
+        throws ParserConfigurationException {
+    // 创建 DocumentBuilderFactory
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    factory.setNamespaceAware(namespaceAware); // 设置命名空间支持
+    if (validationMode != XmlValidationModeDetector.VALIDATION_NONE) {
+        factory.setValidating(true); // 开启校验
+        // XSD 模式下，设置 factory 的属性
+        if (validationMode == XmlValidationModeDetector.VALIDATION_XSD) {
+            // Enforce namespace aware for XSD...
+            factory.setNamespaceAware(true); // XSD 模式下，强制设置命名空间支持
+            // 设置 SCHEMA_LANGUAGE_ATTRIBUTE
+            try {
+                factory.setAttribute(SCHEMA_LANGUAGE_ATTRIBUTE, XSD_SCHEMA_LANGUAGE);
+            } catch (IllegalArgumentException ex) {
+                ParserConfigurationException pcex = new ParserConfigurationException(
+                        &quot;Unable to validate using XSD: Your JAXP provider [&quot; + factory +
+                        &quot;] does not support XML Schema. Are you running on Java 1.4 with Apache Crimson? &quot; +
+                        &quot;Upgrade to Apache Xerces (or Java 1.5) for full XSD support.&quot;);
+                pcex.initCause(ex);
+                throw pcex;
+            }
+        }
+    }
+    return factory;
+}
+</code></pre>
+<ul>
+<li>然后，调用 <code>#createDocumentBuilder(DocumentBuilderFactory factory, EntityResolver entityResolver,ErrorHandler errorHandler)</code> 方法，创建 <code>javax.xml.parsers.DocumentBuilder</code> 对象。代码如下：</li>
+</ul>
+<pre><code class="language-java">protected DocumentBuilder createDocumentBuilder(DocumentBuilderFactory factory,
+		@Nullable EntityResolver entityResolver, @Nullable ErrorHandler errorHandler)
+		throws ParserConfigurationException {
+	// 创建 DocumentBuilder 对象
+	DocumentBuilder docBuilder = factory.newDocumentBuilder();
+	// &lt;x&gt; 设置 EntityResolver 属性
+	if (entityResolver != null) {
+		docBuilder.setEntityResolver(entityResolver);
+	}
+	// 设置 ErrorHandler 属性
+	if (errorHandler != null) {
+		docBuilder.setErrorHandler(errorHandler);
+	}
+	return docBuilder;
+}
+</code></pre>
+<p>在 <code>&lt;x&gt;</code>处，设置 DocumentBuilder 的 <strong>EntityResolver</strong> 属性。关于它，在 <a href="http://svip.iocoder.cn/Spring/IoC-load-Document/#">「2. EntityResolver」</a> 会详细解析。</p>
+<ul>
+<li>最后，调用 <code>DocumentBuilder#parse(InputSource)</code> 方法，解析 InputSource ，返回 Document 对象。</li>
+</ul>
+<h1 id="2-entityresolver">2. EntityResolver</h1>
+<p>通过 <code>DocumentLoader#loadDocument(...)</code> 方法来获取 Document 对象时，有一个方法参数 <code>entityResolver</code> 。该参数是通过 <code>XmlBeanDefinitionReader#getEntityResolver()</code> 方法来获取的。代码如下：</p>
+<blockquote>
+<p><code>#getEntityResolver()</code> 方法，返回指定的解析器，如果没有指定，则构造一个未指定的默认解析器。</p>
+</blockquote>
+<pre><code class="language-java">// XmlBeanDefinitionReader.java
+
+/**
+ * EntityResolver 解析器
+ */
+@Nullable
+private EntityResolver entityResolver;
+
+protected EntityResolver getEntityResolver() {
+	if (this.entityResolver == null) {
+		// Determine default EntityResolver to use.
+		ResourceLoader resourceLoader = getResourceLoader();
+		if (resourceLoader != null) {
+			this.entityResolver = new ResourceEntityResolver(resourceLoader);
+		} else {
+			this.entityResolver = new DelegatingEntityResolver(getBeanClassLoader());
+		}
+	}
+	return this.entityResolver;
+}
+</code></pre>
+<ul>
+<li>如果 ResourceLoader 不为 <code>null</code>，则根据指定的 ResourceLoader 创建一个 ResourceEntityResolver 对象。</li>
+<li>如果 ResourceLoader 为 <code>null</code> ，则创建 一个 DelegatingEntityResolver 对象。该 Resolver 委托给默认的 BeansDtdResolver 和 PluggableSchemaResolver 。</li>
+</ul>
+<h2 id="21-子类">2.1 子类</h2>
+<p>上面的方法，一共涉及<strong>四个</strong> EntityResolver 的子类：</p>
+<ul>
+<li><code>org.springframework.beans.factory.xm.BeansDtdResolver</code> ：实现 EntityResolver 接口，Spring Bean dtd 解码器，用来从 classpath 或者 jar 文件中加载 dtd 。部分代码如下：</li>
+</ul>
+<pre><code class="language-java">private static final String DTD_EXTENSION = &quot;.dtd&quot;;
+
+private static final String DTD_NAME = &quot;spring-beans&quot;;
+</code></pre>
+<ul>
+<li><code>org.springframework.beans.factory.xml.PluggableSchemaResolver</code> ，实现 EntityResolver 接口，读取 classpath 下的所有 <code>&quot;META-INF/spring.schemas&quot;</code> 成一个 namespaceURI 与 Schema 文件地址的 map 。代码如下：</li>
+</ul>
+<pre><code class="language-java">/**
+ * The location of the file that defines schema mappings.
+ * Can be present in multiple JAR files.
+ *
+ * 默认 {@link #schemaMappingsLocation} 地址
+ */
+public static final String DEFAULT_SCHEMA_MAPPINGS_LOCATION = &quot;META-INF/spring.schemas&quot;;
+
+@Nullable
+private final ClassLoader classLoader;
+
+/**
+ * Schema 文件地址
+ */
+private final String schemaMappingsLocation;
+
+/** Stores the mapping of schema URL -&gt; local schema path. */
+@Nullable
+private volatile Map&lt;String, String&gt; schemaMappings; // namespaceURI 与 Schema 文件地址的映射集合
+</code></pre>
+<ul>
+<li><code>org.springframework.beans.factory.xml.DelegatingEntityResolver</code> ：实现 EntityResolver 接口，分别代理 dtd 的 BeansDtdResolver 和 xml schemas 的  PluggableSchemaResolver 。代码如下：</li>
+</ul>
+<pre><code class="language-java">/** Suffix for DTD files. */
+public static final String DTD_SUFFIX = &quot;.dtd&quot;;
+
+/** Suffix for schema definition files. */
+public static final String XSD_SUFFIX = &quot;.xsd&quot;;
+
+private final EntityResolver dtdResolver;
+
+private final EntityResolver schemaResolver;
+
+// 默认
+public DelegatingEntityResolver(@Nullable ClassLoader classLoader) {
+	this.dtdResolver = new BeansDtdResolver();
+	this.schemaResolver = new PluggableSchemaResolver(classLoader);
+}
+
+// 自定义
+public DelegatingEntityResolver(EntityResolver dtdResolver, EntityResolver schemaResolver) {
+	Assert.notNull(dtdResolver, &quot;'dtdResolver' is required&quot;);
+	Assert.notNull(schemaResolver, &quot;'schemaResolver' is required&quot;);
+	this.dtdResolver = dtdResolver;
+	this.schemaResolver = schemaResolver;
+}
+</code></pre>
+<ul>
+<li><code>org.springframework.beans.factory.xml.ResourceEntityResolver</code> ：继承自 DelegatingEntityResolver 类，通过 ResourceLoader 来解析实体的引用。代码如下：</li>
+</ul>
+<pre><code class="language-java">private final ResourceLoader resourceLoader;
+
+public ResourceEntityResolver(ResourceLoader resourceLoader) {
+	super(resourceLoader.getClassLoader());
+	this.resourceLoader = resourceLoader;
+}
+</code></pre>
+<h2 id="22-作用">2.2 作用</h2>
+<blockquote>
+<p>EntityResolver 的作用就是，通过实现它，应用可以自定义如何<strong>寻找</strong>【验证文件】的逻辑。</p>
+</blockquote>
+<blockquote>
+<p>FROM 《Spring 源码深度解析》</p>
+<p>在 loadDocument 方法中涉及一个参数 EntityResolver ，何为EntityResolver？官网这样解释：如果  SAX 应用程序需要实现自定义处理外部实体，则必须实现此接口并使用 setEntityResolver 方法向SAX  驱动器注册一个实例。也就是说，对于解析一个XML，SAX 首先读取该 XML 文档上的声明，根据声明去寻找相应的 DTD  定义，以便对文档进行一个验证。默认的寻找规则，即通过网络（实现上就是声明的DTD的URI地址）来下载相应的DTD声明，并进行认证。下载的过程是一个漫长的过程，而且当网络中断或不可用时，这里会报错，就是因为相应的DTD声明没有被找到的原因。</p>
+<p>EntityResolver 的作用是项目本身就可以提供一个如何寻找 DTD 声明的方法，即由程序来实现寻找 DTD 声明的过程，比如我们将 DTD 文件放到项目中某处，在实现时直接将此文档读取并返回给 SAX 即可。这样就避免了通过网络来寻找相应的声明。</p>
+</blockquote>
+<p><code>org.xml.sax.EntityResolver</code> 接口，代码如下：</p>
+<pre><code class="language-java">public interface EntityResolver {
+
+    public abstract InputSource resolveEntity (String publicId, String systemId)
+        throws SAXException, IOException;
+
+}
+</code></pre>
+<p>接口方法接收两个参数 <code>publicId</code> 和 <code>systemId</code> ，并返回 InputSource 对象。两个参数声明如下：</p>
+<ul>
+<li><code>publicId</code> ：被引用的外部实体的公共标识符，如果没有提供，则返回 <code>null</code> 。</li>
+<li><code>systemId</code> ：被引用的外部实体的系统标识符。</li>
+</ul>
+<p>这两个参数的实际内容和具体的验证模式的关系如下：</p>
+<ul>
+<li>
+<p>XSD 验证模式</p>
+<ul>
+<li>publicId：null</li>
+<li>systemId：http://www.springframework.org/schema/beans/spring-beans.xsd</li>
+<li><img src="http://static.iocoder.cn/08e5f8a505505def17e84becd4f0dbf9" alt="XSD 验证模式" loading="lazy"></li>
+</ul>
+</li>
+<li>
+<p>DTD 验证模式</p>
+<ul>
+<li>publicId：-//SPRING//DTD BEAN 2.0//EN</li>
+<li>systemId：http://www.springframework.org/dtd/spring-beans.dtd</li>
+<li><img src="http://static.iocoder.cn/8f77d23019c10f4ac026968ce19067ef" alt="DTD 验证模式" loading="lazy"></li>
+</ul>
+</li>
+</ul>
+<h2 id="23-delegatingentityresolver">2.3 DelegatingEntityResolver</h2>
+<p>我们知道在 Spring 中使用 DelegatingEntityResolver 为 EntityResolver 的实现类。<code>#resolveEntity(String publicId, String systemId)</code> 方法，实现如下：</p>
+<pre><code class="language-java">@Override
+@Nullable
+public InputSource resolveEntity(String publicId, @Nullable String systemId) throws SAXException, IOException {
+	if (systemId != null) {
+		// DTD 模式
+		if (systemId.endsWith(DTD_SUFFIX)) {
+			return this.dtdResolver.resolveEntity(publicId, systemId);
+		// XSD 模式
+		} else if (systemId.endsWith(XSD_SUFFIX)) {
+			return this.schemaResolver.resolveEntity(publicId, systemId);
+		}
+	}
+	return null;
+}
+</code></pre>
+<ul>
+<li>如果是 DTD 验证模式，则使用 BeansDtdResolver 来进行解析</li>
+<li>如果是 XSD 验证模式，则使用 PluggableSchemaResolver 来进行解析。</li>
+</ul>
+<h2 id="24-beansdtdresolver">2.4 BeansDtdResolver</h2>
+<p>BeansDtdResolver 的解析过程，代码如下：</p>
+<pre><code class="language-java">/**
+ * DTD 文件的后缀
+ */
+private static final String DTD_EXTENSION = &quot;.dtd&quot;;
+/**
+ * Spring Bean DTD 的文件名
+ */
+private static final String DTD_NAME = &quot;spring-beans&quot;;
+
+@Override
+@Nullable
+public InputSource resolveEntity(String publicId, @Nullable String systemId) throws IOException {
+    if (logger.isTraceEnabled()) {
+        logger.trace(&quot;Trying to resolve XML entity with public ID [&quot; + publicId +
+                &quot;] and system ID [&quot; + systemId + &quot;]&quot;);
+    }
+    // 必须以 .dtd 结尾
+    if (systemId != null &amp;&amp; systemId.endsWith(DTD_EXTENSION)) {
+        // 获取最后一个 / 的位置
+        int lastPathSeparator = systemId.lastIndexOf('/');
+        // 获取 spring-beans 的位置
+        int dtdNameStart = systemId.indexOf(DTD_NAME, lastPathSeparator);
+        if (dtdNameStart != -1) { // 找到
+            String dtdFile = DTD_NAME + DTD_EXTENSION;
+            if (logger.isTraceEnabled()) {
+                logger.trace(&quot;Trying to locate [&quot; + dtdFile + &quot;] in Spring jar on classpath&quot;);
+            }
+            try {
+                // 创建 ClassPathResource 对象
+                Resource resource = new ClassPathResource(dtdFile, getClass());
+                // 创建 InputSource 对象，并设置 publicId、systemId 属性
+                InputSource source = new InputSource(resource.getInputStream());
+                source.setPublicId(publicId);
+                source.setSystemId(systemId);
+                if (logger.isTraceEnabled()) {
+                    logger.trace(&quot;Found beans DTD [&quot; + systemId + &quot;] in classpath: &quot; + dtdFile);
+                }
+                return source;
+            }
+            catch (IOException ex) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(&quot;Could not resolve beans DTD [&quot; + systemId + &quot;]: not found in classpath&quot;, ex);
+                }
+            }
+        }
+    }
+
+    // 使用默认行为，从网络上下载
+    // Use the default behavior -&gt; download from website or wherever.
+    return null;
+}
+</code></pre>
+<p>从上面的代码中，我们可以看到，加载 DTD 类型的 <code>BeansDtdResolver#resolveEntity(...)</code> 过程，只是对 <code>systemId</code> 进行了简单的校验（从最后一个 / 开始，内容中是否包含 <code>spring-beans</code>），然后构造一个 InputSource 对象，并设置 <code>publicId</code>、<code>systemId</code> 属性，然后返回。</p>
+<h2 id="25-pluggableschemaresolver">2.5 PluggableSchemaResolver</h2>
+<p>PluggableSchemaResolver 的解析过程，代码如下:</p>
+<pre><code class="language-java">@Nullable
+private final ClassLoader classLoader;
+
+/**
+ * Schema 文件地址
+ */
+private final String schemaMappingsLocation;
+
+/** Stores the mapping of schema URL -&gt; local schema path. */
+@Nullable
+private volatile Map&lt;String, String&gt; schemaMappings; // namespaceURI 与 Schema 文件地址的映射集合
+
+@Override
+@Nullable
+public InputSource resolveEntity(String publicId, @Nullable String systemId) throws IOException {
+    if (logger.isTraceEnabled()) {
+        logger.trace(&quot;Trying to resolve XML entity with public id [&quot; + publicId +
+                &quot;] and system id [&quot; + systemId + &quot;]&quot;);
+    }
+
+    if (systemId != null) {
+        // 获得 Resource 所在位置
+        String resourceLocation = getSchemaMappings().get(systemId);
+        if (resourceLocation != null) {
+            // 创建 ClassPathResource
+            Resource resource = new ClassPathResource(resourceLocation, this.classLoader);
+            try {
+                // 创建 InputSource 对象，并设置 publicId、systemId 属性
+                InputSource source = new InputSource(resource.getInputStream());
+                source.setPublicId(publicId);
+                source.setSystemId(systemId);
+                if (logger.isTraceEnabled()) {
+                    logger.trace(&quot;Found XML schema [&quot; + systemId + &quot;] in classpath: &quot; + resourceLocation);
+                }
+                return source;
+            }
+            catch (FileNotFoundException ex) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(&quot;Could not find XML schema [&quot; + systemId + &quot;]: &quot; + resource, ex);
+                }
+            }
+        }
+    }
+    return null;
+}
+</code></pre>
+<ul>
+<li>首先调用 <code>#getSchemaMappings()</code> 方法，获取一个映射表(systemId 与其在本地的对照关系)。代码如下：</li>
+</ul>
+<pre><code class="language-java">private Map&lt;String, String&gt; getSchemaMappings() {
+    Map&lt;String, String&gt; schemaMappings = this.schemaMappings;
+    // 双重检查锁，实现 schemaMappings 单例
+    if (schemaMappings == null) {
+        synchronized (this) {
+            schemaMappings = this.schemaMappings;
+            if (schemaMappings == null) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace(&quot;Loading schema mappings from [&quot; + this.schemaMappingsLocation + &quot;]&quot;);
+                }
+                try {
+                    // 以 Properties 的方式，读取 schemaMappingsLocation
+                    Properties mappings = PropertiesLoaderUtils.loadAllProperties(this.schemaMappingsLocation, this.classLoader);
+                    if (logger.isTraceEnabled()) {
+                        logger.trace(&quot;Loaded schema mappings: &quot; + mappings);
+                    }
+                    // 将 mappings 初始化到 schemaMappings 中
+                    schemaMappings = new ConcurrentHashMap&lt;&gt;(mappings.size());
+                    CollectionUtils.mergePropertiesIntoMap(mappings, schemaMappings);
+                    this.schemaMappings = schemaMappings;
+                } catch (IOException ex) {
+                    throw new IllegalStateException(
+                            &quot;Unable to load schema mappings from location [&quot; + this.schemaMappingsLocation + &quot;]&quot;, ex);
+                }
+            }
+        }
+    }
+    return schemaMappings;
+}
+</code></pre>
+<ul>
+<li>
+<p>映射表如下（<strong>部分</strong>）:<img src="http://static.iocoder.cn/4dba22abb6ce4bc1a7721afb2cb53567" alt="映射表" loading="lazy"></p>
+</li>
+<li>
+<p>然后，根据传入的 <code>systemId</code> 获取该 <code>systemId</code> 在本地的路径 <code>resourceLocation</code> 。</p>
+</li>
+<li>
+<p>最后，根据 <code>resourceLocation</code> ，构造 InputSource 对象。</p>
+</li>
+</ul>
+<h2 id="26-resourceentityresolver">2.6 ResourceEntityResolver</h2>
+<p>ResourceEntityResolver 的解析过程，代码如下:</p>
+<pre><code class="language-java">private final ResourceLoader resourceLoader;
+
+@Override
+@Nullable
+public InputSource resolveEntity(String publicId, @Nullable String systemId) throws SAXException, IOException {
+    // 调用父类的方法，进行解析
+    InputSource source = super.resolveEntity(publicId, systemId);
+    // 解析失败，resourceLoader 进行解析
+    if (source == null &amp;&amp; systemId != null) {
+        // 获得 resourcePath ，即 Resource 资源地址
+        String resourcePath = null;
+        try {
+            String decodedSystemId = URLDecoder.decode(systemId, &quot;UTF-8&quot;); // 使用 UTF-8 ，解码 systemId
+            String givenUrl = new URL(decodedSystemId).toString(); // 转换成 URL 字符串
+            // 解析文件资源的相对路径（相对于系统根路径）
+            String systemRootUrl = new File(&quot;&quot;).toURI().toURL().toString();
+            // Try relative to resource base if currently in system root.
+            if (givenUrl.startsWith(systemRootUrl)) {
+                resourcePath = givenUrl.substring(systemRootUrl.length());
+            }
+        } catch (Exception ex) {
+            // Typically a MalformedURLException or AccessControlException.
+            if (logger.isDebugEnabled()) {
+                logger.debug(&quot;Could not resolve XML entity [&quot; + systemId + &quot;] against system root URL&quot;, ex);
+            }
+            // No URL (or no resolvable URL) -&gt; try relative to resource base.
+            resourcePath = systemId;
+        }
+        if (resourcePath != null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace(&quot;Trying to locate XML entity [&quot; + systemId + &quot;] as resource [&quot; + resourcePath + &quot;]&quot;);
+            }
+            // 获得 Resource 资源
+            Resource resource = this.resourceLoader.getResource(resourcePath);
+            // 创建 InputSource 对象
+            source = new InputSource(resource.getInputStream());
+            // 设置 publicId 和 systemId 属性
+            source.setPublicId(publicId);
+            source.setSystemId(systemId);
+            if (logger.isDebugEnabled()) {
+                logger.debug(&quot;Found XML entity [&quot; + systemId + &quot;]: &quot; + resource);
+            }
+        }
+    }
+    return source;
+}
+</code></pre>
+<ul>
+<li>首先，调用<strong>父类</strong>的方法，进行解析。</li>
+<li>如果失败，使用 <code>resourceLoader</code> ，尝试读取 <code>systemId</code> 对应的 Resource 资源。</li>
+</ul>
+<h2 id="27-自定义-entityresolver">2.7 自定义 EntityResolver</h2>
+<p><code>#getEntityResolver()</code> 方法返回 EntityResolver 对象。那么怎么进行自定义 EntityResolver 呢?</p>
+<blockquote>
+<p>If a SAX application needs to implement customized handling for  external entities, it must implement this interface and register an  instance with the SAX driver using the setEntityResolver method.</p>
+<p>就是说：如果 SAX 应用程序需要实现自定义处理外部实体，则必须实现此接口，并使用 <code>#setEntityResolver(EntityResolver entityResolver)</code> 方法，向 SAX 驱动器注册一个 EntityResolver 实例。</p>
+</blockquote>
+<p>示例如下：</p>
+<pre><code class="language-java">public class MyResolver implements EntityResolver {
+
+    @Override
+    public InputSource resolveEntity(String publicId, String systemId) {
+        if (systemId.equals(&quot;http://www.myhost.com/today&quot;)) {
+            MyReader reader = new MyReader();
+            return new InputSource(reader);
+        } else {
+            // use the default behaviour
+            return null;
+        }
+    }
+
+}
+</code></pre>
+<p>我们首先将 <code>&quot;spring-student.xml&quot;</code> 文件中的 XSD 声明的地址改掉，如下：</p>
+<figure data-type="image" tabindex="3"><img src="http://static.iocoder.cn/882e730ac463e3007c5f3c5cde8380bc" alt="spring-student.xml" loading="lazy"></figure>
+<p>如果我们再次运行，则会报如下错误：</p>
+<figure data-type="image" tabindex="4"><img src="http://static.iocoder.cn/741da1d13906154d36f02fa5113432fd" alt="报错" loading="lazy"></figure>
+<p>从上面的错误可以看到，是在进行文档验证时，无法根据声明找到 XSD 验证文件而导致无法进行 XML 文件验证。在 <a href="http://svip.iocoder.cn/Spring/IoC-Validation-Mode-For-Resource">《【死磕 Spring】—— IoC 之获取验证模型》</a> 中讲到，如果要解析一个 XML 文件，SAX 首先会读取该 XML 文档上的声明，然后根据声明去寻找相应的 DTD 定义，以便对文档进行验证。<strong>默认的加载规则是通过网络方式下载验证文件</strong>，而在实际生产环境中我们会遇到网络中断或者不可用状态，那么就应用就会因为无法下载验证文件而报错。</p>
+<h1 id="3-小结">3. 小结</h1>
+<p>是不是看到此处，有点懵逼，不是说好了分享<strong>获取 Document 对象</strong>，结果内容主要是 EntityResolver 呢？因为，从 XML 中获取 Document 对象，已经有 <code>javax.xml</code> 库进行解析。而 EntityResolver 的重点，是在于如何获取【验证文件】，从而验证用户写的 XML 是否通过验证。</p>
+
+							</div>
+							<div class="wow bounceInDown vt-post-tags">
+								
+								<a href="https://xinrong2019.github.io/tag/y2uDFThMC/" rel="tag">Spring</a>
+								
+							</div>
+							<nav class="navigation3 post-navigation3" role="navigation">
+
+								<div class="nav-links3">
+									
+									<div class="wow bounceInLeft nav-previous3"><a href="https://xinrong2019.github.io/post/mian-xiang-jian-li-bian-cheng/"
+											rel="prev"> 面向简历编程</a></div>
+									
+									
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/si-ke-spring-ioc-zhi-huo-qu-yan-zheng-mo-xing/"
+											rel="next"> [死磕Spring]--IOC之获取验证模型</a></div>
+									
+								</div>
+							</nav>
+							<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
+								<div class="author-avatar pull-left"><img
+										src="https://xinrong2019.github.io//images/avatar.png"></div>
+								
+								<div class="author-description">
+									<div class="author-title">
+										<div class="author-link" rel="author">Kim</div>
+									</div>
+									
+									
+									<p class="author-bio">Time waits for no one.</p>
+								</div>
+							</div>
+							
+						</div>
+					</article>
+					<div id="marlin_lite_about_widget-2" class="wow bounceInUp widget marlin_lite_about_widget"
+						data-wow-delay="0.1s">
+
+						
+						
+						<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '2f13af052cedc58f1f20',
+    clientSecret: 'ce03139f08944b2398d0f580a3d00ff58958c242',
+    repo: 'xinrong2019.github.io',
+    owner: 'xinrong2019',
+    admin: ['xinrong2019'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+						
+						
+						
+						<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://xinrong2019.github.io//media/scripts/Valine.min.js'></script>
+
+<div class="comment"></div>
+<script>
+        new Valine({
+            // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+            av: AV, 
+            el: '.comment',
+            lang: 'zh-cn',
+            
+            
+     	
+      	
+          
+        });
+    </script> 
+
+
+					</div>
+				</div>
+				<div class="tocc col l3 hide-on-med-and-down">
+
+    <div class="toc-widget">
+
+        <div class="toc-title"></div>
+
+        <div id="toc-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.5.0/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '.entry-summary',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('.entry-summary').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+
+    $(function () {
+        var bt;
+        bt = $('.toc-widget');
+        if ($(document).width() > 480) {
+            $(window).scroll(function () {
+                var st;
+                st = $(window).scrollTop();
+                if (st > 450) {
+                    return bt.css('display', 'block');
+                } else {
+                    return bt.css('display', 'none');
+                }
+            })
+        }
+    });
+</script>
+			</div>
+		</div>
+		<footer id="colophon" class="site-footer">
+	<div class="container">
+		<div class="copyright">
+			Created by Kim.
+			<br>
+			<b>Theme: </b>
+			<a href="https://github.com/alterfang/gridea-theme-pan" target="_blank" title="Pan">
+				<span><b>Pan</b></span>
+			</a>
+			<b>. Powered by </b>
+			<a href="https://gridea.dev/" target="_blank" title="Gridea">
+				<span><b>Gridea</b></span>
+			</a>
+		</div>
+	</div><!-- .container -->
+</footer><!-- #colophon -->
+	</div>
+
+	<script src="https://cdn.bootcss.com/fitvids/1.2.0/jquery.fitvids.min.js"></script>
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/marlin-scripts.js'></script>
+<script src="//tokinx.github.io/lately/lately.min.js"></script>
+<script>
+  jQuery(document).ready(function () {
+    $.lately({
+      'target': '.lately-a,.lately-b,.lately-c'
+    })
+  });
+</script>
+<style type="text/css">
+  /* 一键到顶部 */
+  a.back_to_top {
+    text-decoration: none;
+    position: fixed;
+    bottom: 65px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.back_to_top span {
+    color: #888;
+  }
+
+  a.back_to_top:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.back_to_top:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .back_to_top {
+      display: none !important;
+    }
+  }
+
+  /* 一键到底部 */
+
+  a.down_to_bottom {
+    text-decoration: none;
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.down_to_bottom span {
+    color: #888;
+  }
+
+  a.down_to_bottom:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.down_to_bottom:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .down_to_bottom {
+      display: none !important;
+    }
+  }
+</style>
+
+
+<a id="back_to_top" href="#" class="back_to_top"><span><i class="iconfont icon-xiangshang"></i></span>
+</a>
+
+<a id="down_to_bottom" href="#" class="down_to_bottom"><span><i class="iconfont icon-xiangxia"></i></span>
+</a>
+
+<script src="//instant.page/3.0.0" type="module" defer
+  integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+<script>
+  function getScrollTop() {
+    var scrollTop = 0,
+      bodyScrollTop = 0,
+      documentScrollTop = 0;
+    if (document.body) {
+      bodyScrollTop = document.body.scrollTop;
+    }
+    if (document.documentElement) {
+      documentScrollTop = document.documentElement.scrollTop;
+    }
+    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+    return scrollTop;
+  };
+
+  function getScrollHeight() {
+    var scrollHeight = 0,
+      bodyScrollHeight = 0,
+      documentScrollHeight = 0;
+    if (document.body) {
+      bSH = document.body.scrollHeight;
+    }
+    if (document.documentElement) {
+      dSH = document.documentElement.scrollHeight;
+    }
+    scrollHeight = (bSH - dSH > 0) ? bSH : dSH;
+    return scrollHeight;
+  };
+
+  function getWindowHeight() {
+    var windowHeight = 0;
+    if (document.compatMode == "CSS1Compat") {
+      windowHeight = document.documentElement.clientHeight;
+    } else {
+      windowHeight = document.body.clientHeight;
+    }
+    return windowHeight;
+  };
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block');
+          } else {
+            return bt.css('display', 'none');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: 0
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#down_to_bottom');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+            return bt.css('display', 'none');
+          } else {
+            return bt.css('display', 'block');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: $('body,html')[0].scrollHeight
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+</script>
+	<script data-no-instant>
+		(function ($) {
+			$.extend({
+				adamsOverload: function () {
+					$('.navigation:eq(0)').remove();
+					$("").attr("rel", "external");
+					$("a[rel='external'],a[rel='external nofollow']").attr("target", "_blank");
+					$("a.vi").attr("rel", "");
+					$.viewImage({
+						'target': 'img',
+						'exclude': '.vsmile-icons img,.gallery img',
+						'delay': 300
+					});
+					$.lately({
+						'target': '.commentmetadata a,.infos time,.post-list time'
+					});
+					prettyPrint();
+
+					$('ul.links li a').each(function () {
+						if ($(this).parent().find('.bg').length == 0) {
+							$(this).parent().append(
+								'<!---<div class="bg" style="background-image:url(https://c3.glgoo.top/s2/favicons?domain=' +
+								$(this).attr("href") + ')"></div>--->')
+						}
+					});
+				}
+			});
+		})(jQuery);
+		jQuery.adamsOverload();
+	</script>
+
+</body>
+
+</html>

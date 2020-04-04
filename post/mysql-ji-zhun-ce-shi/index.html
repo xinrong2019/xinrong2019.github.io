@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<meta HTTP-EQUIV="expires" CONTENT="0"> 
+<title>MySQL基准测试 | Eucaly</title>	
+
+<link rel="stylesheet" href="https://xinrong2019.github.io//styles/main.css">
+<script type="text/javascript">
+function getCSS()
+{
+        datetoday = new Date();
+        timenow=datetoday.getTime();
+        datetoday.setTime(timenow);
+        thehour = datetoday.getHours();
+
+            display = "https://xinrong2019.github.io//media/css/night.css";
+
+            display = "https://xinrong2019.github.io//media/css/night.css";   
+      
+            display = "https://xinrong2019.github.io//media/css/day.css";
+
+            display = "https://xinrong2019.github.io//media/css/day.css";
+      
+
+var css = '<';
+        css+='link rel="stylesheet" href='+display+' \/';
+        css+='>';
+        document.write(css);
+}
+</script>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Noto+Sans+SC:300|Montserrat&display=swap" rel="stylesheet">
+<link href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css" rel="stylesheet" />
+<link href="https://at.alicdn.com/t/font_1651848_tf0hnpbyjfj.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/script.js'></script>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet" />
+  <script src="https://cdn.bootcss.com/wow/1.1.2/wow.min.js"></script>
+  <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>wow=new WOW({boxClass:'wow',animateClass:'animated',offset:0,mobile:true,live:true});wow.init();</script>
+
+<script type="text/javascript">
+window.onload=getCSS();
+</script>
+
+
+</head>
+
+<body class="post-template-default single single-post postid-70 single-format-standard">
+	<div id="wrapper">
+				<header id="header" class="site-header" >
+			<div class="site-branding">
+				<h1 class="site-title">
+					<div class="post-title-name">
+						<a href="https://xinrong2019.github.io/" rel="home">MySQL基准测试</a>
+					</div>
+				</h1>
+				<h2 class="site-description">Time waits for no one.</h2>
+			</div>
+			<nav id="nav-wrapper">
+				<div class="container">
+					<div class="nav-toggle">
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<ul id="" class="dove">
+						
+
+						<li>
+
+							<a href="/"> 首页</a></li>
+
+						
+
+						<li>
+
+							<a href="/archives"> 归档</a></li>
+
+						
+
+						<li>
+
+							<a href="/tags"> 标签</a></li>
+
+						
+
+						<li>
+
+							<a href="/friends"> 友链</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mysql"> MySQL</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/dubbo"> Dubbo</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mq"> MQ</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/spring"> Spring</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/about"> 关于</a></li>
+
+						
+
+					</ul>
+					</li>
+
+					</ul>
+				</div>
+			</nav>
+
+			<div class="jingge">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			<form id="gridea-search-form" data-update="1585982810028" action="/search/index.html">
+				<div class="search-box">
+					<input class="search-txt" name="q" placeholder="Type to search" />
+					<a class="search-btn">
+						<i class="iconfont icon-search1" action="/search/index.html"></i>
+					</a>
+				</div>
+			</form>
+		</header>
+		<div id="content" class="container">
+			<div class="row">
+				<div class="col-md-8 site-main">
+					<article id="post-70"
+						class="post-70 post type-post status-publish format-standard hentry category-5 tag-10 tag-9 tag-11">
+						<div class="entry-content">
+							<div class="entry-meta">
+								<div class="entry-info">
+									<time>
+										2020-01-25
+									</time>
+									<span>
+										8 min read
+									</span>
+								</div>
+							</div>
+							<div class="wow slideInLeft entry-summary song">
+								<p>关键词：</p>
+<p><code>压力测试</code> <code>可靠性测试</code> <code>sysbench</code></p>
+<h2 id="学习目的">学习目的：</h2>
+<p>通过了解基准测试的策略、方法、工具、案例，结合实践，掌握系统的行为。</p>
+<h2 id="21-为什么需要基准测试">2.1 为什么需要基准测试</h2>
+<p>基准测试是唯一方便有效的、可以学习系统在给定工作负载下会发生什么的方法。</p>
+<p>基准测试可以观察系统在不同压力下的行为，评估系统的容量，掌握哪些是重要的变化，或者观察系统如何处理不同的数据。</p>
+<p>基准测试可以完成以下工作，或者更多：</p>
+<ul>
+<li>验证基于系统的一些假设，确认这些假设是否符合实际情况</li>
+<li>重现系统中的某些异常行为，以解决这些异常</li>
+<li>测试系统当前的运行情况。如果不清楚系统当前的性能，就无法确认某些优化的效果如何。也可以利用历史的基准测试结果来分析诊断一些无法预测的问题。</li>
+<li>模拟比当前系统更高的负载，以找出系统随着压力增加而可能遇到的扩展性瓶颈。</li>
+<li>规划未来的业务增长。基准测试可以评估在项目未来的负载下，需要什么样的硬件，需要多大容量的网络，以及其他相关资源。这有助于降低系统升级和重大变更的风险。</li>
+<li>测试应用适应可变环境的能力。</li>
+<li>测试不同的硬件、软件和操作系统配置。</li>
+<li>证明新采购的设备是否配置正确。</li>
+</ul>
+<p>我们只能进行大概的测试，来确定系统大致的余量有多少。尽管不能完全模拟真实环境，但是基准测试还是非常有用的（只要搞清楚测试的原理，并且了解如何分析结果所代表的意义）。</p>
+<h2 id="22-基准测试的策略">2.2 基准测试的策略</h2>
+<h4 id="集成式">集成式</h4>
+<p>针对整个系统做集成测试，而不是单独测试MySQL的原因主要有以下几点：</p>
+<ul>
+<li>测试整个系统，包括Web服务器、应用代码、网络和数据库是非常有用的，因为用户关注的并不仅仅是MySQL本书的性能，而是应用整体的性能。</li>
+<li>MySQL并非总是应用的瓶颈，通过整体的测试可以揭示这一点。</li>
+<li>只有对应用做整体测试，才能发现各部分之间的缓存带来的影响。</li>
+<li>更能揭示应用的真实表现，而单独组件的测试很难做到这一点。</li>
+</ul>
+<h4 id="单组件式">单组件式</h4>
+<p>在项目初期，可以只测试MySQL</p>
+<ul>
+<li>需要比较不同的schema或查询的性能</li>
+<li>针对应用中某个具体问题的测试</li>
+<li>为了避免漫长的基准测试，可以通过一个短期的基准测试，做快速的“周期循环”，来检测出某些调整后的效果。</li>
+</ul>
+<p>如果可能，采用生产环境的数据快照做测试。</p>
+<h3 id="221-测试何种指标">2.2.1 测试何种指标</h3>
+<p>在开始执行甚至是在设计基准测试之前，需要先明确测试的目标。</p>
+<p>测试目标决定了选择什么样的测试工具和技术，以获得精确而有意义的测试结果。</p>
+<p>可以将测试目标细化为一系列的问题，比如，“这种CPU是否比另一种快？”，“新索引是否比当前索引性能更好？”</p>
+<p>有时候需要用不同的方法测试不同的指标。比如，针对延迟和吞吐量就需要采用不同的测试方法。</p>
+<p>请考虑以下指标，看看如何满足测试的需求。</p>
+<h4 id="吞吐量">吞吐量</h4>
+<p>吞吐量指的是单位时间内的事务处理数。</p>
+<p>主要针对在线事务处理（OLTP）的吞吐量，非常适用于多用户的交互式应用。常用的测试单位是每秒事务数（TPS），有些采用每分钟事务数（TPM）。</p>
+<h4 id="响应时间或者延迟">响应时间或者延迟</h4>
+<p>这个指标用于测试任务所需的整体时间。</p>
+<p>通常可以使用百分比响应时间来替代最大响应时间。</p>
+<p>例如，如果95%的响应时间都是5毫秒，则表示任务在95%的时间段内都可以在5毫秒之内完成。</p>
+<h4 id="并发性">并发性</h4>
+<p>Web服务器的并发性，是指在任意时间有多少同时发生的并发请求。</p>
+<p>并发性基准测试需要关注的是正在工作中的并发操作，或者是同时工作中的线程数或连接数，</p>
+<p>一个Web站点“同时有50000个用户”访问，却可能只有10～15个并发请求到MySQL数据库。</p>
+<p>当并发性增加时，需要测量吞吐量是否下降，响应时间是否变长，如果是这样，应用可能就无法处理峰值压力。</p>
+<p>并发性测试不是为了测试应用能达到的并发度，而是为了测试应用在不同并发下的性能。</p>
+<h4 id="可扩展性">可扩展性</h4>
+<p>系统的业务压力可能发生变化时，测试可扩展性非常必要。</p>
+<p>可扩展性指的是，给系统增加一倍的工作，在理想情况下就能获得两倍的结果（即吞吐量增加一倍）。</p>
+<p>可扩展性指标对于容量规范非常有用，基于不断增加用户连接的情况下的响应时间测试可以发现应用的瓶颈。</p>
+<h4 id="小结">小结</h4>
+<p>应该测试那些对用户来说最重要的指标。因此应该尽可能地去收集一些需求，比如，什么样的响应时间是可以接受的，期待多少的并发性，等等。然后基于这些需求来设计基准测试，避免目光短浅地只关注部分指标，而忽略其他指标。</p>
+<h2 id="23-基准测试方法">2.3 基准测试方法</h2>
+<p>在了解基本概念后，现在可以具体讨论一下如何设计和执行基准测试。</p>
+<p>先来看一下如何避免一些常见的错误，这些错误可能导致测试结果无用或者不精确：</p>
+<ul>
+<li>使用真实数据的子集而不是全集。例如，应用需要处理几百GB的数据，但测试只有1GB数据；或者只使用当前数据进行测试，却希望模拟未来业务大幅度增长后的情况。</li>
+<li>使用错误的数据分布。例如使用均匀分布的数据测试，而系统的真实数据有很多热点区域（随机生成的测试数据通常无法模拟真实的数据分布）。</li>
+<li>使用不真实的分布参数，例如假定所有用户的个人信息都会被平均地读取。</li>
+<li>在多用户场景中，只做单用户的测试。</li>
+<li>在单服务器上测试分布式应用。</li>
+<li>与真实用户行为不匹配。</li>
+<li>反复执行同一个查询。</li>
+<li>没有检查错误（日志）。</li>
+<li>忽略了系统预热的过程。</li>
+<li>使用默认的服务器配置。</li>
+<li>测试时间太短。</li>
+</ul>
+<h3 id="231-设计和规划基准测试">2.3.1 设计和规划基准测试</h3>
+<p>标准的基准测试</p>
+<p>专用的基准测试</p>
+<p>针对查询的测试，可以建立一个单元测试集作为初步的测试，并运行多遍。</p>
+<p>更好的办法是选择一个有代表性的时间段，比如高峰期的一个小时，或者一整天，记录生产系统上的所有查询。</p>
+<p>如果时间段选得比较小，则可以选择多个时间段。</p>
+<p>可以在不同级别记录查询。例如，如果是集成测试，可以记录Web服务器上HTTP请求，也可以打开MySQL的查询日期。倘若要重演这些查询，就要确保创建多线程来并行执行，而不是单线程线性地执行。</p>
+<p>详细地写下测试规划。测试规划应该记录测试数据、系统配置的步骤、如何测量和分析结果，以及预热的方案等。</p>
+<p>应该建立将参数和结果文档化的规范，每一轮测试都必须进行详细记录。</p>
+<h3 id="232-基准测试应该运行多长时间">2.3.2 基准测试应该运行多长时间</h3>
+<p>直到系统稳定为止，读IO和写IO稳定。</p>
+<p>如果没有时间去完成准确完整的基准测试，那么已经花费的所有时间都是一种浪费。</p>
+<h3 id="233-获取系统性能和状态">2.3.3 获取系统性能和状态</h3>
+<h3 id="234-获得准确的测试结果">2.3.4 获得准确的测试结果</h3>
+<h3 id="235-运行基准测试并分析结果">2.3.5 运行基准测试并分析结果</h3>
+<h3 id="236-绘图的重要性">2.3.6 绘图的重要性</h3>
+<h2 id="24-基准测试工具">2.4 基准测试工具</h2>
+<h3 id="241-集成测试工具">2.4.1 集成测试工具</h3>
+<h3 id="242-单组件式测试工具">2.4.2 单组件式测试工具</h3>
+<h2 id="25-基准测试案例">2.5 基准测试案例</h2>
+<h2 id="26-总结">2.6 总结</h2>
+
+							</div>
+							<div class="wow bounceInDown vt-post-tags">
+								
+								<a href="https://xinrong2019.github.io/tag/pFkv0WMfK/" rel="tag">mysql</a>
+								
+							</div>
+							<nav class="navigation3 post-navigation3" role="navigation">
+
+								<div class="nav-links3">
+									
+									<div class="wow bounceInLeft nav-previous3"><a href="https://xinrong2019.github.io/post/fu-wu-qi-xing-neng-pou-xi/"
+											rel="prev"> 服务器性能剖析</a></div>
+									
+									
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/mysql-jia-gou/"
+											rel="next"> MySQL架构</a></div>
+									
+								</div>
+							</nav>
+							<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
+								<div class="author-avatar pull-left"><img
+										src="https://xinrong2019.github.io//images/avatar.png"></div>
+								
+								<div class="author-description">
+									<div class="author-title">
+										<div class="author-link" rel="author">Kim</div>
+									</div>
+									
+									
+									<p class="author-bio">Time waits for no one.</p>
+								</div>
+							</div>
+							
+						</div>
+					</article>
+					<div id="marlin_lite_about_widget-2" class="wow bounceInUp widget marlin_lite_about_widget"
+						data-wow-delay="0.1s">
+
+						
+						
+						<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '2f13af052cedc58f1f20',
+    clientSecret: 'ce03139f08944b2398d0f580a3d00ff58958c242',
+    repo: 'xinrong2019.github.io',
+    owner: 'xinrong2019',
+    admin: ['xinrong2019'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+						
+						
+						
+						<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://xinrong2019.github.io//media/scripts/Valine.min.js'></script>
+
+<div class="comment"></div>
+<script>
+        new Valine({
+            // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+            av: AV, 
+            el: '.comment',
+            lang: 'zh-cn',
+            
+            
+     	
+      	
+          
+        });
+    </script> 
+
+
+					</div>
+				</div>
+				<div class="tocc col l3 hide-on-med-and-down">
+
+    <div class="toc-widget">
+
+        <div class="toc-title"></div>
+
+        <div id="toc-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.5.0/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '.entry-summary',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('.entry-summary').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+
+    $(function () {
+        var bt;
+        bt = $('.toc-widget');
+        if ($(document).width() > 480) {
+            $(window).scroll(function () {
+                var st;
+                st = $(window).scrollTop();
+                if (st > 450) {
+                    return bt.css('display', 'block');
+                } else {
+                    return bt.css('display', 'none');
+                }
+            })
+        }
+    });
+</script>
+			</div>
+		</div>
+		<footer id="colophon" class="site-footer">
+	<div class="container">
+		<div class="copyright">
+			Created by Kim.
+			<br>
+			<b>Theme: </b>
+			<a href="https://github.com/alterfang/gridea-theme-pan" target="_blank" title="Pan">
+				<span><b>Pan</b></span>
+			</a>
+			<b>. Powered by </b>
+			<a href="https://gridea.dev/" target="_blank" title="Gridea">
+				<span><b>Gridea</b></span>
+			</a>
+		</div>
+	</div><!-- .container -->
+</footer><!-- #colophon -->
+	</div>
+
+	<script src="https://cdn.bootcss.com/fitvids/1.2.0/jquery.fitvids.min.js"></script>
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/marlin-scripts.js'></script>
+<script src="//tokinx.github.io/lately/lately.min.js"></script>
+<script>
+  jQuery(document).ready(function () {
+    $.lately({
+      'target': '.lately-a,.lately-b,.lately-c'
+    })
+  });
+</script>
+<style type="text/css">
+  /* 一键到顶部 */
+  a.back_to_top {
+    text-decoration: none;
+    position: fixed;
+    bottom: 65px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.back_to_top span {
+    color: #888;
+  }
+
+  a.back_to_top:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.back_to_top:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .back_to_top {
+      display: none !important;
+    }
+  }
+
+  /* 一键到底部 */
+
+  a.down_to_bottom {
+    text-decoration: none;
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.down_to_bottom span {
+    color: #888;
+  }
+
+  a.down_to_bottom:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.down_to_bottom:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .down_to_bottom {
+      display: none !important;
+    }
+  }
+</style>
+
+
+<a id="back_to_top" href="#" class="back_to_top"><span><i class="iconfont icon-xiangshang"></i></span>
+</a>
+
+<a id="down_to_bottom" href="#" class="down_to_bottom"><span><i class="iconfont icon-xiangxia"></i></span>
+</a>
+
+<script src="//instant.page/3.0.0" type="module" defer
+  integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+<script>
+  function getScrollTop() {
+    var scrollTop = 0,
+      bodyScrollTop = 0,
+      documentScrollTop = 0;
+    if (document.body) {
+      bodyScrollTop = document.body.scrollTop;
+    }
+    if (document.documentElement) {
+      documentScrollTop = document.documentElement.scrollTop;
+    }
+    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+    return scrollTop;
+  };
+
+  function getScrollHeight() {
+    var scrollHeight = 0,
+      bodyScrollHeight = 0,
+      documentScrollHeight = 0;
+    if (document.body) {
+      bSH = document.body.scrollHeight;
+    }
+    if (document.documentElement) {
+      dSH = document.documentElement.scrollHeight;
+    }
+    scrollHeight = (bSH - dSH > 0) ? bSH : dSH;
+    return scrollHeight;
+  };
+
+  function getWindowHeight() {
+    var windowHeight = 0;
+    if (document.compatMode == "CSS1Compat") {
+      windowHeight = document.documentElement.clientHeight;
+    } else {
+      windowHeight = document.body.clientHeight;
+    }
+    return windowHeight;
+  };
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block');
+          } else {
+            return bt.css('display', 'none');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: 0
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#down_to_bottom');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+            return bt.css('display', 'none');
+          } else {
+            return bt.css('display', 'block');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: $('body,html')[0].scrollHeight
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+</script>
+	<script data-no-instant>
+		(function ($) {
+			$.extend({
+				adamsOverload: function () {
+					$('.navigation:eq(0)').remove();
+					$("").attr("rel", "external");
+					$("a[rel='external'],a[rel='external nofollow']").attr("target", "_blank");
+					$("a.vi").attr("rel", "");
+					$.viewImage({
+						'target': 'img',
+						'exclude': '.vsmile-icons img,.gallery img',
+						'delay': 300
+					});
+					$.lately({
+						'target': '.commentmetadata a,.infos time,.post-list time'
+					});
+					prettyPrint();
+
+					$('ul.links li a').each(function () {
+						if ($(this).parent().find('.bg').length == 0) {
+							$(this).parent().append(
+								'<!---<div class="bg" style="background-image:url(https://c3.glgoo.top/s2/favicons?domain=' +
+								$(this).attr("href") + ')"></div>--->')
+						}
+					});
+				}
+			});
+		})(jQuery);
+		jQuery.adamsOverload();
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<meta HTTP-EQUIV="expires" CONTENT="0"> 
+<title>Go语言从入门到出门 | Eucaly</title>	
+
+<link rel="stylesheet" href="https://xinrong2019.github.io//styles/main.css">
+<script type="text/javascript">
+function getCSS()
+{
+        datetoday = new Date();
+        timenow=datetoday.getTime();
+        datetoday.setTime(timenow);
+        thehour = datetoday.getHours();
+
+            display = "https://xinrong2019.github.io//media/css/night.css";
+
+            display = "https://xinrong2019.github.io//media/css/night.css";   
+      
+            display = "https://xinrong2019.github.io//media/css/day.css";
+
+            display = "https://xinrong2019.github.io//media/css/day.css";
+      
+
+var css = '<';
+        css+='link rel="stylesheet" href='+display+' \/';
+        css+='>';
+        document.write(css);
+}
+</script>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Noto+Sans+SC:300|Montserrat&display=swap" rel="stylesheet">
+<link href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css" rel="stylesheet" />
+<link href="https://at.alicdn.com/t/font_1651848_tf0hnpbyjfj.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/script.js'></script>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet" />
+  <script src="https://cdn.bootcss.com/wow/1.1.2/wow.min.js"></script>
+  <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>wow=new WOW({boxClass:'wow',animateClass:'animated',offset:0,mobile:true,live:true});wow.init();</script>
+
+<script type="text/javascript">
+window.onload=getCSS();
+</script>
+
+
+</head>
+
+<body class="post-template-default single single-post postid-70 single-format-standard">
+	<div id="wrapper">
+				<header id="header" class="site-header" >
+			<div class="site-branding">
+				<h1 class="site-title">
+					<div class="post-title-name">
+						<a href="https://xinrong2019.github.io/" rel="home">Go语言从入门到出门</a>
+					</div>
+				</h1>
+				<h2 class="site-description">Time waits for no one.</h2>
+			</div>
+			<nav id="nav-wrapper">
+				<div class="container">
+					<div class="nav-toggle">
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<ul id="" class="dove">
+						
+
+						<li>
+
+							<a href="/"> 首页</a></li>
+
+						
+
+						<li>
+
+							<a href="/archives"> 归档</a></li>
+
+						
+
+						<li>
+
+							<a href="/tags"> 标签</a></li>
+
+						
+
+						<li>
+
+							<a href="/friends"> 友链</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mysql"> MySQL</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/dubbo"> Dubbo</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mq"> MQ</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/spring"> Spring</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/about"> 关于</a></li>
+
+						
+
+					</ul>
+					</li>
+
+					</ul>
+				</div>
+			</nav>
+
+			<div class="jingge">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			<form id="gridea-search-form" data-update="1585982810028" action="/search/index.html">
+				<div class="search-box">
+					<input class="search-txt" name="q" placeholder="Type to search" />
+					<a class="search-btn">
+						<i class="iconfont icon-search1" action="/search/index.html"></i>
+					</a>
+				</div>
+			</form>
+		</header>
+		<div id="content" class="container">
+			<div class="row">
+				<div class="col-md-8 site-main">
+					<article id="post-70"
+						class="post-70 post type-post status-publish format-standard hentry category-5 tag-10 tag-9 tag-11">
+						<div class="entry-content">
+							<div class="entry-meta">
+								<div class="entry-info">
+									<time>
+										2020-01-29
+									</time>
+									<span>
+										3 min read
+									</span>
+								</div>
+							</div>
+							<div class="wow slideInLeft entry-summary song">
+								<h2 id="学习动机">学习动机</h2>
+<ul>
+<li>掌握另一种编程语言，提高对编程语言的认知</li>
+<li>坚持学习，培养坚持做完一件事的能力，提高自信</li>
+</ul>
+<h2 id="学习资源">学习资源</h2>
+<ul>
+<li><a href="https://www.liwenzhou.com/posts/Go/go_menu/">李文周的博客</a></li>
+<li><a href="https://www.bilibili.com/video/av83815484?p=2">2020年寒假高薪特训: 20天入门到精通Go语言</a></li>
+<li><a href="https://golang.org/">官网</a></li>
+<li><a href="https://www.bilibili.com/video/av83815484?p=2">B站老男孩第5期</a></li>
+<li><a href="https://www.bilibili.com/video/av77475090?from=search&amp;seid=17564199147946934375">B站老男孩第4期</a></li>
+<li><a href="https://www.bilibili.com/video/av69407918?from=search&amp;seid=17564199147946934375">B站老男孩周末班5期</a></li>
+</ul>
+<h2 id="学习方法">学习方法</h2>
+<ul>
+<li>目的导向，结果导向</li>
+<li>通过教程掌握基础</li>
+<li>通过阅读和分析源码进阶</li>
+<li>通过开源项目、开源中间件进阶</li>
+<li>在公司里运用、布道</li>
+</ul>
+<h2 id="go语言学习路线">Go语言学习路线</h2>
+<h3 id="零基础">零基础</h3>
+<h4 id="学习计算机知识">学习计算机知识</h4>
+<h5 id="基础知识">基础知识</h5>
+<ul>
+<li>计算机体系结构</li>
+<li>计算机硬件基础</li>
+<li>计算机软件知识</li>
+</ul>
+<h5 id="入门好书">入门好书</h5>
+<ul>
+<li>计算机是怎样跑起来的</li>
+<li>程序是怎样跑起来的</li>
+<li>动手制作一台计算机</li>
+</ul>
+<h5 id="备选进阶书">备选进阶书</h5>
+<ul>
+<li>深入理解计算机操作系统</li>
+</ul>
+<h4 id="学习操作系统知识">学习操作系统知识</h4>
+<h5 id="基础知识-2">基础知识</h5>
+<ul>
+<li>操作系统管理</li>
+<li>操作系统基本原理</li>
+<li>命令行的使用</li>
+</ul>
+<h5 id="入门好书-2">入门好书</h5>
+<ul>
+<li>30天自制操作系统</li>
+<li>Linux就该这么学</li>
+<li>Linux命令行与Shell脚本编程</li>
+<li>Linux Shell脚本攻略</li>
+</ul>
+<h5 id="备选进阶书-2">备选进阶书</h5>
+<ul>
+<li>Linux内核设计的艺术：图解Linux操作系统架构设计与实现原理</li>
+</ul>
+<h4 id="学习网络知识">学习网络知识</h4>
+<h5 id="基础知识-3">基础知识</h5>
+<ul>
+<li>网络链接</li>
+<li>网络协议</li>
+</ul>
+<h5 id="入门好书-3">入门好书</h5>
+<ul>
+<li>网络是怎样连接的</li>
+<li>图解HTTP</li>
+<li>HTTP/2基础教程</li>
+<li>图解TCP/IP</li>
+</ul>
+<h5 id="备选进阶书-3">备选进阶书</h5>
+<ul>
+<li>HTTP权威指南</li>
+<li>TCP/IP详解</li>
+</ul>
+<h3 id="无编程经验的同学">无编程经验的同学</h3>
+<p>学习编程基础知识</p>
+<h4 id="基础知识-4">基础知识</h4>
+<ul>
+<li>程序设计基础</li>
+<li>高等数学</li>
+<li>算法基础</li>
+<li>程序员英语</li>
+</ul>
+<h4 id="入门好书-4">入门好书</h4>
+<ul>
+<li>我的第一本编程书</li>
+<li>程序员的数学</li>
+<li>算法图解</li>
+<li>啊哈算法</li>
+<li>程序员的英语</li>
+</ul>
+<h4 id="备选进阶书-4">备选进阶书</h4>
+<ul>
+<li>计算机程序设计艺术</li>
+<li>Linux/Unix系统编程手册</li>
+<li>Unix环境高级编程</li>
+</ul>
+<h3 id="有其他语言编程经验的同学">有其他语言编程经验的同学</h3>
+<p>学习Go语言基础知识</p>
+<h4 id="基础知识-5">基础知识</h4>
+<ul>
+<li>Go语言规范</li>
+<li>Go语言命令</li>
+<li>Go语言基础编程</li>
+<li>Go语言并发编程</li>
+</ul>
+<h4 id="推荐资源">推荐资源</h4>
+<ul>
+<li>Go语言规范文档</li>
+<li>Go语言命令文档</li>
+<li>Go语言编辑器和IDE</li>
+<li>Go语言WIKI</li>
+<li>Go语言核心技术36讲</li>
+<li>Go并发编程实战</li>
+<li>Go命令教程</li>
+<li>Go语言第一课</li>
+</ul>
+<h3 id="有go语言编程经验的同学">有Go语言编程经验的同学</h3>
+<p>学习Go语言进阶知识</p>
+<h4 id="进阶知识">进阶知识</h4>
+<ul>
+<li>Go语言数据类型使用进阶</li>
+<li>Go语言标准库使用进阶</li>
+<li>Go语言并发编程进阶</li>
+<li>Go语言知识体系巩固</li>
+</ul>
+<h4 id="推荐资源-2">推荐资源</h4>
+<ul>
+<li>Effective Go</li>
+<li>Go语言内存模型</li>
+<li>Go程序诊断</li>
+<li>Go语言核心技术36讲</li>
+<li>Go并发编程实战</li>
+<li>Go语言实战</li>
+</ul>
+<h4 id="进阶方法">进阶方法</h4>
+<ul>
+<li>打好基础，不断补充知识缺漏</li>
+<li>研读Go语言官方文档和源码</li>
+<li>学习明星项目中的代码和文档</li>
+<li>多读书，读好书（所有相关技术书，不只Go语言）</li>
+<li>积极练习、积极讨论、积极加入技术组织和社区</li>
+<li>积极发布和开源自己的程序，积极通过代码和软件项目交友</li>
+<li>积极公开自己的想法，并拥抱和吸纳不同的想法</li>
+<li>尽量多的在公开场合发声，包括公开讨论、演讲、培训和咨询</li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://static001.infoq.cn/resource/image/f0/6f/f0728a5c91f4783c0de02ce65a8f8e6f.png" alt="Go语言基础知识" loading="lazy"></figure>
+
+							</div>
+							<div class="wow bounceInDown vt-post-tags">
+								
+								<a href="https://xinrong2019.github.io/tag/0PodLkQSu/" rel="tag">golang</a>
+								
+							</div>
+							<nav class="navigation3 post-navigation3" role="navigation">
+
+								<div class="nav-links3">
+									
+									<div class="wow bounceInLeft nav-previous3"><a href="https://xinrong2019.github.io/post/da-han-java-mian-shi-bi-wen-dian/"
+											rel="prev"> 大厂Java面试必问点</a></div>
+									
+									
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/fu-wu-qi-xing-neng-pou-xi/"
+											rel="next"> 服务器性能剖析</a></div>
+									
+								</div>
+							</nav>
+							<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
+								<div class="author-avatar pull-left"><img
+										src="https://xinrong2019.github.io//images/avatar.png"></div>
+								
+								<div class="author-description">
+									<div class="author-title">
+										<div class="author-link" rel="author">Kim</div>
+									</div>
+									
+									
+									<p class="author-bio">Time waits for no one.</p>
+								</div>
+							</div>
+							
+						</div>
+					</article>
+					<div id="marlin_lite_about_widget-2" class="wow bounceInUp widget marlin_lite_about_widget"
+						data-wow-delay="0.1s">
+
+						
+						
+						<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '2f13af052cedc58f1f20',
+    clientSecret: 'ce03139f08944b2398d0f580a3d00ff58958c242',
+    repo: 'xinrong2019.github.io',
+    owner: 'xinrong2019',
+    admin: ['xinrong2019'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+						
+						
+						
+						<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://xinrong2019.github.io//media/scripts/Valine.min.js'></script>
+
+<div class="comment"></div>
+<script>
+        new Valine({
+            // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+            av: AV, 
+            el: '.comment',
+            lang: 'zh-cn',
+            
+            
+     	
+      	
+          
+        });
+    </script> 
+
+
+					</div>
+				</div>
+				<div class="tocc col l3 hide-on-med-and-down">
+
+    <div class="toc-widget">
+
+        <div class="toc-title"></div>
+
+        <div id="toc-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.5.0/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '.entry-summary',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('.entry-summary').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+
+    $(function () {
+        var bt;
+        bt = $('.toc-widget');
+        if ($(document).width() > 480) {
+            $(window).scroll(function () {
+                var st;
+                st = $(window).scrollTop();
+                if (st > 450) {
+                    return bt.css('display', 'block');
+                } else {
+                    return bt.css('display', 'none');
+                }
+            })
+        }
+    });
+</script>
+			</div>
+		</div>
+		<footer id="colophon" class="site-footer">
+	<div class="container">
+		<div class="copyright">
+			Created by Kim.
+			<br>
+			<b>Theme: </b>
+			<a href="https://github.com/alterfang/gridea-theme-pan" target="_blank" title="Pan">
+				<span><b>Pan</b></span>
+			</a>
+			<b>. Powered by </b>
+			<a href="https://gridea.dev/" target="_blank" title="Gridea">
+				<span><b>Gridea</b></span>
+			</a>
+		</div>
+	</div><!-- .container -->
+</footer><!-- #colophon -->
+	</div>
+
+	<script src="https://cdn.bootcss.com/fitvids/1.2.0/jquery.fitvids.min.js"></script>
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/marlin-scripts.js'></script>
+<script src="//tokinx.github.io/lately/lately.min.js"></script>
+<script>
+  jQuery(document).ready(function () {
+    $.lately({
+      'target': '.lately-a,.lately-b,.lately-c'
+    })
+  });
+</script>
+<style type="text/css">
+  /* 一键到顶部 */
+  a.back_to_top {
+    text-decoration: none;
+    position: fixed;
+    bottom: 65px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.back_to_top span {
+    color: #888;
+  }
+
+  a.back_to_top:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.back_to_top:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .back_to_top {
+      display: none !important;
+    }
+  }
+
+  /* 一键到底部 */
+
+  a.down_to_bottom {
+    text-decoration: none;
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.down_to_bottom span {
+    color: #888;
+  }
+
+  a.down_to_bottom:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.down_to_bottom:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .down_to_bottom {
+      display: none !important;
+    }
+  }
+</style>
+
+
+<a id="back_to_top" href="#" class="back_to_top"><span><i class="iconfont icon-xiangshang"></i></span>
+</a>
+
+<a id="down_to_bottom" href="#" class="down_to_bottom"><span><i class="iconfont icon-xiangxia"></i></span>
+</a>
+
+<script src="//instant.page/3.0.0" type="module" defer
+  integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+<script>
+  function getScrollTop() {
+    var scrollTop = 0,
+      bodyScrollTop = 0,
+      documentScrollTop = 0;
+    if (document.body) {
+      bodyScrollTop = document.body.scrollTop;
+    }
+    if (document.documentElement) {
+      documentScrollTop = document.documentElement.scrollTop;
+    }
+    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+    return scrollTop;
+  };
+
+  function getScrollHeight() {
+    var scrollHeight = 0,
+      bodyScrollHeight = 0,
+      documentScrollHeight = 0;
+    if (document.body) {
+      bSH = document.body.scrollHeight;
+    }
+    if (document.documentElement) {
+      dSH = document.documentElement.scrollHeight;
+    }
+    scrollHeight = (bSH - dSH > 0) ? bSH : dSH;
+    return scrollHeight;
+  };
+
+  function getWindowHeight() {
+    var windowHeight = 0;
+    if (document.compatMode == "CSS1Compat") {
+      windowHeight = document.documentElement.clientHeight;
+    } else {
+      windowHeight = document.body.clientHeight;
+    }
+    return windowHeight;
+  };
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block');
+          } else {
+            return bt.css('display', 'none');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: 0
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#down_to_bottom');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+            return bt.css('display', 'none');
+          } else {
+            return bt.css('display', 'block');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: $('body,html')[0].scrollHeight
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+</script>
+	<script data-no-instant>
+		(function ($) {
+			$.extend({
+				adamsOverload: function () {
+					$('.navigation:eq(0)').remove();
+					$("").attr("rel", "external");
+					$("a[rel='external'],a[rel='external nofollow']").attr("target", "_blank");
+					$("a.vi").attr("rel", "");
+					$.viewImage({
+						'target': 'img',
+						'exclude': '.vsmile-icons img,.gallery img',
+						'delay': 300
+					});
+					$.lately({
+						'target': '.commentmetadata a,.infos time,.post-list time'
+					});
+					prettyPrint();
+
+					$('ul.links li a').each(function () {
+						if ($(this).parent().find('.bg').length == 0) {
+							$(this).parent().append(
+								'<!---<div class="bg" style="background-image:url(https://c3.glgoo.top/s2/favicons?domain=' +
+								$(this).attr("href") + ')"></div>--->')
+						}
+					});
+				}
+			});
+		})(jQuery);
+		jQuery.adamsOverload();
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<meta HTTP-EQUIV="expires" CONTENT="0"> 
+<title>MySQL架构 | Eucaly</title>	
+
+<link rel="stylesheet" href="https://xinrong2019.github.io//styles/main.css">
+<script type="text/javascript">
+function getCSS()
+{
+        datetoday = new Date();
+        timenow=datetoday.getTime();
+        datetoday.setTime(timenow);
+        thehour = datetoday.getHours();
+
+            display = "https://xinrong2019.github.io//media/css/night.css";
+
+            display = "https://xinrong2019.github.io//media/css/night.css";   
+      
+            display = "https://xinrong2019.github.io//media/css/day.css";
+
+            display = "https://xinrong2019.github.io//media/css/day.css";
+      
+
+var css = '<';
+        css+='link rel="stylesheet" href='+display+' \/';
+        css+='>';
+        document.write(css);
+}
+</script>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Noto+Sans+SC:300|Montserrat&display=swap" rel="stylesheet">
+<link href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css" rel="stylesheet" />
+<link href="https://at.alicdn.com/t/font_1651848_tf0hnpbyjfj.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/script.js'></script>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet" />
+  <script src="https://cdn.bootcss.com/wow/1.1.2/wow.min.js"></script>
+  <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>wow=new WOW({boxClass:'wow',animateClass:'animated',offset:0,mobile:true,live:true});wow.init();</script>
+
+<script type="text/javascript">
+window.onload=getCSS();
+</script>
+
+
+</head>
+
+<body class="post-template-default single single-post postid-70 single-format-standard">
+	<div id="wrapper">
+				<header id="header" class="site-header" >
+			<div class="site-branding">
+				<h1 class="site-title">
+					<div class="post-title-name">
+						<a href="https://xinrong2019.github.io/" rel="home">MySQL架构</a>
+					</div>
+				</h1>
+				<h2 class="site-description">Time waits for no one.</h2>
+			</div>
+			<nav id="nav-wrapper">
+				<div class="container">
+					<div class="nav-toggle">
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<ul id="" class="dove">
+						
+
+						<li>
+
+							<a href="/"> 首页</a></li>
+
+						
+
+						<li>
+
+							<a href="/archives"> 归档</a></li>
+
+						
+
+						<li>
+
+							<a href="/tags"> 标签</a></li>
+
+						
+
+						<li>
+
+							<a href="/friends"> 友链</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mysql"> MySQL</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/dubbo"> Dubbo</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mq"> MQ</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/spring"> Spring</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/about"> 关于</a></li>
+
+						
+
+					</ul>
+					</li>
+
+					</ul>
+				</div>
+			</nav>
+
+			<div class="jingge">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			<form id="gridea-search-form" data-update="1585982810028" action="/search/index.html">
+				<div class="search-box">
+					<input class="search-txt" name="q" placeholder="Type to search" />
+					<a class="search-btn">
+						<i class="iconfont icon-search1" action="/search/index.html"></i>
+					</a>
+				</div>
+			</form>
+		</header>
+		<div id="content" class="container">
+			<div class="row">
+				<div class="col-md-8 site-main">
+					<article id="post-70"
+						class="post-70 post type-post status-publish format-standard hentry category-5 tag-10 tag-9 tag-11">
+						<div class="entry-content">
+							<div class="entry-meta">
+								<div class="entry-info">
+									<time>
+										2020-01-24
+									</time>
+									<span>
+										17 min read
+									</span>
+								</div>
+							</div>
+							<div class="wow slideInLeft entry-summary song">
+								<h2 id="mysql为什么灵活灵活性体现在哪">MySQL为什么灵活？灵活性体现在哪？</h2>
+<p>可以通过配置使它在不同的硬件上都运行得很好，也可以支持多种不同的数据类型。但是最重要、最与众不同的特性是它的<strong>存储引擎架构</strong>，这种架构的设计将<code>查询处理</code>及<code>其他系统任务和数据的存储/提取</code>相分离。</p>
+<p>这种处理和存储分离的设计可以在使用时根据性能、特性，以及其他需求来选择数据存储的方式。</p>
+<p>学习目标：</p>
+<ol>
+<li>掌握MySQL服务器架构</li>
+<li>掌握各种存储引擎之间的主要区别，以及这些区别的重要性</li>
+<li>了解MySQL的历史背景和基准测试</li>
+<li>初步掌握MySQL的原理</li>
+</ol>
+<h2 id="11-mysql逻辑架构">1.1 MySQL逻辑架构</h2>
+<p>头脑中构建出一幅MySQL各组件之间如何协同工作的架构图，有助于深入理解MySQL服务器。</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/MySQL%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84_2020_01_23_09_13_13.jpg" alt="" loading="lazy"></figure>
+<p>第一层：连接处理、授权认证、安全</p>
+<p>第二层：大多数MySQL的核心服务，包括查询解析、分析、优化、缓存以及所有的内置函数（例如，日期、时间、数学和加密函数），所有跨存储引擎的功能都在这一层实现：存储过程、触发器、视图等。</p>
+<p>第三层：存储引擎。存储引擎负责MySQL中数据的存取和提取。服务器通过API与存储引擎进行通信。存储引擎API包含几十个底层函数，用于执行诸如“开始一个事务”或者“根据主键提取一行记录”等操作。但存储引擎不回去解析SQL(InnoDB例外，会解析外健定义，因为MySQL服务器本身没有实现该功能)，不同存储引擎之间也不会相互通信，而只是简单地响应上层服务器等请求。</p>
+<h3 id="111-连接管理与安全性">1.1.1 连接管理与安全性</h3>
+<p>每个客户端连接都会在服务器进程中拥有一个线程，这个连接的查询只会在这个单独的线程中执行，该线程只能轮流在某个CPU核心或者CPU中运行。服务器会负责缓存线程，因此不需要为每一个新建的连接创建或者销毁线程。</p>
+<blockquote>
+<p>线程池是一个更优秀的资源管理策略</p>
+</blockquote>
+<p>当客户端(应用)连接到MySQL服务器时，服务器需要对其进行认证。认证基于用户名、原始主机信息和密码。如果使用了安全套接字(SSL)的方式连接，还可以使用X.509证书认证。一旦客户端连接成功，服务器会继续验证该客户端是否具有执行某个特定查询的权限(例如，是否允许客户端对world数据库的Country表执行Select语句)。</p>
+<h3 id="112-优化与执行">1.1.2 优化与执行</h3>
+<p>MySQL会解析查询，并创建内部数据结构(解析树)，然后对其进行各种优化，包括重写查询、决定表的读取顺序，以及选择合适的索引等。</p>
+<p>用户可以通过特殊的关键字提示(hint)优化器，影响它的决策过程。</p>
+<p>也可以请求优化器解释(explain)优化过程的各个因素，使用户可以知道服务器是如何进行优化决策的，并提供一个参考基准，便于用户重构查询和schema、修改相关配置，使应用尽可能高效运行。</p>
+<p>第6章将讨论更多优化器细节。</p>
+<p>优化器会请求存储引擎提供容量或某个具体操作的开销信息，以及表数据的统计信息等。例如，某些存储引擎的某种索引，可能对一些特定的查询有优化。</p>
+<p>关于索引与schema的优化，参见第4章和第5章。</p>
+<p>对于SELECT语句，在解析查询之前，服务器会先检查查询缓存，如果能够在其中找到对应的查询，服务器就不必再执行查询解析、优化和执行的整个过程，而是直接返回查询缓存中的结果集。</p>
+<p>第7章详细讨论了相关内容。</p>
+<h2 id="12-并发控制">1.2 并发控制</h2>
+<p>无论何时，只要有多个查询需要在同一时刻修改数据，都会产生并发控制的问题。</p>
+<p>本章的目的是讨论MySQL在两个层面的并发控制：服务器层与存储引擎层。</p>
+<p>本章只简要地讨论MySQL如何控制并发读写。</p>
+<p>以Unix系统的email box为例，典型的mbox文件格式是非常简单的。一个mbox邮箱中的所有邮件都串行在一起，彼此首尾相连。</p>
+<p>这种格式对于读取和分析邮件信息非常友好，同时投递邮件也很容易，只要在文件末尾附加新的邮件内容即可。</p>
+<p>但如果两个进程在同一时刻对同一个邮箱投递邮件，邮箱的数据会被破坏，两封邮件的内容会交叉地附加在邮箱文件的末尾。</p>
+<p>设计良好的邮箱投递系统会通过锁(lock)来防止数据损坏。如果客户试图投递邮件，而邮箱已经被其他客户锁住，那就必须等待，直到锁释放才能进行投递。</p>
+<p>这种锁的方案在实际应用环境中虽然工作良好，但并不支持并发处理。因为任意一个时刻，只有一个进程可以修改邮箱的数据，这在大容量的邮箱系统中是个问题。</p>
+<h3 id="121-读写锁">1.2.1 读写锁</h3>
+<p>读读不会出现问题，读写、写读、写写都会有问题。需要做同步处理。</p>
+<p>一个经典的方法是，通过实现一个由两种类型的锁组成的锁系统来解决问题。</p>
+<p>这两种类型的锁通常被称为共享锁和排他锁，也叫读锁和写锁。</p>
+<p>读锁是共享的，或者说是相互不阻塞的。多个客户在同一时刻可以同时读取同一个资源，而互不干扰。</p>
+<p>写锁则是排他的，也就是说一个写锁会阻塞其他的写锁和读锁。</p>
+<p>在实际的数据库系统中，每时每刻都在发生锁定，当某个用户修改某一部分数据时，MySQL会通过锁定防止其他用户读取同一数据。大多数时候，MySQL锁的内部管理都是透明的。</p>
+<h3 id="122-锁粒度">1.2.2 锁粒度</h3>
+<p>一种<strong>提高共享资源并发性</strong>的方式就是让锁定对象更有选择性。尽量<strong>只锁定需要修改的部分数据</strong>，而不是所有的资源。</p>
+<p>更理想的方式是，<strong>只对会修改的数据片进行精确的锁定</strong>。任何时候，在给定的资源上，锁定的数据量越少，则系统的并发程度越高，只要相互之间不发生冲突即可。</p>
+<p>问题是加锁也需要消耗资源。锁的各种操作，包括获得锁、检查锁是否已经解除、释放锁等，都会增加系统等开销。如果系统花费大量的时间来管理锁，而不是存取数据，那么系统的性能可能会因此受到影响。</p>
+<p>所谓的锁策略，是在锁的开销和数据的安全性之间寻求平衡，这种平衡当然也会影响到性能。</p>
+<p>大多数商业数据库系统没有提供更多的选择，一般都是在表上施加行级锁，并以各种复杂的方式来实现，以便在锁比较多的情况下尽可能地提供更好的性能。</p>
+<p>而MySQL则提供了多种选择。每种MySQL存储引擎都可以实现自己的锁策略和锁粒度。</p>
+<p>MySQL中，对锁的管理灵活，锁粒度可以修改，多存储引擎架构提供对多场景支持。</p>
+<h4 id="两种重要的锁策略">两种重要的锁策略</h4>
+<h5 id="表锁">表锁</h5>
+<p>开销最小</p>
+<p>在特定的场景中，表锁也可能有良好的性能。例如，READ_LOCAL表锁支持某些类型的并发写操作。</p>
+<p>另外，写锁也比读锁有更高的优先级，因此一个写锁请求可能会被插入到读锁队列的前面。</p>
+<p>尽管存储引擎可以管理自己的锁，MySQL本身还是会使用各种有效的表锁来实现不同的目的。例如，服务器会为诸如ALTER TABLE之类的语句使用表锁，而忽略存储引擎的锁机制。</p>
+<h5 id="行级锁">行级锁</h5>
+<p>行级锁可以最大程度地支持并发处理（同时也带来了最大的锁开销）。在InnoDB和XtraDB，以及一些存储引擎中实现了行级锁。</p>
+<p>行级锁只在存储引擎层实现，而MySQL服务器层（如有必要，请回顾前问的逻辑架构图）没有实现。服务器层完全不了解存储引擎中的锁实现。在本章的后续内容以及全书中，所有的存储引擎都以自己的方式显现了锁机制。</p>
+<h2 id="13-事务">1.3 事务</h2>
+<p>事务就是一组原子性的SQL查询，或者说一个独立的工作单元。</p>
+<p>事务内的语句，要么全部执行成功，要么全部执行失败。</p>
+<h3 id="事务的acid">事务的ACID</h3>
+<p>一个运行良好的事务处理系统，必须具备这些标准特征：</p>
+<h4 id="原子性atomicity">原子性（atomicity）</h4>
+<h4 id="一致性consistency">一致性（consistency）</h4>
+<h4 id="隔离性isolation">隔离性（isolation）</h4>
+<h4 id="持久性durability">持久性（durability）</h4>
+<p>实现ACID需要考虑性能、安全等很多复杂问题。</p>
+<h3 id="隔离级别">隔离级别</h3>
+<p>在SQL标准中定义了四种隔离级别，每一种级别都规定了一个事务中所做的修改，哪些在事务内和事务间是可见的，哪些是不可见的。较低级别的隔离通常可以执行更高的并发，系统的开销也更低。</p>
+<h4 id="read-uncommitted读未提交">READ UNCOMMITTED(读未提交)</h4>
+<h4 id="read-committed读已提交">READ COMMITTED(读已提交)</h4>
+<h4 id="repeatable-read可重复度">REPEATABLE READ(可重复度)</h4>
+<h4 id="serializable可串行化">SERIALIZABLE(可串行化)</h4>
+<p>ANSI SQL隔离级别</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读可能性</th>
+<th>不可重复读可能性</th>
+<th>幻读可能性</th>
+<th>加锁读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>READ UNCOMMITTED</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>READ COMMITTED</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>REPEATABLE READ</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>SERIALIZABLE</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="132-死锁">1.3.2 死锁</h3>
+<p>什么是死锁？</p>
+<p>怎么产生死锁？</p>
+<p>死锁检测和超时机制</p>
+<h3 id="133-事务日志">1.3.3 事务日志</h3>
+<p>采用追加的方式，速度快，顺序IO，不用移动磁头。</p>
+<p>预写式日志（Write-Ahead Logging），修改数据需要写两次磁盘，实时修改内存拷贝，持久化事务日志，事务日志持久化后，内存中被修改的数据在后台可以慢慢地刷回到磁盘。</p>
+<h3 id="134-mysql中的事务">1.3.4 MySQL中的事务</h3>
+<p>事务支持：InnoDB</p>
+<h4 id="自动提交">自动提交</h4>
+<p>默认自动提交</p>
+<h4 id="在事务中混合使用存储引擎">在事务中混合使用存储引擎</h4>
+<h4 id="隐式和显式锁定">隐式和显式锁定</h4>
+<h2 id="14-多版本并发控制">1.4 多版本并发控制</h2>
+<p>可以认为MVCC是行级锁的一个变种，但是它在很多情况下避免了加锁操作，因此开销更低。虽然实现机制有所不同，但都实现了非阻塞的读操作，写操作也只锁定必要的行。</p>
+<p>MVCC的实现，是通过保存数据在某个时间点的快照来实现的。</p>
+<p>MVCC的实现，典型的有乐观并发控制和悲观并发控制。下面我们通过InnoDB的简化版行为来说明MVCC是如何工作的。</p>
+<p>InnoDB的MVCC，是通过在每行记录后保存两个隐藏的列来实现的。这两个列，一个保存了行的创建时间，一个保存了行的过期时间（或删除时间）。当然存储的并不是实际的时间值，而是系统版本号（system version number）。没开始一个新的事务，系统版本号都会自动递增。事务开始时刻的系统版本号会作为事务的版本号，用来和查询到的每行记录的版本号进行比较。</p>
+<p>下面看一下在REPEATABLE READ隔离级别下，MVCC具体是如何操作的。</p>
+<p>SELECT<br>
+InnoDB会根据以下两个条件检查每行记录：<br>
+a. InnoDB只查找版本早于当前事务版本的数据行（也就是，行的系统版本号小于或等于事务的系统版本号），这样可以确保事务读取的行，要么是在事务开始前已经存在的，要么是事务自身插入或者修改过的。<br>
+b. 行的删除版本要么未定义，要么大于当前事务版本号。这可以确保事务读取到的行，在事务开始之前未被删除。<br>
+只有符合上述两个条件的记录，才能返回作为查询结果。<br>
+Insert<br>
+InnoDB为新插入的每一行保存当前系统版本号作为行版本号。<br>
+DELETE<br>
+InnoDB为删除的每一行保存当前系统版本号作为行删除标识。<br>
+UPDATE<br>
+InnoDB为插入一行新纪录，保存当前系统版本号作为行版本号，同时保存当前系统版本号到原来的行作为行删除标识。</p>
+<p>保存这两个额外系统版本号，使大多数读操作都可以不用加锁。这样设计使得读数据操作很简单，性能很好，并且也能保证只会读取到符合标准的行。</p>
+<p>不足之处是每行记录都需要额外的存储空间，需要做更多的行检查工作，以及一些额外的维护工作。</p>
+<p>MVCC只在REPEATABLE READ和READ COMMITTED两个隔离级别下工作。其他两个隔离级别都和MVCC不兼容，因为READ UNCOMMITTED总是读取最新的数据行，而不是符合当前事务版本的数据行。而SERIALIZABLE则会对所有读取的行都加锁。</p>
+<h2 id="15-mysql的存储引擎">1.5 MySQL的存储引擎</h2>
+<p>数据库，或称schema，对应文件系统中数据目录下的一个子目录。</p>
+<p>创建表时，MySQL会在数据库子目录下创建一个和表同名的.frm文件保存表的定义。</p>
+<p>大小写敏感和平台相关。</p>
+<p>可以使用show table status命令（在5.0以后的版本中，也可以查询information_schema中对应的表）显示表的相关信息。</p>
+<h3 id="151-innodb存储引擎">1.5.1 InnoDB存储引擎</h3>
+<p>MySQL默认的事务引擎。被设计用来处理大量的短期事务，短期事务大部分情况时正常提交的，很少会被回滚。</p>
+<p>InnoDB的性能和自动崩溃恢复特性，使得它在非事务型存储的需求中也很流行。</p>
+<h4 id="innodb的历史">InnoDB的历史</h4>
+<h4 id="innodb概览">InnoDB概览</h4>
+<p>InnoDB的数据存储在表空间中。</p>
+<p>InnoDB采用MVCC来支持高并发，并且实现了四个标准的隔离级别。</p>
+<p>默认级别是REPEATABLE READ（可重复读），并且通过间隙锁（<code>next-key locking</code>）策略防止幻读的出现。间隙锁使得InnoDB不仅仅锁定查询涉及的行，还会对索引中的间隙进行锁定，以防止幻影行的插入。</p>
+<p>InnoDB表是基于聚簇索引建立的。</p>
+<p>聚簇索引对主键查询有很高的性能。不过它的二级索引（secondary index，非主键索引）中必须包含主键列，所以如果主键列很大的话，其他的索引都会很大。</p>
+<p>因此，若表上的索引较多的话，主键应当尽可能的小。</p>
+<p>InnoDB的存储格式是平台独立的。数据和索引文件可以在各个平台间复制。</p>
+<p>InnoDB内部做了很多优化，包括从磁盘读取数据时采用的可预测性预读，能够自动在内存中创建hash索引以加速读操作的自适应哈希索引（adaptive hash index），以及能够加速插入操作的插入缓冲区（insert buffer）等。后面将详细地讨论这些内容。</p>
+<p>如果应用程序基于InnoDB引起，则应该了解一下InnoDB的MVCC架构带来的一些微妙和细节之处时非常有必要的。</p>
+<p>存储引擎要为所有用户甚至包括修改数据的用户维持一致性的视图，是非常复杂的工作。要获取一致性视图需要停止对所有表的写入，而在读写混合场景中，停止写入也意味着停止读取。</p>
+<p>InnoDB支持热备份。</p>
+<h3 id="152-myisam存储引擎">1.5.2 MyISAM存储引擎</h3>
+<p>特性：</p>
+<p>支持全文索引、压缩、空间函数（GIS）等</p>
+<p>缺点：</p>
+<p>不支持事务和行级锁</p>
+<p>崩溃后无法完全恢复</p>
+<h4 id="存储">存储</h4>
+<h4 id="特性">特性</h4>
+<h4 id="压缩表">压缩表</h4>
+<h4 id="性能">性能</h4>
+<h3 id="153-mysql内建等其他存储引擎">1.5.3 MySQL内建等其他存储引擎</h3>
+<p>Memory引擎</p>
+<p>Merge引擎</p>
+<h3 id="154-第三方存储引擎">1.5.4 第三方存储引擎</h3>
+<h4 id="oltp类引擎">OLTP类引擎</h4>
+<p>TokuDB引擎，分形树（Fractal Trees）索引数据结构。缓存无关，是一种大数据存储引擎，因为其拥有很高的压缩比，可以在大的数据量上创建大量索引。</p>
+<h4 id="面向列的存储引擎">面向列的存储引擎</h4>
+<h4 id="社区存储引擎">社区存储引擎</h4>
+<h3 id="155-选择合适的引擎">1.5.5 选择合适的引擎</h3>
+<p>如果应用需要不同的存储引擎，请先考虑以下几个因素。</p>
+<p>事务</p>
+<p>备份</p>
+<p>崩溃恢复</p>
+<p>特有的特性</p>
+<p>常见的应用场景。</p>
+<h4 id="日志型应用">日志型应用</h4>
+<h4 id="只读或者大部分情况下只读的表">只读或者大部分情况下只读的表</h4>
+<h4 id="订单处理">订单处理</h4>
+<h4 id="电子公告牌和主题讨论论坛">电子公告牌和主题讨论论坛</h4>
+<h4 id="cd-rom应用">CD-ROM应用</h4>
+<h4 id="大数据量">大数据量</h4>
+<h3 id="156-转换表的引擎">1.5.6 转换表的引擎</h3>
+<h4 id="alter-table">ALTER TABLE</h4>
+<h4 id="导出与导入">导出与导入</h4>
+<h4 id="创建于查询">创建于查询</h4>
+<p>先创建一个新的存储引擎的表，然后利用<code>insert... select</code>语法来导数据。</p>
+<pre><code class="language-sql">create table innodb_table like muisam_table;
+
+alter table innodb_table engine=Innodb;
+
+insert into innodb_table select * from myisam_table;
+</code></pre>
+<p>数据量大的情况，可以考虑做分批处理，针对每一段数据执行事务提交操作，避免大事务产生过多的undo。</p>
+<pre><code class="language-sql">start transaction;
+insert into innodb_table select * from myisam_table where id between x and y;
+commit;
+</code></pre>
+<h2 id="16-mysql时间线timeline">1.6 MySQL时间线（Timeline）</h2>
+<h2 id="17-mysql的开发模式">1.7 MySQL的开发模式</h2>
+<p>新里程碑开发版</p>
+<p>GA（Generally Available）版，通常可用版</p>
+<p>实验室预览版，发布一些需要评估的特性</p>
+<p>插件付费，插件开发模式</p>
+<h2 id="18-总结">1.8 总结</h2>
+<p>MySQL拥有分层的架构。</p>
+<p>上层是服务器层的服务和查询执行引擎，下层则是存储引擎。</p>
+<p>如果能理解MySQL在存储引擎和服务层之间处理查询时如何通过API来回交互，就能抓住MySQL的核心基础架构的精髓。</p>
+<p>数据字典保存在.frm文件中，对于InnoDB来说，所有的操作都是事务。</p>
+<p>选择多并非好事。InnoDB对于95%以上的用户来说都是最佳选择。</p>
+
+							</div>
+							<div class="wow bounceInDown vt-post-tags">
+								
+								<a href="https://xinrong2019.github.io/tag/pFkv0WMfK/" rel="tag">mysql</a>
+								
+							</div>
+							<nav class="navigation3 post-navigation3" role="navigation">
+
+								<div class="nav-links3">
+									
+									<div class="wow bounceInLeft nav-previous3"><a href="https://xinrong2019.github.io/post/mysql-ji-zhun-ce-shi/"
+											rel="prev"> MySQL基准测试</a></div>
+									
+									
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/si-ke-spring-ioc-zhi-zhu-ce-beandefinitions/"
+											rel="next"> [死磕Spring]--IOC之注册 BeanDefinitions</a></div>
+									
+								</div>
+							</nav>
+							<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
+								<div class="author-avatar pull-left"><img
+										src="https://xinrong2019.github.io//images/avatar.png"></div>
+								
+								<div class="author-description">
+									<div class="author-title">
+										<div class="author-link" rel="author">Kim</div>
+									</div>
+									
+									
+									<p class="author-bio">Time waits for no one.</p>
+								</div>
+							</div>
+							
+						</div>
+					</article>
+					<div id="marlin_lite_about_widget-2" class="wow bounceInUp widget marlin_lite_about_widget"
+						data-wow-delay="0.1s">
+
+						
+						
+						<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '2f13af052cedc58f1f20',
+    clientSecret: 'ce03139f08944b2398d0f580a3d00ff58958c242',
+    repo: 'xinrong2019.github.io',
+    owner: 'xinrong2019',
+    admin: ['xinrong2019'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+						
+						
+						
+						<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://xinrong2019.github.io//media/scripts/Valine.min.js'></script>
+
+<div class="comment"></div>
+<script>
+        new Valine({
+            // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+            av: AV, 
+            el: '.comment',
+            lang: 'zh-cn',
+            
+            
+     	
+      	
+          
+        });
+    </script> 
+
+
+					</div>
+				</div>
+				<div class="tocc col l3 hide-on-med-and-down">
+
+    <div class="toc-widget">
+
+        <div class="toc-title"></div>
+
+        <div id="toc-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.5.0/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '.entry-summary',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('.entry-summary').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+
+    $(function () {
+        var bt;
+        bt = $('.toc-widget');
+        if ($(document).width() > 480) {
+            $(window).scroll(function () {
+                var st;
+                st = $(window).scrollTop();
+                if (st > 450) {
+                    return bt.css('display', 'block');
+                } else {
+                    return bt.css('display', 'none');
+                }
+            })
+        }
+    });
+</script>
+			</div>
+		</div>
+		<footer id="colophon" class="site-footer">
+	<div class="container">
+		<div class="copyright">
+			Created by Kim.
+			<br>
+			<b>Theme: </b>
+			<a href="https://github.com/alterfang/gridea-theme-pan" target="_blank" title="Pan">
+				<span><b>Pan</b></span>
+			</a>
+			<b>. Powered by </b>
+			<a href="https://gridea.dev/" target="_blank" title="Gridea">
+				<span><b>Gridea</b></span>
+			</a>
+		</div>
+	</div><!-- .container -->
+</footer><!-- #colophon -->
+	</div>
+
+	<script src="https://cdn.bootcss.com/fitvids/1.2.0/jquery.fitvids.min.js"></script>
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/marlin-scripts.js'></script>
+<script src="//tokinx.github.io/lately/lately.min.js"></script>
+<script>
+  jQuery(document).ready(function () {
+    $.lately({
+      'target': '.lately-a,.lately-b,.lately-c'
+    })
+  });
+</script>
+<style type="text/css">
+  /* 一键到顶部 */
+  a.back_to_top {
+    text-decoration: none;
+    position: fixed;
+    bottom: 65px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.back_to_top span {
+    color: #888;
+  }
+
+  a.back_to_top:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.back_to_top:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .back_to_top {
+      display: none !important;
+    }
+  }
+
+  /* 一键到底部 */
+
+  a.down_to_bottom {
+    text-decoration: none;
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.down_to_bottom span {
+    color: #888;
+  }
+
+  a.down_to_bottom:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.down_to_bottom:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .down_to_bottom {
+      display: none !important;
+    }
+  }
+</style>
+
+
+<a id="back_to_top" href="#" class="back_to_top"><span><i class="iconfont icon-xiangshang"></i></span>
+</a>
+
+<a id="down_to_bottom" href="#" class="down_to_bottom"><span><i class="iconfont icon-xiangxia"></i></span>
+</a>
+
+<script src="//instant.page/3.0.0" type="module" defer
+  integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+<script>
+  function getScrollTop() {
+    var scrollTop = 0,
+      bodyScrollTop = 0,
+      documentScrollTop = 0;
+    if (document.body) {
+      bodyScrollTop = document.body.scrollTop;
+    }
+    if (document.documentElement) {
+      documentScrollTop = document.documentElement.scrollTop;
+    }
+    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+    return scrollTop;
+  };
+
+  function getScrollHeight() {
+    var scrollHeight = 0,
+      bodyScrollHeight = 0,
+      documentScrollHeight = 0;
+    if (document.body) {
+      bSH = document.body.scrollHeight;
+    }
+    if (document.documentElement) {
+      dSH = document.documentElement.scrollHeight;
+    }
+    scrollHeight = (bSH - dSH > 0) ? bSH : dSH;
+    return scrollHeight;
+  };
+
+  function getWindowHeight() {
+    var windowHeight = 0;
+    if (document.compatMode == "CSS1Compat") {
+      windowHeight = document.documentElement.clientHeight;
+    } else {
+      windowHeight = document.body.clientHeight;
+    }
+    return windowHeight;
+  };
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block');
+          } else {
+            return bt.css('display', 'none');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: 0
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#down_to_bottom');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+            return bt.css('display', 'none');
+          } else {
+            return bt.css('display', 'block');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: $('body,html')[0].scrollHeight
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+</script>
+	<script data-no-instant>
+		(function ($) {
+			$.extend({
+				adamsOverload: function () {
+					$('.navigation:eq(0)').remove();
+					$("").attr("rel", "external");
+					$("a[rel='external'],a[rel='external nofollow']").attr("target", "_blank");
+					$("a.vi").attr("rel", "");
+					$.viewImage({
+						'target': 'img',
+						'exclude': '.vsmile-icons img,.gallery img',
+						'delay': 300
+					});
+					$.lately({
+						'target': '.commentmetadata a,.infos time,.post-list time'
+					});
+					prettyPrint();
+
+					$('ul.links li a').each(function () {
+						if ($(this).parent().find('.bg').length == 0) {
+							$(this).parent().append(
+								'<!---<div class="bg" style="background-image:url(https://c3.glgoo.top/s2/favicons?domain=' +
+								$(this).attr("href") + ')"></div>--->')
+						}
+					});
+				}
+			});
+		})(jQuery);
+		jQuery.adamsOverload();
+	</script>
+
+</body>
+
+</html>

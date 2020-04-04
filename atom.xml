@@ -1,0 +1,1596 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://xinrong2019.github.io/</id>
+    <title>Eucaly</title>
+    <updated>2020-04-04T06:46:53.518Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://xinrong2019.github.io/"/>
+    <link rel="self" href="https://xinrong2019.github.io/atom.xml"/>
+    <subtitle>Time waits for no one.</subtitle>
+    <logo>https://xinrong2019.github.io/images/avatar.png</logo>
+    <icon>https://xinrong2019.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2020, Eucaly</rights>
+    <entry>
+        <title type="html"><![CDATA[Java基础知识清单]]></title>
+        <id>https://xinrong2019.github.io/post/java-ji-chu/</id>
+        <link href="https://xinrong2019.github.io/post/java-ji-chu/">
+        </link>
+        <updated>2020-04-04T06:42:46.000Z</updated>
+        <content type="html"><![CDATA[<p><a href="https://class.imooc.com/lesson/1222#mid=29173"><strong>1-17 福利：Java基础面试考点清单</strong></a><br>
+<strong>带着问题与技术关键词，有目标的开启体系化学习之旅~</strong></p>
+<ul>
+<li>
+<p><strong>基础：</strong></p>
+</li>
+<li>
+<ul>
+<li>强引用、弱引用、虚引用、软引用</li>
+<li>final关键字的作用 (方法、变量、类)</li>
+<li>泛型、泛型继承、泛型擦除</li>
+<li>jdk ServiceLoader</li>
+<li>LinkedList、LinkedHashMap、LRU</li>
+<li>装饰者模式、代理模式、责任链模式、工厂模式、适配器模式、建造者模式、单例模式、模板模式、观察者模式…</li>
+<li>关于精度损失问题：int、long 超过最大值</li>
+<li>关于注解：元注解的种类、继承java.lang.Annotation、注解的基础类型、注解的常用方法</li>
+<li>关于ClassLoader，类加载器，双亲委派模型</li>
+</ul>
+</li>
+<li>
+<p><strong>J.U.C</strong></p>
+</li>
+<li>
+<ul>
+<li>线程池参数说明，线程池的线程回收、shutdown</li>
+<li>线程池的生命周期？</li>
+<li>线程池的核心模型Worker对象的运作流程是怎样的？</li>
+<li>线程池的拒绝策略有哪4种？</li>
+<li>线程池的提交，execute与submit有什么区别？在实际开发中需要注意哪些问题？</li>
+<li>threadlocal原理，数据结构</li>
+<li>并发集合类了解哪些？</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>ConcurrentHashMap</li>
+<li>CopyOnWrite集合、原理、锁机制</li>
+<li>ConcurrentLinkedQueue、LinkedTransferQueue、ArrayBlockingQueue、PriorityBlockingQueue、SynchronousQueue、DelayQueue</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>AQS 原理：</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>独占 &amp; 共享</li>
+<li>state &amp; CHL队列</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>锁：</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>Synchronized、ReentrantLock、RWLock、Condition、LockSupport、StampedLock、</li>
+<li>概念：CAS 自旋、重入、偏向</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>volatile：</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>多线程共享 &amp; 阻止指令重排序</li>
+<li>jvm的逃逸分析 &amp; Tlab &amp; 消除伪共享 &amp; UNsafe &amp;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>atomic:</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>CAS的缺点，自旋、ABA问题</li>
+<li>atomic 原子性、Reference、referenceArray、longadder</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>并发控制：</li>
+<li>barrier、countdownlatch、exchanger、future、semaphore</li>
+</ul>
+</li>
+<li>
+<p><strong>jvm虚拟机：</strong></p>
+</li>
+<li>
+<ul>
+<li>虚拟机内存模型</li>
+<li>新生代（Eden S0 S1）、老年代 、MetaSpace （比例）</li>
+<li>垃圾回收算法（引用计数、标记压缩、清除、复制算法、分区）、垃圾收集器</li>
+<li>GC停顿、吞吐量，进入老年代阈值、大对象回收问题等</li>
+<li>jvm性能调优、参数配置</li>
+<li>常用命令：jstat、jmap、jstack等</li>
+<li>内存溢出分析：堆内、堆外 （含义、如何设置）</li>
+<li>CPU飙升：死锁、线程阻塞</li>
+<li>关于GC: minor major full</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>stw，安全点等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>数据结构&amp;算法</strong></p>
+</li>
+<li>
+<ul>
+<li>数组、链表、树、队列…</li>
+<li>关于时间复杂度，时间换空间转换案例</li>
+<li>关于排序、冒泡、快排、递归、二分搜索、位运算</li>
+</ul>
+</li>
+<li>
+<p><strong>Spring</strong></p>
+</li>
+<li>
+<ul>
+<li>Spring生命周期，流程梳理</li>
+<li>Spring扩展点作用</li>
+<li>Spring IOC AOP 基本原理</li>
+<li>动态代理</li>
+<li>BeanPostProcessor 作用？</li>
+<li>ApplicationContextAware 的作用和使用？</li>
+<li>BeanNameAware与BeanFactoryAware的先后顺序？</li>
+<li>InitializingBean 和 BeanPostProcessor 的after方法先后顺序？</li>
+<li>ApplicationListener监控的Application事件有哪些？</li>
+<li>Spring模块装配的概念，比如@EnableScheduling @EnableRetry @EnableAsync，@Import注解的作用？</li>
+<li>ImportBeanDefinitionRegistrar 扩展点用于做什么事情？</li>
+<li>ClassPathBeanDefinitionScanner 的作用？</li>
+<li>NamespaceHandlerSupport 命名空间扩展点的作用？</li>
+<li>如何实现动态注入一个Bean？</li>
+<li>如何把自定义注解所在的Class 初始化注入到Spring容器？</li>
+<li>BeanDefinition指的是什么，与BeanDefinitionHolder的区别，Spring如何存储BeanDefinition实例？</li>
+<li>ASM 与 CGlib</li>
+<li>Spring的条件装配，自动装配</li>
+</ul>
+</li>
+<li>
+<p><strong>RPC通信框架</strong></p>
+</li>
+<li>
+<ul>
+<li>Dubbo</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>Dubbo的Spi机制？</li>
+<li>Dubbo的核心模型 invoker、invocation、filter</li>
+<li>Dubbo的隐式传递?</li>
+<li>Dubbo的泛化调用？</li>
+<li>Dubbo的export与importer时机？</li>
+<li>Dubbo的服务调用过程？</li>
+<li>Dubbo的负载均衡策略？</li>
+<li>Dubbo的集群容错？</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>网络通信</strong></p>
+</li>
+<li>
+<ul>
+<li>IO / NIO</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>IO NIO区别？</li>
+<li>多路复用的概念，Selector</li>
+<li>Channel的概念、Bytebuf的概念，flip、position…</li>
+<li>FileChannel 如何使用？</li>
+<li>RAF使用，seek、skip方法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>Netty</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>关于Netty的Reactor实现？</li>
+<li>Netty的ByteBuf有哪些？</li>
+<li>内存与非内存Bytebuffer的区别与使用场景？</li>
+<li>池化与非池化buffer的区别与使用场景？</li>
+<li>关于Netty的请求Buffer和响应Buffer?</li>
+<li>Netty的ChannelPipeline设计模式？</li>
+<li>Netty的核心option参数配置？</li>
+<li>Netty的ChannelInboundHandlerAdapter和SimpleChannelInboundHandler关系？</li>
+<li>Netty的EventLoop核心实现？</li>
+<li>Netty的连接管理事件接口有哪些常用方法（ChannelDuplexHandler）？</li>
+<li>Netty的编解码与序列化手段</li>
+<li>Netty的FastThreadLocal实现？</li>
+<li>Netty中应用的装饰者 和 观察者模式在哪里体现？</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>MQ</strong></p>
+</li>
+<li>
+<ul>
+<li>API使用，常用生产消费模型，集群架构搭建</li>
+<li>常见问题，消息可靠性投递、幂等性保障</li>
+<li>概念、原理、存储、消息投递、通信机制、性能相关优化</li>
+<li>MQ常见的作用于目的、服务解耦、削峰填谷等</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>RocketMQ</li>
+<li>Kafka</li>
+<li>RabbitMQ</li>
+<li>ActiveMQ</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>缓存</strong></p>
+</li>
+<li>
+<ul>
+<li>内存缓存</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>堆外内存缓存 回收释放</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>Redis</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>缓存穿透、雪崩、热点Key、大Key、无底洞问题，缓存更新与淘汰、缓存与数据库的一致性</li>
+<li>Redis的幂等性</li>
+<li>Redis的分布式锁实现</li>
+<li>Redis的原子性，Redis的特点</li>
+<li>Redis集群相关问题、一致性hash、slot概念等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>流控组件</strong></p>
+</li>
+<li>
+<ul>
+<li>Hystrix</li>
+<li>Sentinel</li>
+</ul>
+</li>
+<li>
+<p><strong>高可用服务中间件</strong></p>
+</li>
+<li>
+<ul>
+<li>Zookeeper / Curator</li>
+<li>Nginx</li>
+<li>Haproxy</li>
+<li>LVS</li>
+<li>Haproxy</li>
+</ul>
+</li>
+<li>
+<p><strong>数据库存储&amp;调度</strong></p>
+</li>
+<li>
+<ul>
+<li>Sharding-JDBC</li>
+<li>ElasticJob</li>
+<li>调度平台相关：DAG、airflow等</li>
+</ul>
+</li>
+<li>
+<p><strong>搜索相关度</strong></p>
+</li>
+<li>
+<ul>
+<li>ELK ，数据库加速、主搜（算法）</li>
+</ul>
+</li>
+<li>
+<p>Logback、Slf4j2</p>
+</li>
+<li>
+<p>Solr &amp; Lucene</p>
+</li>
+</ul>
+<h2 id="toc">TOC</h2>
+<p>[TOC]</p>
+<h2 id="目标">目标</h2>
+<p>以面试为导向，知识点要全面，查漏补缺。突出重点。</p>
+<p>学完后有一个基本的认知是什么，对于重点内容要知道为什么，了解实现原理。</p>
+<h2 id="基础">基础</h2>
+<h3 id="强引用-弱引用-虚引用-软引用">强引用、弱引用、虚引用、软引用</h3>
+<p>参见<a href="https://juejin.im/post/5a5129f5f265da3e317dfc08">Java中的四种引用类型</a></p>
+<h4 id="背景">背景</h4>
+<p>简单了解即可。和引用关联的知识点，不得不提对象的生命周期，再远点就是GC如何管理对象的生命周期的。这里假设读者已经知道这些内容了。</p>
+<h4 id="引用强度认知">引用强度认知：</h4>
+<p>引用强度从强到弱分别为：强引用、软引用、弱引用、虚引用。</p>
+<h4 id="强引用-strongreference">强引用 StrongReference</h4>
+<p>默认引用形式，使用时不需要显示定义。任何通过强引用所使用的对象不管系统资源有多紧张，Java GC都不会主动回收具有强引用的对象。</p>
+<h4 id="弱引用-weakreference">弱引用 WeakReference</h4>
+<p>如果一个对象只具有弱引用，无论内存充足与否，Java GC后对象如果只有弱引用将会被自动回收。</p>
+<h4 id="软引用-softreference">软引用 SoftReference</h4>
+<p>软引用和弱引用的特性基本一致， 主要的区别在于软引用在内存不足时才会被回收。如果一个对象只具有软引用，Java GC在内存充足的时候不会回收它，内存不足时才会被回收。</p>
+<h4 id="虚引用-phantomreference">虚引用 PhantomReference</h4>
+<p>从PhantomReference类的源代码可以知道，它的get()方法无论何时返回的都只会是null。所以单独使用虚引用时，没有什么意义，需要<strong>和引用队列ReferenceQueue类联合使用</strong>。当执行Java GC时如果一个对象只有虚引用，就会把这个对象加入到与之关联的ReferenceQueue中。</p>
+<blockquote>
+<p>文字干巴巴，去看原文代码</p>
+</blockquote>
+<h4 id="小结">小结</h4>
+<p>强引用是 Java 的默认引用形式，使用时不需要显示定义，是我们平时最常使用到的引用方式。不管系统资源有多紧张，Java GC都不会主动回收具有强引用的对象。<br>
+  弱引用和软引用一般在引用对象为非必需对象的时候使用。它们的区别是被弱引用关联的对象在垃圾回收时总是会被回收，被软引用关联的对象只有在内存不足时才会被回收。<br>
+  虚引用的get()方法获取的永远是null，无法获取对象实例。Java GC会把虚引用的对象放到引用队列里面。可用来在对象被回收时做额外的一些资源清理或事物回滚等处理。<br>
+  由于无法从虚引获取到引用对象的实例。它的使用情况比较特别，所以这里不把虚引用放入表格进行对比。这里对强引用、弱引用、软引用进行对比：</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200403134544324_2020_04_03_13_47_09.png" alt="" loading="lazy"></figure>
+<h3 id="final关键字的作用-方法-变量-类">final关键字的作用 (方法、变量、类)</h3>
+<p>参见<a href="https://www.jianshu.com/p/e43c3273d7d5">final 关键字</a></p>
+<p>应用在方法、变量、类上的作用不赘述，已经掌握，只查漏补缺</p>
+<ul>
+<li>
+<p>被final修饰的方法，不可以被重写。但是不影响本类的重载以及重载函数的重写。</p>
+</li>
+<li>
+<p>final成员变量必须在声明的时候初始化或者在构造器中初始化，否则就会报编译错误。</p>
+</li>
+</ul>
+<p>不可变的类是天然无状态的，线程安全的。</p>
+<h4 id="如何写一个不可变类呢">如何写一个不可变类呢？</h4>
+<ul>
+<li>将类声明为final，所以它不能被继承</li>
+<li>将所有的成员声明为私有的，这样就不允许直接访问这些成员</li>
+<li>对变量不要提供setter方法</li>
+<li>将所有可变的成员声明为final，这样只能对它们赋值一次</li>
+<li>通过构造器初始化所有成员，进行深拷贝(deep copy)</li>
+<li>在getter方法中，不要直接返回对象本身，而是克隆对象，并返回对象的拷贝</li>
+</ul>
+<p>具体可参考String和Integer等的写法</p>
+<h4 id="和static一起使用">和static一起使用</h4>
+<p>对于静态final变量，我们可以直接初始化，或者使用静态代码块。而不可以使用构造函数或者构造代码块。</p>
+<p>因为static要求在编译期间就确定值，然后放入静态区。而构造函数和构造代码块发生在运行期间。</p>
+<h4 id="final和private">final和private</h4>
+<p>类中所有的private方法都隐式的指定为final的，由于无法取用private方法，所以也就无法覆盖它，可以对private方法添加final修饰符，但并没有添加任何额外意义。（了解即可）</p>
+<h3 id="泛型-泛型继承-泛型擦除">泛型、泛型继承、泛型擦除</h3>
+<p><a href="https://blog.csdn.net/u012706811/article/details/53464612">泛型擦除分析</a><br>
+<a href="https://juejin.im/post/5e61fb10e51d4526d6406cb0#heading-4">泛型擦除是什么，会带来什么问题？</a></p>
+<h4 id="泛型擦除">泛型擦除</h4>
+<p>使用泛型的话,<strong>运行期把对象都是当成object来处理的</strong>,所以可以运用的方法都是object的方法,且在赋值操作时,编译器会自动强转为指定泛型类型,另一个好处就是在编译期更早的发现向下转型可能出现的错误,因为向下转型是不安全的.</p>
+<h4 id="带来什么样的问题">带来什么样的问题？</h4>
+<p>在运行时反编译添加不同类型的数据，数据错误，代码不报错。</p>
+<h4 id="泛型继承带上界的擦除">泛型继承，带上界的擦除</h4>
+<p>当使用上界时泛型擦除擦除为上界的类型,因此也就解释了为啥可以调用上界的方法.并且会和赋值操作的时候一样自动强转为对应的泛型,向上转型,为安全的操作。</p>
+<h4 id="带通配符的上界">带通配符的上界</h4>
+<h4 id="带通配符的下界">带通配符的下界</h4>
+<h4 id="总结">总结</h4>
+<p>泛型的出现是为了减少向下转型出现的错误,泛型的目的是<strong>尽可能的在编译器发现转型时的错误</strong>,所以对于不安全的操作(编译器认为的)会绝对禁止,存储进去的都是绝对安全(编译器认为的)的数据.</p>
+<h3 id="jdk-serviceloader">jdk ServiceLoader</h3>
+<p>参见<a href="https://juejin.im/post/5d2db85d6fb9a07ea7134408">Java SPI机制：ServiceLoader实现原理及应用剖析</a></p>
+<p>SPI，全称<code>Service Provider Interfaces</code>，服务提供接口。可以用来<strong>解耦服务的实现和使用，增强应用的可扩展性</strong>。</p>
+<p>JDK中，基于SPI的思想，提供了默认具体的实现，<code>ServiceLoader</code>。利用JDK自带的<code>ServiceLoader</code>，可以轻松实现面向<code>服务的注册与发现</code>，完成服务提供与使用的<code>解耦</code>。</p>
+<h4 id="使用">使用</h4>
+<p>外部使用时，往往通过<code>load(Class service, ClassLoader loader)</code>或<code>load(Class service)</code>调用，最后都是在<code>reload</code>方法中创建了<code>LazyIterator</code>对象，<code>LazyIterator</code>是<code>ServiceLoader</code>的内部类，实现了<code>Iterator</code>接口，其作用是一个懒加载的迭代器，在<code>hasNextService</code>方法中，完成了对位于<code>META-INF/services/</code>目录下的配置文件的解析，并在<code>nextService</code>方法中，完成了对具体实现类的实例化。</p>
+<p><code>META-INF/services/</code>，是<code>ServiceLoader</code>中约定的接口与实现类的关系配置目录，文件名是接口全限定类名，内容是接口对应的具体实现类，如果有多个实现类，分别将不同的实现类都分别作为每一行去配置。解析过程中，通过<code>LinkedHashMap&lt;String,S&gt;</code>数据结构的<code>providers</code>，将已经发现了的接口实现类进行了缓存，并对外提供的<code>iterator()</code>方法，方便外部遍历。</p>
+<h4 id="总结-2">总结</h4>
+<p>基于服务提供与发现的思想，系统自带的<code>ServiceLoader</code>以及基于此思想基础上的演化形式，被广泛的使用到实际的项目中。本质上，<strong>通过服务接口约定、服务注册与服务发现，完成将服务提供方与服务使用方的解耦，大大扩展了系统的可扩展性</strong>。<strong>服务注册的本质，是将服务接口与具体服务实现的映射关系注册到系统或特定实现中。服务发现的过程，本质上是向系统或特定实现去匹配对应的具体实现类</strong>，但在写法上是基于接口的编程方式，因为服务使用方和服务提供方彼此都是透明与未感知的。基于<code>SPI</code>思想的<code>ServiceLoader</code>实现及演化，在项目的组件化，或实现扩展性功能，甚至完成具有可插拔能力的插件化模块时，往往都被广泛使用到。</p>
+<h3 id="linkedlist-linkedhashmap-lru">LinkedList、LinkedHashMap、LRU</h3>
+<h4 id="linkedlist">LinkedList</h4>
+<p>底层数据结构</p>
+<h3 id="设计模式">设计模式</h3>
+<h4 id="装饰者模式">装饰者模式</h4>
+<h4 id="代理模式">代理模式</h4>
+<h4 id="责任链模式">责任链模式</h4>
+<h4 id="工厂模式">工厂模式</h4>
+<h4 id="适配器模式">适配器模式</h4>
+<h4 id="建造者模式">建造者模式</h4>
+<h4 id="单例模式">单例模式</h4>
+<h4 id="模板模式">模板模式</h4>
+<h4 id="观察者模式">观察者模式</h4>
+<h3 id="关于精度损失问题int-long-超过最大值">关于精度损失问题：int、long 超过最大值</h3>
+<h3 id="关于注解元注解的种类-继承javalangannotation-注解的基础类型-注解的常用方法">关于注解：元注解的种类、继承java.lang.Annotation、注解的基础类型、注解的常用方法</h3>
+<h3 id="关于classloader类加载器双亲委派模型">关于ClassLoader，类加载器，双亲委派模型</h3>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[SpringCloud Alibaba学习笔记]]></title>
+        <id>https://xinrong2019.github.io/post/springcloud-alibaba-xue-xi-bi-ji/</id>
+        <link href="https://xinrong2019.github.io/post/springcloud-alibaba-xue-xi-bi-ji/">
+        </link>
+        <updated>2020-04-04T06:41:43.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="springcloud-alibaba学习笔记">SpringCloud Alibaba学习笔记</h1>
+<h2 id="目录">目录</h2>
+<p>[TOC]</p>
+<h2 id="导学">导学</h2>
+<h3 id="为什么学">为什么学</h3>
+<ul>
+<li>组件性能更强</li>
+<li>良好的可视化界面</li>
+<li>搭建简单，学习曲线低</li>
+<li>文档丰富并且是中文</li>
+</ul>
+<h3 id="学习目标">学习目标</h3>
+<ul>
+<li>Spring Cloud Alibaba核心组件的用法及实现原理</li>
+<li>Spring Cloud Alibaba结合微信小程序从&quot;0&quot;学习真正开发中的使用</li>
+<li>实际工作中如何避免踩坑，正确的思考问题方式</li>
+<li>Spring Cloud Alibaba的进阶：代码的优化和改善，微服务监控</li>
+</ul>
+<h3 id="进阶目标">进阶目标</h3>
+<ul>
+<li>如何提升团队的代码质量
+<ul>
+<li>编码技巧</li>
+<li>心得总结</li>
+</ul>
+</li>
+<li>如何改善代码结构设计
+<ul>
+<li>借助监控工具</li>
+<li>定位问题</li>
+<li>解决问题</li>
+</ul>
+</li>
+</ul>
+<h3 id="思路">思路</h3>
+<p>分析并拆解微服务-&gt;编写代码-&gt;分析现有架构问题-&gt;引入微服务组件-&gt;优化重构-&gt;总结完善</p>
+<h3 id="spring-cloud-alibaba的重要组件">Spring Cloud Alibaba的重要组件</h3>
+<ul>
+<li>服务发现Nacos
+<ul>
+<li>服务发现原理剖析</li>
+<li>Nacos Server/Client</li>
+<li>高可用Nacos搭建</li>
+</ul>
+</li>
+<li>实现负载均衡Ribbon
+<ul>
+<li>负载均衡的常见模式</li>
+<li>RestTemplate整合Ribbon</li>
+<li>Ribbon配置自定义</li>
+<li>如何扩展Ribbon</li>
+</ul>
+</li>
+<li>声明式HTTP客户端-Feign
+<ul>
+<li>如何使用Feign</li>
+<li>Feign配置自定义</li>
+<li>如何扩展Feign</li>
+</ul>
+</li>
+<li>服务容错Sentinel
+<ul>
+<li>服务容错原理</li>
+<li>Sentinel</li>
+<li>Sentinel DashBoard</li>
+<li>Sentinel核心原理分析</li>
+</ul>
+</li>
+<li>消息驱动RocketMq
+<ul>
+<li>Spring Cloud Stream</li>
+<li>实现异步消息推送与消费</li>
+</ul>
+</li>
+<li>API网关Gateway
+<ul>
+<li>整合Gateway</li>
+<li>三大核心</li>
+<li>聚合微服务请求</li>
+</ul>
+</li>
+<li>用户认证与授权
+<ul>
+<li>认证授权的常见方案</li>
+<li>改造Gateway</li>
+<li>扩展Feign</li>
+</ul>
+</li>
+<li>配置管理Nacos
+<ul>
+<li>配置如何管理</li>
+<li>配置动态刷新</li>
+<li>配置管理的最佳实践</li>
+</ul>
+</li>
+<li>调用链监控Sleuth
+<ul>
+<li>调用链监控原理剖析</li>
+<li>Sleuth使用</li>
+<li>Zipkin使用</li>
+</ul>
+</li>
+</ul>
+<h2 id="环境搭建">环境搭建</h2>
+<ul>
+<li>JDK8</li>
+<li>MySQL</li>
+<li>Maven的安装与配置</li>
+<li>IDEA</li>
+</ul>
+<h2 id="spring-boot必知必会">Spring Boot必知必会</h2>
+<h3 id="spring-boot特性">Spring Boot特性</h3>
+<ul>
+<li>无需部署WAR文件</li>
+<li>提供stater简化配置</li>
+<li>尽可能自动配置Spring以及第三方库</li>
+<li>提供&quot;生产就绪&quot;功能，例如指标、健康检查、外部配置等</li>
+<li>无代码生成&amp;无XML</li>
+</ul>
+<h3 id="编写第一个spring-boot应用">编写第一个Spring Boot应用</h3>
+<h3 id="spring-boot应用组成分析">Spring Boot应用组成分析</h3>
+<ul>
+<li>依赖：pom.xml</li>
+<li>启动类：注解</li>
+<li>配置：application.properties</li>
+<li>static目录：静态文件</li>
+<li>templates目录：模板文件</li>
+</ul>
+<h3 id="spring-boot开发三板斧">Spring Boot开发三板斧</h3>
+<ul>
+<li>加依赖</li>
+<li>写注解</li>
+<li>写配置</li>
+</ul>
+<h3 id="spring-boot-actuator">Spring Boot Actuator</h3>
+<p>监控工具</p>
+<h4 id="actuator">/actuator</h4>
+<p>入口</p>
+<h4 id="health">/health</h4>
+<p>健康检查</p>
+<p>显示详情配置</p>
+<pre><code class="language-properties">management.endpoint.health.show-details=always
+# 显示所有监控端点
+management.endpoints.web.exposure.include=*
+
+# 描述信息（自定义键值对）
+info.app-name=spring-boot-demo
+info.author=kim
+info.email=xxx@163.com
+</code></pre>
+<h3 id="spring-boot配置管理">Spring Boot配置管理</h3>
+<p>支持的配置格式</p>
+<pre><code class="language-yaml">management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+  # 描述信息
+info:
+  app-name: spring-boot-demo
+  author: kim
+  email: xxx@163.com
+</code></pre>
+<p>注意：值是*，yml写法需要加引号</p>
+<ul>
+<li>yml是使用趋势</li>
+<li>yml在有的配置中可以表达顺序，properties不行</li>
+</ul>
+<p>17种配置方式</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/2ncu17_2020_04_04_12_37_13.png" alt="" loading="lazy"></figure>
+<p>实际项目种经常用到的配置管理方式：</p>
+<ul>
+<li>配置文件</li>
+<li>环境变量</li>
+<li>外部配置文件</li>
+<li>命令行参数</li>
+</ul>
+<h4 id="环境变量方式配置管理">环境变量方式配置管理</h4>
+<p>application.yml</p>
+<pre><code class="language-yaml">management:
+  endpoint:
+    health:
+      show-details: ${SOME_ENV}
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+  # 描述信息
+info:
+  app-name: spring-boot-demo
+  author: kim
+  email: xxx@163.com
+</code></pre>
+<p>设置环境变量<code>SOME_ENV</code></p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/E5UBsc_2020_04_04_12_45_05.png" alt="" loading="lazy"></figure>
+<h4 id="环境变量方式配置管理java-jar方式">环境变量方式配置管理（java -jar方式）</h4>
+<p><code>mvn clean install -DskipTests</code></p>
+<p><code>java -jar spring-boot-demo-0.0.1-SNAPSHOT.jar --SOME_ENV=always</code></p>
+<h4 id="外部配置文件方式配置管理">外部配置文件方式配置管理</h4>
+<p>将打的jar包和配置文件放在同一目录，会优先读取该配置文件内配置</p>
+<h4 id="命令行参数方式配置管理">命令行参数方式配置管理</h4>
+<p><code>java -jar spring-boot-demo-0.0.1-SNAPSHOT.jar --server.port=8081</code></p>
+<h4 id="最佳实践">最佳实践</h4>
+<p>KISS，规避掉优先级，没人会记住17中配置姿势的优先级。</p>
+<h3 id="profile">Profile</h3>
+<pre><code class="language-yaml"># 所有环境下公用的配置属性
+management:
+  endpoint:
+    health:
+      show-details: ${SOME_ENV}
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+  # 描述信息
+info:
+  app-name: spring-boot-demo
+  author: kim
+  email: xxx@163.com
+
+# 连字符
+---
+# profile=x的专用属性，也就是说某个环境下的专用属性
+# 开发环境
+spring:
+  profiles: dev
+
+---
+# profile=y的专用属性，也就是说某个环境下的专用属性
+# 生产环境
+spring:
+  profiles: prod
+server:
+  tomcat:
+    max-threads: 300
+    max-connections: 1000
+</code></pre>
+<p>IDEA启动配置</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/0cmidO_2020_04_04_13_00_38.png" alt="" loading="lazy"></figure>
+<p>访问http://localhost:8080/actuator/configprops通过actuator端口查看</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/L6Qjuf_2020_04_04_13_03_39.png" alt="" loading="lazy"></figure>
+<p>默认使用default，可以通过添加配置设置默认profile</p>
+<pre><code class="language-yaml">spring:
+  profiles:
+    active: dev
+</code></pre>
+<h4 id="最佳实践-2">最佳实践</h4>
+<p>KISS，不要使用优先级，规划好公用和专用配置</p>
+<h2 id="微服务拆分与编写">微服务拆分与编写</h2>
+<ul>
+<li>单体架构vs微服务架构
+<ul>
+<li>单体架构是什么</li>
+<li>微服务是什么</li>
+<li>微服务特性</li>
+<li>微服务全景架构图</li>
+<li>微服务优缺点</li>
+<li>微服务适用场景</li>
+</ul>
+</li>
+<li>业务分析与建模
+<ul>
+<li>项目功能演示与分析</li>
+<li>微服务拆分</li>
+<li>项目架构图</li>
+<li>数据库设计</li>
+<li>API文档</li>
+</ul>
+</li>
+<li>编写微服务
+<ul>
+<li>创建小程序</li>
+<li>创建项目</li>
+<li>编写用户微服务</li>
+<li>编写内容微服务</li>
+</ul>
+</li>
+</ul>
+<h3 id="单体架构">单体架构</h3>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/euh6g8_2020_04_04_13_11_38.png" alt="" loading="lazy"></figure>
+<p>优点：</p>
+<ul>
+<li>架构简单</li>
+<li>开发、测试、部署方便</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>复杂性高</li>
+<li>部署慢，频率低</li>
+<li>扩展能力受限（比如用户模块是CPU密集的，只能通过买更好的CPU的机器，比如内容模块是IO密集的，只能通过购买更多内存）</li>
+<li>阻碍技术创新（SpringMVC-&gt;Spring Web Flux，改动大）</li>
+</ul>
+<p>不适合庞大复杂的系统</p>
+<h3 id="微服务">微服务</h3>
+<p>拆分后的小型服务</p>
+<h4 id="微服务的特性">微服务的特性</h4>
+<ul>
+<li>每个微服务可独立运行在自己的进程里；（每个服务一个Tomcat）</li>
+<li>一些列独立运行的微服务共同构建起整个系统</li>
+<li>每个服务为独立的业务开发，一个微服务只关注某个特定的功能，例如订单管理、用户管理</li>
+<li>可以使用不同的语言与数据存储技术（契合项目情况和团队实力）</li>
+<li>微服务之间通过轻量的通信机制进行通信，例如通过Rest API进行调用；（通信协议轻量、跨平台）</li>
+<li>全自动的部署机制</li>
+</ul>
+<h4 id="微服务全景架构图">微服务全景架构图</h4>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/9qjnWH_2020_04_04_13_24_06.png" alt="" loading="lazy"></figure>
+<h4 id="优点">优点</h4>
+<ul>
+<li>单个服务更易于开发、维护</li>
+<li>单个微服务启动较快</li>
+<li>局部修改容易部署</li>
+<li>技术栈不受限</li>
+</ul>
+<h4 id="缺点">缺点</h4>
+<ul>
+<li>运维要求高</li>
+<li>分布式固有的复杂性</li>
+<li>重复劳动（不同语言调用相同功能时）</li>
+</ul>
+<h4 id="适用场景">适用场景</h4>
+<ul>
+<li>大型、复杂的项目</li>
+<li>有快速迭代的需求</li>
+<li>访问压力大（微服务去中心化，把业务和数据都拆分了，可以应对访问压力）</li>
+</ul>
+<h4 id="不适用微服务的场景">不适用微服务的场景</h4>
+<ul>
+<li>业务稳定</li>
+<li>迭代周期长</li>
+</ul>
+<h3 id="项目演示">项目演示</h3>
+<figure data-type="image" tabindex="7"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/J5duZx_2020_04_04_13_34_50.png" alt="" loading="lazy"></figure>
+<h3 id="微服务拆分">微服务拆分</h3>
+<ul>
+<li>业界流行的拆分方法论</li>
+<li>个人心得</li>
+<li>合理粒度</li>
+<li>小程序的拆分</li>
+</ul>
+<h4 id="方法论">方法论</h4>
+<ul>
+<li>
+<p>领域驱动设计（Domain Driven Design）(概念太多，学习曲线高)</p>
+</li>
+<li>
+<p>面向对象（by name./by verb）（通过名词（状态），动词（行为）拆分）</p>
+</li>
+</ul>
+<h4 id="个人心得">个人心得</h4>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[网课]]></title>
+        <id>https://xinrong2019.github.io/post/wang-ke/</id>
+        <link href="https://xinrong2019.github.io/post/wang-ke/">
+        </link>
+        <updated>2020-03-25T11:45:12.000Z</updated>
+        <content type="html"><![CDATA[<p>斯坦福网络安全课</p>
+<p>https://web.stanford.edu/class/cs253/</p>
+<p>高级数据结构</p>
+<p>https://courses.csail.mit.edu/6.851/fall17/lectures/</p>
+<p>MIT计算机科学</p>
+<p>https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[是不是很酷文章摘录]]></title>
+        <id>https://xinrong2019.github.io/post/shi-bu-shi-hen-ku-wen-zhang-zhai-lu/</id>
+        <link href="https://xinrong2019.github.io/post/shi-bu-shi-hen-ku-wen-zhang-zhai-lu/">
+        </link>
+        <updated>2020-03-25T11:44:00.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="关于提升瓶颈的问题">关于提升瓶颈的问题</h2>
+<p>关于提升瓶颈的问题，可以参考这个问答：https://t.zsxq.com/uRJauBi</p>
+<p>如果你做了四年安卓，感觉“技术就那样”，转去做前端，近乎一定也是“就那样”。当然，如果你接触前端，发现你更喜欢前端技术的话，慢慢转去做前端没问题。但具体在什么技术领域，应该不是你现阶段发展的瓶颈。 我的建议是，向上发展，而不是领域迁移。</p>
+<p>什么叫向上发展？</p>
+<p>选定安卓或者前端某一个技术领域，去研究大厂的高级别的技术职位，需要达到什么标准？他们简历关看什么？期望你有什么经历？什么技术水平？笔试考什么？对应什么知识？面试又面什么？需要你达到什么水平？找到自己的差距，开始向这个标准努力。</p>
+<p>或者，如果对管理岗感兴趣的话，研究一下，在自己所在的企业，从你现在的level，怎么往上升？怎么成为你所在组的 leader？甚至成为整个技术部门的 leader？自己还差什么？</p>
+<p>不是说要你争名夺利。而是说，眼睛应该往更高的地方去看，去思考，去想，去研究，那些你期望的岗位上的人，他们到底为什么能走到那里？他们和自己的差别在哪里？一旦找到这个差别，努力就好了。</p>
+<p>我公众号上转载的一篇文章，给你提供一个可能的方向参考：</p>
+<p>https://mp.weixin.qq.com/s/gzZU-pk-aJNUk0vEixtHPA</p>
+<h2 id="关于语言选择的问题">关于语言选择的问题</h2>
+<p>关于语言选择的问题，可以参考这个问答：https://t.zsxq.com/ufAieAy</p>
+<p>不要选择语言，而是选择领域。</p>
+<p>不过你刚大二，说实话，不用想这么多。依托一两个语言，把基础知识学好，真的最重要。 什么是基础知识？算法，数据结构，操作系统，软件工程，网络，数据库，计算机底层原理（可以参考这里：https://mp.weixin.qq.com/s/h9mnGmIUoht7zRtDh6XD-g ），数学（离散数学为主），等等等等。 这些课程应该也是你们现在课程设计的中心。 这些学好了，应用层的开发真的很简单。你去大厂工作也好，将来考研究生也好，就会发现，主要考查的，也是这些基础内容。 更重要的是，等你真的开始吃技术这碗饭的时候，爬得越高，越会意识到，这些基础知识的掌握，决定着你的技术上限。 加油！：）</p>
+<p>系统开发，推荐算法，图像，后端，这些都是方向。C++不是方向，Java同理。</p>
+<p>任何语言本身不是一个学习的方向。</p>
+<p>一个值钱的架构师，道路应该是陡峭的：但从另一个角度看，任何一个值钱的职业，都应该是陡峭的，不容易的。所以，我建议在选择职业道路的时候，不要想难度。第一看自己的兴趣；第二看市场的需求。 我认为优秀的架构师长期有巨大的市场需求。至于你的兴趣是否在这里，只有你自己知道。</p>
+<p>如何应对大龄危机，是一个太过宽泛的问题。我不认为存在一个万能之法，使用它就解决大龄危机问题了。如果这个方法存在的话，大龄危机就不是一个问题了。 关于大龄问题，我也一直在思考，以后可能会形成一篇甚至几篇公众号文章。 不过现在，我对这个问题也没什么经验，毕竟我才 34 岁，还年轻的很：）</p>
+<h2 id="天生不聪明">天生不聪明</h2>
+<p>https://mp.weixin.qq.com/s/QvXIDpyrpiOmvEhcOUUmxQ</p>
+<h3 id="对聪明的不同看法会影响人的表现和行为发展">对聪明的不同看法，会影响人的表现和行为发展。</h3>
+<p>聪明到底是天生的？还是后天学习来的？</p>
+<p>认为聪明是后天学习来的孩子，学习成绩明显的高于相信聪明是天生的孩子。</p>
+<p>相信聪明是天生的学生，数学成绩持续下降；而那些相信聪明是后天的学习可以弥补的学生，数学成绩是不降反升的！</p>
+<h3 id="认知神经科学基础课和补习班">认知神经科学基础课和补习班</h3>
+<p>“补习班”——讲解具体的数学知识点。数学考不好？来来来，课后我们多做点儿练习。</p>
+<p>“认知神经科学”基础课。课程的内容，主要就是向大家传授当前认知神经科学的最新研究成果：人类的大脑是如何学习到知识的？答案是通过不断的思考。在不断地学习和思考的过程中，人的大脑内部产生着剧烈的神经活动，迫使脑神经之间建立了更多的连接。随着神经元之间连接越来越多，我们对问题的认识也就越来越深刻，遇到类似问题反应也会越来越快。不仅如此，甚至还能触类旁通，举一反三，乃至和其他的领域结合，产生创新性的想法。这表现出来，就是你更聪明了。</p>
+<blockquote>
+<p><a href="%5Bhttps://zh.wikipedia.org/wiki/%E7%BB%B4%E7%94%9F%E7%B4%A0B%5D(https://zh.wikipedia.org/wiki/%E7%BB%B4%E7%94%9F%E7%B4%A0B)">维生素B族</a>都是<strong>水溶性维生素</strong>，它们有协同作用，调节<a href="https://zh.wikipedia.org/wiki/%E6%96%B0%E9%99%B3%E4%BB%A3%E8%AC%9D">新陈代谢</a>，维持<a href="https://zh.wikipedia.org/wiki/%E7%9A%AE%E8%82%A4">皮肤</a>和<a href="https://zh.wikipedia.org/wiki/%E8%82%8C%E8%82%89">肌肉</a>的健康，增进<a href="https://zh.wikipedia.org/wiki/%E5%85%8D%E7%96%AB%E7%B3%BB%E7%BB%9F">免疫系统</a>和<a href="https://zh.wikipedia.org/wiki/%E7%A5%9E%E7%BB%8F%E7%B3%BB%E7%BB%9F">神经系统</a>的功能，促进<a href="https://zh.wikipedia.org/wiki/%E7%BB%86%E8%83%9E">细胞</a>生长和<a href="https://zh.wikipedia.org/wiki/%E7%BB%86%E8%83%9E%E5%88%86%E8%A3%82">分裂</a>（包括促进<a href="https://zh.wikipedia.org/wiki/%E7%BA%A2%E8%A1%80%E7%90%83">红血球</a>的产生，预防<a href="https://zh.wikipedia.org/wiki/%E8%B4%AB%E8%A1%80">贫血</a>发生）。其中维生素B1、B6和B12有助保护神经组织细胞，维生素B2则具有抗氧化作用，而植物能合成维生素B2，动物一般不能合成，必须由食物获得维生素B2，而维生素B2是维持动物正常生长所必需的元素之一，如果缺乏则有可能造成生长停顿，或局部损害。</p>
+<p>补充维生素B不会让你更聪明，但是会在你需要的时候促进神经系统产生连接。</p>
+</blockquote>
+<p>我们对聪明的看法，会影响，甚至是严重影响我们的表现！</p>
+<p>聪明不是固定的。只要你相信聪明是靠努力可以弥补的，并且努力下去，你就会变聪明。</p>
+<p>我们现在可以回到文章开头的问题了：觉得算法好难，<strong>自己不够聪明</strong>，要花好长时间才能理解一个算法，刷题效率也很低，半天能过一道题就不错了，我该怎么办？</p>
+<p>对此，我的回答是：对不起，我没有更好的方法。并且，我坚信，不仅我没有，这个世界上根本不存在这样的一个方法。我经常使用反证法来阐述这个问题：假设这个世界存在一个简单、可行、快速、高效的学会算法的方法，那么，所有的人早就使用这个方法学习算法了，所有的人也早就成为算法大神了，算法也就不是什么让人头疼的事情了。可这是和现实不相符的。所以，这个方法不存在：）</p>
+<p>以上证明不仅适用于算法学习，对各个领域的学习都适用。</p>
+<p>但是，如果能给你一点安慰的话，我想实话告诉你：在我刚开始接触算法的时候，我也觉得算法好难，自己不够聪明，要花很长时间才能理解一个算法，刷题效率也特别低，别说半天一道题了，一个礼拜死磕一道题都是家常便饭。</p>
+<p><strong>或许，你我都是天生不聪明的人。</strong></p>
+<p>不过，好在，天生不聪明似乎并没有什么关系。因为，只要你相信聪明是靠努力可以弥补的，并且努力下去，你终将变得很“聪明”。甚至，你会超越这种“聪明”，理解一个很嘻哈又很深刻的道理：<strong>聪明不是什么大不了不起的事儿：）</strong></p>
+<h3 id="选择和努力同样重要">选择和努力同样重要</h3>
+<p>我用了这么长的文章，回答了一个问题。其实最后答案是一句废话：<strong>要努力</strong>。换句文绉绉的表示法，就是：<strong>万事无他，唯手熟尔</strong>。</p>
+<p>当然，我也承认，只是努力，可能并不够。或者说，至少，还有改进的余地。人生是一个维度极其丰富的过程，用任何一个单一维度去解释它，都是极其幼稚可笑的。比如，我就认为，另外一个非常重要的维度，叫做“选择”。我们经常听到互联网上的一种声音：选择大于努力。对于这个观点怎么看？大家可以期待一下我的一篇文章，我会聊聊我对于“选择”的看法。</p>
+<p>但是，在这篇文章里，作为计算机专业的同学，如果想学好算法，将来成为一个计算机科学领域的大神，并且你已经深刻地明白了努力就能更聪明，却不知如何选择从哪里开始努力的话... 咳咳咳，我建议大家从选择我在慕课网上的算法课程开始：）</p>
+<h2 id="如果高效学习有什么秘诀的话那就都在这里了"><a href="https://mp.weixin.qq.com/s?__biz=MzU4NTIxODYwMQ==&amp;mid=2247483836&amp;idx=1&amp;sn=90854aa76507281403e4dd9cd434a12b&amp;chksm=fd8caefacafb27ec78f999fde4f1217c04c6e2ff28cf51fe511d8fa29d484d9281ff91de8c9c&amp;scene=21#wechat_redirect">如果高效学习有什么秘诀的话，那就都在这里了：）</a></h2>
+<h3 id="不要完美主义">不要完美主义</h3>
+<p>**学习不是要么0分，要么100分的。**80分是收获；60分是收获；20分也是收获。有收获最重要。但是因为着眼于自己的不完美，最终放弃了，那就是彻底的0分了。</p>
+<p>仔细想，这种“完美主义害死人”的例子特别多。我看到过很多同学，其实是在学习的路上，被自己的“完美主义”逼得“放弃了”——由于学习中有一点没有做好，遭受到了一点点挫折，最终就放弃了整个学习计划。每个人都一定要接受自己的不完美。想开一点：我们都不是小升初考了满分，才能上初中的；也不是中考考了满分，才能读高中的；更不是高考考了满分，才能念大学的；将来也不会是大学所有科目都是满分，才能出来工作。<strong>不完美其实是常态</strong>，根本不会影响我们学习更多更深入的内容。<strong>但是在自学过程中，很多同学却要求自己在自己制定的每一步计划中都达到“完美”，才进行下一步。最终结果，通常都是“放弃”。</strong></p>
+<p>可能有的同学会跳出来反驳我：学习当然要认真啊！在这里，我必须强调，我所说的“不要完美主义”，和“学习认真”是不冲突的。什么是“完美主义”，什么又是“囫囵吞枣”，这是一个“度”，每个人其实不一样。不要“完美主义”，不代表学习可以草率前行。每个人都必须要找到适合自己的学习节奏。<strong>我的经验是：在自己又因为自己的学习进度而沮丧的时候，问自己一句：是不是自己又犯“完美主义”的毛病了：）</strong></p>
+<h3 id="不要过度依赖学习路径学习要冲着自己的目标去"><strong>不要过度依赖“学习路径”，学习要冲着自己的目标去。</strong></h3>
+<p>比如，很多同学想学机器学习，大多数学习路径都会告诉你，机器学习需要数学基础。于是，很多同学就转而学习数学去了，非要先把数学学好再去学机器学习。可是发现数学怎么也学不好（在这里，可能完美主义的毛病又犯了），而机器学习却一点儿都没学。最终放弃了机器学习，非常可惜。其实，如果真正去接触机器学习，就会发现，至少在入门阶段，机器学习对数学的要求没有那么高。正因为如此，我一直建议：只要你在本科接触过高数，线数，概率这些科目的基础概念，想学机器学习，就去直接学习机器学习。学习过程中发现自己的数学不够用，再回头补数学。在这种情况下，数学学习得也更有目标性，其实效果更好。</p>
+<p>类似这样的例子还有很多，很多同学想学习做ios app，就先去精通swift语言，或者想做android app，就先去精通java语言。在我看来大可不必。以我的经验，只要你有一门编译型语言基础，大概看一下这些语言的基础语法，就可以直接上手ios或者android app的开发了。先能做出一个最基本的app，在这个过程中，就会意识到语言特性的意义，再回头深入研究语言也不迟。此时还能结合真实的开发任务去理解语言特性，比没有上手app开发，抽象地理解语言特性，有意义的多。</p>
+<p>再比如，我的《算法与数据结构》课程和《玩转算法面试》课程，在视频中都是使用C++进行编码的。虽然我一再强调对于算法的学习，语言不重要，但还是有很多同学表示，要先把C++学透，再回来把课程中的算法学好。这是完全没必要的。事实上，在我的这两门课程中，我看到的收获最大的同学，是那些能够把课程中的算法思想理解清楚，然后用自己熟悉的语言去实现的同学：）</p>
+<p>依然是：不要“过度”学习路径依赖，什么叫“过度”，每个人的标准不一样。每个人都需要寻找自己的那个“度”。</p>
+<h3 id="不要迷信权威的好教材"><strong>不要迷信权威的“好”教材。</strong></h3>
+<p>不是说权威教材不好，而是每一本教材都有其预设的读者群，如果你不在这个预设的读者群的范畴里，教材再好也没用。最简单的例子：再好的高数教材，对于小学生来说，都是一堆废纸。</p>
+<p>诚然，算法不容易，但是，一上来就抱着《算法导论》啃，实在是选择了一条完全没必要的，更难的，甚至可能是根本走不通的路。对于一个领域的学习，了解市面上有什么好的教材是必要的，单也不能迷信权威教材。<strong>每个人必须要去探索学习如何寻找适合自己的学习材料。</strong></p>
+<h3 id="不要看不起薄薄的傻教材这些你看不起的学习材料可能是你入门某个领域的关键"><strong>不要看不起“薄薄”的“傻”教材，这些你看不起的学习材料，可能是你入门某个领域的关键。</strong></h3>
+<p>在这里，关键字是够“薄”。因为“薄”的教材能让你以最快的速度看完，对整个学科有一个全盘的认识：这个领域是做什么的？解决什么问题了？整体解决问题的思路是怎样？解决问题的方法大致是怎样划分的？一些最基础的方法具体是怎样的。这些在初学阶段是至关重要！是让你全盘把握整个领域脉络的。虽然通过这么一本薄薄的教材，你的脉络把握肯定不够全面细致，但比没有强太多！</p>
+<p>我看过不少同学，一上来学习《算法导论》，关于复杂度分析的笔记做了好几页，然后就放弃了，可是连什么是动态规划都不知道。这样完全没有对“算法”这个领域有全面的认识，甚至可以说根本没有学过“算法”！先用薄教材入门，再找“厚”教材，细细体会其中的细节，是我百试不爽的学习方法。</p>
+<p>另外，在这里，我还要强调“入门教材”，很多教材虽然够“薄”，但不是“入门教材”。大家要注意。</p>
+<h3 id="不要迷信单一教材"><strong>不要迷信单一教材。</strong></h3>
+<p>在大多数情况下，学习不是一本固定教材可以搞定的。非要找到一本“最适合自己的”教材，然后就一头扎进去，其实是不科学的。</p>
+<p>大多数同学喜欢仅仅扎进一本书里，一旦选定了自己的学习材料，就对其他材料充耳不闻，甚至是排斥的心理。这种做法，一方面又是“完美主义”的表现——非要把这本教材学透；另一方面，其实也是“犯懒”的表现，不愿意多翻翻，多看看，自己多比较比较，自己去寻找最适合自己的材料，一味地盲目相信所谓“大神”的推荐，殊不知，这些推荐，不一定是更适合自己的材料；更何况，还有很多大神，明明是靠不出名的“薄”教材入的门，但给别人做推荐的时候，就突然变成自己是算法奇才，自幼阅读《算法导论》而所成的神话了：）</p>
+<h3 id="实践"><strong>实践！</strong></h3>
+<p>前面说了很多和教材选择相关的话题，但**对于计算机领域的学习来说，教材的意义其实远远小于实践的意义。**如果仅仅是看学习材料就是学习的话，那么教学网站的视频后期处理人员就是水平最高的工程师了。因为每段视频，他们都需要看一遍。但是，很显然，仅仅是看视频，是无法学到知识的。**对于计算机领域的学习来说，真正动手实践去编程是异常重要的。怎么夸大其中的作用都不过分。**这就好比学游泳，必须下水去游泳；或者学开车，必须亲自上路。否则你说的再头头是道，一个小学生文化水平的人，只要他开过车，游过泳，都能在这两个领域瞬间秒杀你。</p>
+<p>很多同学都说我的算法讲得好，其实，我一直认为，这其中的一个最简单的秘诀就是：我带领大家把大多数算法都非常细致的实现了一遍；或者对其中的应用进行了非常具体的实践。反观大多数高校教育，对于算法或者机器学习这种一定程度偏理论的学习，通常非常不强调实践。最终的结果是学习者只是接受了很多抽象的概念，但对其中具体的实现细节，却是云里雾里。我见过太多同学，都明白什么是O(n<sup>2)复杂度，什么是O(nlogn)的复杂度，却问我对于100万的数据规模，为什么自己的选择排序运行起来就没反应了。答案很简单：O(n</sup>2)的复杂度太慢了，100万的数据规模太大了，一般家用计算机转选择排序一时半会儿是转不完的。这些同学一定理解O(n^2)的算法比O(nlogn)的算法慢，却没有真正实践过，不知道这个差距到底是多少。</p>
+<p>在我的课程中，经常遇到有些同学提出这样的问题：这个算法的某句话（或者某段逻辑），为什么要写成A的样子，而不是B的样子？这种问题其实很好，但我觉得解决方法也很简单，实际的去把算法改写成B的样子，实际的运行试试看，看会发生什么。如果发生了错误，仔细分析一下，为什么会有错误？如果没有错误，具体比较一下：A和B两种不同的写法，为什么都正确？又有什么区别？**真正的学习上的提高，就发生在这个过程中。**我当然可以告诉给同学们一个结果，但是自己亲自实践一遍，相比阅读我给出的一个答案，自己对其中问题理解的深刻程度，是完全不可比拟的。</p>
+<h3 id="debug非常非常重要"><strong>debug非常非常重要。</strong></h3>
+<p>我看到的另一类“经典”问题就是：老师，这个代码为什么错了，然后贴一大段代码。这种问题背后，依然是，透露着学习方法的不对劲：提问的同学懒得debug。**在计算机领域，debug近乎和实践是一个意思。**如果只是把材料上的代码“抄”一遍，这不叫实践，这叫抄代码。小学生也能做。但是“抄”一遍，不小心没抄对，发生了错误，然后自己一点一点调试，找到错误的根源，这叫真的实践。小学生不能做。（当然，自己理解了算法的逻辑，按照自己的理解，把算法写出来，才是终极目的：）</p>
+<p>不过很多同学不喜欢debug，我当然理解。其实谁都不喜欢debug，但是，debug才是最重要的能力。**通常在一个领域里，你最不喜欢做的事情，就是这个领域的核心竞争力！**我见过的所有计算机领域的“高手”，不管是在哪个细分领域，都无一例外，是个debug好手。我经常告诉大家，在实际工作中，其实debug的时间要占你真正编程时间的70%。<strong>如果你做一个项目，根本不需要debug，要么是你的项目对你来说太简单了，要么是你根本没有接触到这个项目的核心。</strong></p>
+<p>debug不仅仅是找到代码错误，解决错误的手段，其实更是一个重要的学习手段。通过debug，看看自己写的程序执行逻辑，哪里和自己设想的不一致？再回头看自己哪里想错了，或者想漏了，分析一下自己为什么想错了，或者想漏了，等等等等，依然是，进步就是发生在这个过程的。</p>
+<p>在我的算法课程中，很多同学对递归想不明白，我的建议都是：用一个小数据量，一步步跟踪程序，看看程序到底是怎么运行的。通常这么做，1个小时的时间，就足以让你深刻理解递归程序的运转逻辑。可是，很多同学懒得花这1个小时的时间，最终的结果是，花了一个下午，对着代码生看，硬想，最终还是没有理解程序的运转逻辑。</p>
+<h3 id="量变到质变"><strong>量变到质变。</strong></h3>
+<p>还有很多同学，对于算法的一些问题，会问：老师，你是怎么想到用这样的方法的？对于这类问题，我的回答一般都是：你见的还不够多。</p>
+<p>不知道是不是受高中阶段学习的影响，有一些同学特别执着于就着一个单一的问题，寻找其中的“解题路径”。当然，我不是说这是完全错误的，但也有一个“度”。我的经验是：与其把时间花在这里，不如去见更多问题。比如动态规划，是算法学习的一个难点，很多同学在学会了背包问题的解法之后，总是执着于去追寻：是怎么想到这种状态定义的方法的。可能是我个人水平有限，我无法清楚地解释是如何想到这种状态定义的方法的。但是我的经验告诉我：再去看，去实践100个动态规划相关的问题，然后回头看背包问题，你会发现这种状态定义的方式非常自然。**仅仅对着一个问题思考，很多时候都是死胡同。你见识的还不够多，就不足以帮助你总结出更加“普遍”的问题解决的规律。**当你见得足够多的时候，一切就都变得很自然，所谓的“量变到质变”。</p>
+<p>不过，大多数同学在这个环节都会“犯懒”，企图通过一个问题就理解问题的本质，这其实和企图通过一本教材就精通一个领域的想法是一样的，是不现实的，不可能的。同时，这里又包含着学习过程中的“完美主义”的思想，遇到一个问题一定要把它想的无比透彻。但是我的经验告诉我：**大多数问题，其实都是需要“回头看”的。随着你对一个领域理解的越深入，回头再去看那些曾经的问题，都会产生新的视角，对于很多曾经想不明白的问题也豁然开朗。这也是“进步”的根源。**如果卡在一个问题上不前进，不给自己“回头看”的机会，甚至最后是放弃了，就什么也没有学会了。</p>
+<p>所以，<strong>很多时候，你发现对一些问题“百思不得其解”，或许不是因为自己“笨”，而是因为“还不够努力”</strong>：）</p>
+<h3 id="最后一定要相信时间的力量"><strong>最后，一定要相信时间的力量。</strong></h3>
+<p>有一天，在我的一个算法课程群里，有个滴滴的后端大神发招聘，结果大家七嘴八舌的就议论开了，大致主题思想就是：自己什么时候能够成为滴滴的后端大神。这位滴滴的后端大神今年32岁；大多数议论的同学，其实连22岁都不到。我告诉他们，其实10年后，你们就是大神。</p>
+<p>这其实很好理解，回想十年前，也就是12岁的你，和现在的你比较，是不是天壤之别？如果把你扔到一堆12岁的小朋友中间，22岁的你是不是就是个大神？同理，32岁的人，已经在业界摸爬滚打了那么多年，扔回到22岁的大学生中间，当然是大神：）</p>
+<p>很多时候，所谓的“大神”并不神秘，仔细观察他们的经历，会发现时间有着不可磨灭的作用。只要你没有虚度时间，每天都在进步，通常结果都不会太差的。如果再加上一点点机遇，就是大神。</p>
+<h2 id="想了解计算机的底层原理这些资源通俗易懂又有趣"><a href="https://mp.weixin.qq.com/s/h9mnGmIUoht7zRtDh6XD-g">想了解计算机的底层原理？这些资源通俗易懂又有趣</a></h2>
+<p>大家可以关注一下波波老师的公众号和知识星球：是不是很酷</p>
+<h2 id="总结">总结</h2>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Mac工作环境搭建]]></title>
+        <id>https://xinrong2019.github.io/post/mac-gong-zuo-huan-jing-da-jian/</id>
+        <link href="https://xinrong2019.github.io/post/mac-gong-zuo-huan-jing-da-jian/">
+        </link>
+        <updated>2020-02-27T05:52:25.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="目录">目录</h2>
+<p>[TOC]</p>
+<h2 id="app软件">App软件</h2>
+<ul>
+<li>WPS</li>
+<li>有道云笔记</li>
+<li>CleanMyMac X</li>
+<li>Visual studio code</li>
+<li>uPic</li>
+<li>Typora</li>
+<li>Tencent Lemon</li>
+<li>Snagit2020</li>
+<li>ShadowsocksX-NG-R8</li>
+<li>QQ</li>
+<li>微信</li>
+<li>钉钉</li>
+<li>Polarr Photo Editor Pro</li>
+<li>PDF Expert</li>
+<li>Parallels DeskTop</li>
+<li>Navicat Premium</li>
+<li>Motrix</li>
+<li>Mark Text</li>
+<li>Little Snitch</li>
+<li>Kap</li>
+<li>IntelliJIDEA</li>
+<li>IINA</li>
+<li>Google Chrome</li>
+<li>GoLand</li>
+<li>Firefox</li>
+<li>eZip</li>
+<li>CotEditor</li>
+<li>Clion</li>
+<li>Araxis Merge</li>
+<li>Android 文件传输</li>
+<li>Kantu</li>
+<li>Jietu</li>
+<li>百度网盘</li>
+</ul>
+<h2 id="软件环境">软件环境</h2>
+<ul>
+<li>JDK</li>
+<li>HomeBrew</li>
+<li>Git</li>
+<li>Gradle</li>
+<li>Maven</li>
+<li>GoLang</li>
+</ul>
+<h2 id="vim配置">vim配置</h2>
+<pre><code class="language-bash">cd
+vi .vimrc
+##i进入编辑模式
+
+# 显示行号
+set number
+
+# 检测文件类型
+filetype on
+
+# 开启语法高亮
+syntax on
+
+# 支持使用鼠标
+set mouse=a
+
+# 按下回车键后，下一行的缩进会自动跟上一行的缩进保持一致。
+set autoindent
+
+# 按下 Tab 键时，Vim 显示的空格数
+set tabstop=2
+
+# 由于 Tab 键在不同的编辑器缩进不一致，该设置自动将 Tab 转为空格
+set expandtab
+
+# 是否显示状态栏。0 表示不显示，1 表示只在多窗口时显示，2 表示显示
+set laststatus=2
+
+# 在状态栏显示光标的当前位置（位于哪一行哪一列）
+set ruler
+
+##按esc键，退出编辑模式，输入:wq
+</code></pre>
+<h2 id="安装homebrew">安装HomeBrew</h2>
+<p>常用命令</p>
+<pre><code class="language-bash">brew list                 # 查看已经安装的包
+brew update               # 更新Homebrew自身
+brew doctor               # 诊断关于Homebrew的问题(Homebrew 有问题时请用它)
+brew cleanup              # 清理老版本软件包或者无用的文件
+brew show ${formula}      # 查看包信息
+brew search ${formula}    # 按名称搜索
+brew upgrade ${formula}   # 升级软件包
+brew install ${formula}   # 按名称安装
+brew uninstall ${formula} # 按名称卸载
+brew pin/unpin ${formula} # 锁定或者解锁软件包版本，防止误升级
+</code></pre>
+<h2 id="terminal配置zsh配置">terminal配置(zsh配置)</h2>
+<p><code>.bash_profile</code></p>
+<pre><code class="language-bash">alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias l='ls -alHh'
+alias ..='cd ../'
+alias ...='cd ../../'
+export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
+</code></pre>
+<p>Mac默认安装了zsh，下载<code>oh-my-zsh</code>简化配置，如果没安装，使用brew安装</p>
+<pre><code class="language-bash"># 安装 zsh
+brew install zsh
+
+# 查看当前使用的 shell
+echo $SHELL
+
+# 切换 shell
+chsh -s /bin/zsh
+
+# 安装wget，安装oh-my-zsh用
+brew install wget
+
+# 安装oh-my-zsh
+wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh
+
+# 安装完后重启终端
+</code></pre>
+<p>zsh主题</p>
+<pre><code class="language-bash">ZSH_THEME=&quot;af-magic&quot;
+plugins=(
+     git
+    zsh-syntax-highlighting
+    zsh-autosuggestions
+    last-working-dir
+    z
+)
+export GRADLE_USER_HOME=/Users/akm/.gradle
+HIST_STAMPS=&quot;yyyy-mm-dd&quot;
+</code></pre>
+<p>在<code>.zshrc</code>文件中应用用户环境变量</p>
+<pre><code class="language-bash"># .zshrc文件最后添加下面一行
+source ~/.bash_profile
+</code></pre>
+<p>更新zsh配置</p>
+<pre><code class="language-bash"># 更新配置
+source ~/.zshrc
+</code></pre>
+<h2 id="upic安装配置">uPic安装配置</h2>
+<h2 id="git安装和配置">Git安装和配置</h2>
+<h2 id="finder配置">Finder配置</h2>
+<ul>
+<li>拷贝路径</li>
+<li>在终端打开</li>
+</ul>
+<h2 id="mac其他">Mac其他</h2>
+<ul>
+<li>显示隐藏文件</li>
+</ul>
+<h2 id="maven">Maven</h2>
+<p>settings.xml</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;  
+&lt;settings xmlns=&quot;http://maven.apache.org/SETTINGS/1.0.0&quot;
+            xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+            xsi:schemaLocation=&quot;http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd&quot;&gt;
+       &lt;pluginGroups&gt;
+       &lt;/pluginGroups&gt;
+
+       &lt;proxies&gt;
+       &lt;/proxies&gt;     
+
+       &lt;servers&gt;
+       &lt;/servers&gt;
+
+       &lt;mirrors&gt;
+       &lt;mirror&gt;
+      &lt;id&gt;aliyunmaven&lt;/id&gt;
+      &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
+      &lt;name&gt;阿里云公共仓库&lt;/name&gt;
+      &lt;url&gt;https://maven.aliyun.com/repository/public&lt;/url&gt;
+     &lt;/mirror&gt;
+      &lt;mirror&gt;
+      &lt;id&gt;aliyunmaven&lt;/id&gt;
+      &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
+      &lt;name&gt;阿里云谷歌仓库&lt;/name&gt;
+      &lt;url&gt;https://maven.aliyun.com/repository/google&lt;/url&gt;
+     &lt;/mirror&gt;
+     &lt;mirror&gt;
+      &lt;id&gt;aliyunmaven&lt;/id&gt;
+      &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
+      &lt;name&gt;阿里云阿帕奇仓库&lt;/name&gt;
+     &lt;url&gt;https://maven.aliyun.com/repository/apache-snapshots&lt;/url&gt;
+     &lt;/mirror&gt;
+     &lt;mirror&gt;
+      &lt;id&gt;aliyunmaven&lt;/id&gt;
+      &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
+      &lt;name&gt;阿里云spring仓库&lt;/name&gt;
+      &lt;url&gt;https://maven.aliyun.com/repository/spring&lt;/url&gt;
+     &lt;/mirror&gt;
+     &lt;mirror&gt;
+      &lt;id&gt;aliyunmaven&lt;/id&gt;
+      &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
+      &lt;name&gt;阿里云spring插件仓库&lt;/name&gt;
+     &lt;url&gt;https://maven.aliyun.com/repository/spring-plugin&lt;/url&gt;
+    &lt;/mirror&gt;
+       &lt;/mirrors&gt;
+&lt;profiles&gt;
+       &lt;/profiles&gt;
+       &lt;/settings&gt; 
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[高级应用]]></title>
+        <id>https://xinrong2019.github.io/post/gao-ji-ying-yong/</id>
+        <link href="https://xinrong2019.github.io/post/gao-ji-ying-yong/">
+        </link>
+        <updated>2020-02-01T12:50:42.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="构建脚本介绍">构建脚本介绍</h2>
+<p>Gradle构建中的两个基本概念是项目（project）和任务（task），每个构建至少包含一个项目，项目中包含一个或多个任务。</p>
+<p>在多项目构建中，一个项目可以依赖于其他项目；类似的，任务可以形成一个依赖关系图来确保他们的执行顺序。</p>
+<h4 id="项目-任务关系">项目-任务关系</h4>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/AmQKRF_2020_2_1_10_2_34.png" alt="" loading="lazy"></figure>
+<p>上图是一个项目任务关系图。</p>
+<ol>
+<li>Project1依赖Project2</li>
+<li>Project1中，TaskA依赖TaskB和TaskC</li>
+<li>Project2中，TaskF依赖TaskE，TaskE依赖TaskD</li>
+</ol>
+<h3 id="项目">项目</h3>
+<p>一个项目代表一个正在构建的组件（比如一个jar文件），当构建启动后，Gradle会基于<code>build.gradle</code>实例化一个<code>org.gradle.api.Project</code>类，并且能够通过project变量使其隐式可用。</p>
+<ul>
+<li><code>group</code>、<code>name</code>、<code>version</code></li>
+<li><code>apply</code>、<code>dependencies</code>、<code>repositories</code>、<code>task</code></li>
+<li>属性的其他配置方式：<code>ext</code>、<code>gradle.properties</code></li>
+</ul>
+<h3 id="任务">任务</h3>
+<p>任务对应<code>org.gradle.api.Task</code>。主要包括任务动作和任务依赖。任务动作定义了一个最小的工作单元。可以依赖于其他任务、动作序列和执行条件。</p>
+<p>任务中的方法举例：</p>
+<ul>
+<li>dependsOn</li>
+<li>doFirst、doLast</li>
+</ul>
+<h2 id="自定义任务">自定义任务</h2>
+<h3 id="自动创建test目录结构">自动创建test目录结构</h3>
+<h4 id="1在buildgradle文件中添加任务">1.在build.gradle文件中，添加任务</h4>
+<pre><code class="language-groovy">def createDir = {
+    path -&gt;
+        File dir = new File(path)
+        if(!dir.exists()){
+            dir.mkdirs()
+        }
+}
+
+task makeJavaDir(){
+    def paths = ['src/test/java','src/test/resources']
+    doFirst {
+        paths.forEach(createDir)
+    }
+}
+</code></pre>
+<h4 id="2重新导入依赖">2.重新导入依赖</h4>
+<p>不重新导入依赖，可能会看不到自定义任务</p>
+<h4 id="3在tasks-other下执行makejavadir">3.在<code>Tasks-&gt;other</code>下执行makeJavaDir</h4>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/37C9t4_2020_2_1_10_49_46.png" style="zoom:50%;" />
+<h3 id="自定义创建web目录">自定义创建web目录</h3>
+<h4 id="1在buildgradle文件中添加任务-2">1.在build.gradle文件中，添加任务</h4>
+<pre><code class="language-groovy">task makeWebDir(){
+    dependsOn 'makeJavaDir'//依赖任务makeJavaDir
+    def paths = ['src/main/webapp','src/test/webapp']
+    doLast {
+        paths.forEach(createDir)
+    }
+}
+</code></pre>
+<p>这里第二行我们使用dependsOn方法，依赖我们上一个任务makeJavaDir。这样在创建web目录时，可以把test目录也创建好。</p>
+<h4 id="2重新导入依赖-2">2.重新导入依赖</h4>
+<p>不重新导入依赖，可能会看不到自定义任务</p>
+<h4 id="3在tasks-other下执行makewebdir">3.在<code>Tasks-&gt;other</code>下执行makeWebDir</h4>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/74RzQr_2020_2_1_10_57_59.png" style="zoom:50%;" />
+<h2 id="构建的生命周期">构建的生命周期</h2>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/KHdsaR_2020_2_1_12_4_29.png" style="zoom:50%;" />
+<p>理解构建的生命周期，生命周期通常会暴露扩展点，以供开发者使用，影响构建的行为，创建灵活的功能。</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/OQTojI_2020_2_1_12_8_2.png" alt="" loading="lazy"></figure>
+<h3 id="初始化">初始化</h3>
+<p>初始化项目，决定有哪些项目参与到构建过程中</p>
+<h3 id="配置">配置</h3>
+<p>生成Task的执行关系和执行图</p>
+<h3 id="执行">执行</h3>
+<p>执行Task的动作</p>
+<h2 id="依赖管理">依赖管理</h2>
+<h3 id="概述">概述</h3>
+<p>几乎所有的基于JVM的软件项目都需要依赖外部类库来重用现有的功能。自动化的依赖管理可以明确依赖的版本，可以解决因传递性依赖带来的版本冲突。</p>
+<h3 id="工件坐标">工件坐标</h3>
+<ul>
+<li>group、name、version</li>
+</ul>
+<h3 id="常用仓库">常用仓库</h3>
+<ul>
+<li>mavenLocal/mavenCentral/jcenter</li>
+<li>自定义maven仓库</li>
+<li>文件仓库</li>
+</ul>
+<h3 id="依赖的传递性">依赖的传递性</h3>
+<p>B依赖A，如果C依赖B，那么C依赖A</p>
+<h3 id="自动化依赖管理">自动化依赖管理</h3>
+<p>首次使用jar，会从远程仓库下载到本地仓库；</p>
+<p>如果多次使用相同的jar，会缓存到本地缓存</p>
+<h3 id="依赖阶段配置">依赖阶段配置</h3>
+<ul>
+<li>compile、runtime</li>
+<li>testCompile、testRuntime</li>
+</ul>
+<h3 id="依赖阶段关系">依赖阶段关系</h3>
+<h3 id="添加logback编译时依赖">添加logback编译时依赖</h3>
+<pre><code class="language-groovy">compile 'ch.qos.logback:logback-classic:1.2.1'
+</code></pre>
+<h2 id="解决版本冲突">解决版本冲突</h2>
+<h3 id="版本冲突例子">版本冲突例子</h3>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/dkmvOq_2020_2_1_14_1_56.png" alt="" loading="lazy"></figure>
+<h3 id="解决冲突">解决冲突</h3>
+<ul>
+<li>查看依赖报告</li>
+</ul>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/UWAqfx_2020_2_1_14_11_6.png" style="zoom:50%;" />
+<ul>
+<li>排除传递性依赖</li>
+<li>强制指定一个版本</li>
+</ul>
+<p>注意：gradle会默认解决版本冲突，使用最高版本的冲突依赖。</p>
+<ul>
+<li>修改默认解决策略</li>
+</ul>
+<pre><code class="language-groovy">configuration.all{
+  resolutionStrategy{
+    failOnVersionConflict()
+  }
+}
+</code></pre>
+<p>让版本冲突出现时报错，让我们知道。</p>
+<h4 id="排除传递性依赖">排除传递性依赖</h4>
+<pre><code class="language-groovy">compile('org.hibernate:hibernate-core:3.6.3.final'){
+  exclude group:&quot;org.slf4j&quot;,module:&quot;slf4j-api&quot;
+  //transitive = false
+}
+</code></pre>
+<p>其中module，就是name。</p>
+<h4 id="强制指定一个版本">强制指定一个版本</h4>
+<pre><code class="language-groovy">configuration.all{
+  resolutionStrategy{
+    force 'org.slf4j:slf4j-api:1.7.24'
+  }
+}
+</code></pre>
+<h2 id="多项目构建介绍">多项目构建介绍</h2>
+<h3 id="项目模块化">项目模块化</h3>
+<p>在企业项目中，包层次和类关系比较复杂，把代码拆分成模块通常是最佳实践，这需要你清晰的划分功能的边界，比如把业务逻辑和数据持久化拆分开来。项目符合高内聚低耦合时，模块化就变得很容易，这是一条非常好的软件开发实践。</p>
+<h3 id="todo模块依赖关系">TODO模块依赖关系</h3>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/gZTQAv_2020_2_1_14_46_12.png" style="zoom:50%;" />
+<h3 id="配置要求">配置要求</h3>
+<ul>
+<li>所有项目应用Java插件</li>
+<li>web子项目打包成war</li>
+<li>所有项目添加logback日志功能</li>
+<li>统一配置公共属性</li>
+</ul>
+<h3 id="项目拆分gradle多项目构建">项目拆分，gradle多项目构建</h3>
+<h4 id="1新建两个模块都是gradle项目">1.新建两个模块，都是gradle项目</h4>
+<h5 id="11-右键点击根目录todonew-module">1.1 右键点击根目录todo，<code>new-&gt;Module</code></h5>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/EOKycA_2020_2_1_17_59_9.png" alt="" loading="lazy"></figure>
+<h5 id="12-新建gradle模块点击next">1.2 新建gradle模块，点击next</h5>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/K7u7Gl_2020_2_1_18_1_18.png" style="zoom:50%;" />
+<h5 id="13-填入模块名然后next再next">1.3 填入模块名，然后next，再next</h5>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/ERaQT2_2020_2_1_18_2_21.png" style="zoom:50%;" />
+<h5 id="14-按照上面三步建立model-repository和web模块">1.4 按照上面三步建立<code>model</code>、<code>repository</code>和<code>web</code>模块</h5>
+<h5 id="15-根目录下的settinggradle文件中会有gradle管理的项目描述">1.5 根目录下的<code>setting.gradle</code>文件中会有gradle管理的项目描述</h5>
+<pre><code class="language-groovy">rootProject.name = 'todo'
+include 'model'
+include 'repository'
+include 'web'
+</code></pre>
+<h5 id="16添加模块依赖">1.6添加模块依赖</h5>
+<p>我们的项目repository模块依赖model模块，web模块依赖repository模块。</p>
+<p>所以需要在repository模块中添加model模块的依赖，在web模块中添加repository模块依赖。</p>
+<pre><code class="language-groovy">dependencies {
+    compile project(&quot;:model&quot;)
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+</code></pre>
+<pre><code class="language-groovy">dependencies {
+    compile project(&quot;:repository&quot;)
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+</code></pre>
+<h2 id="多项目构建实战">多项目构建实战</h2>
+<h3 id="1所有项目中应用java插件">1.所有项目中应用Java插件</h3>
+<p>将子模块的java插件配置都删除，在根项目中使用allprojects方法应用</p>
+<pre><code class="language-groovy">group 'com.kim.gradle'
+version '1.0-SNAPSHOT'
+
+allprojects {
+    apply plugin:'java'
+    sourceCompatibility = 1.8
+}
+
+repositories {
+    mavenCentral()
+}
+//省略其他配置
+</code></pre>
+<h3 id="2web子项目打包成war">2.web子项目打包成war</h3>
+<p>个性化需求，给web子模块应用war插件</p>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/AmW1hy_2020_2_1_18_24_36.png" style="zoom:50%;" />
+<h3 id="3所有项目添加logback日志功能包括junit">3.所有项目添加logback日志功能，包括Junit</h3>
+<pre><code class="language-groovy">allprojects {
+    apply plugin:'java'
+    sourceCompatibility = 1.8
+}
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        compile 'ch.qos.logback:logback-classic:1.2.1'
+        testCompile 'junit:junit:4.12'
+    }
+}
+</code></pre>
+<p>这里用subprojects可以达到同样的效果</p>
+<h3 id="4统一配置group和version">4.统一配置group和version</h3>
+<p>在根目录下新建<code>gradle.properties</code>文件，加入这两个属性。</p>
+<pre><code class="language-properties">group=com.kim.gradle
+version=1.0-SNAPSHOT
+</code></pre>
+<p>同时，子模块中删除这两个属性。</p>
+<h3 id="5执行root项目的clean任务">5.执行root项目的clean任务</h3>
+<p>执行root项目的clean任务，观察执行顺序。</p>
+<pre><code class="language-groovy">&gt; Task :clean
+&gt; Task :model:clean UP-TO-DATE
+&gt; Task :repository:clean UP-TO-DATE
+&gt; Task :web:clean
+</code></pre>
+<h2 id="自动化测试">自动化测试</h2>
+<h3 id="1测试配置">1.测试配置</h3>
+<pre><code class="language-groovy">dependencies {
+    testCompile 'junit:junit:4.12'
+}
+</code></pre>
+<h3 id="2测试发现">2.测试发现</h3>
+<p>gradle是如何发现哪些类或方法是测试类的呢</p>
+<ul>
+<li>任何继承自junit.framework.TestCase或groovy.util.GroovyTestCase的类</li>
+<li>任何被@RunWith注解的类</li>
+<li>任何至少包含一个被@Test注解的类</li>
+</ul>
+<h2 id="发布">发布</h2>
+<h3 id="配置发布插件">配置发布插件</h3>
+<pre><code class="language-groovy">allprojects {
+    apply plugin:'java'
+    sourceCompatibility = 1.8
+
+    apply plugin: 'maven-publish'
+
+    publishing {
+        publications {
+            myPublish(MavenPublication){
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                name &quot;myRepo&quot;
+                url &quot;&quot;
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="发布到本地仓库">发布到本地仓库</h3>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/uWkXKt_2020_2_1_19_20_25.png" style="zoom:50%;" />
+<h3 id="发布到公司私服">发布到公司私服</h3>
+<p>在发布插件配置中配置公司私服的url，然后执行publish这个任务</p>
+<p><a href="https://github.com/SixGodFlowerDewWater1029/gradle">项目源码</a></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[第一个Gradle项目]]></title>
+        <id>https://xinrong2019.github.io/post/di-yi-ge-gradle-xiang-mu/</id>
+        <link href="https://xinrong2019.github.io/post/di-yi-ge-gradle-xiang-mu/">
+        </link>
+        <updated>2020-02-01T12:49:33.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="示例介绍">示例介绍</h3>
+<ul>
+<li>TODO应用程序，只实现添加待办事项</li>
+<li>Java应用程序版</li>
+<li>Web版</li>
+</ul>
+<h2 id="java应用程序版">Java应用程序版</h2>
+<h3 id="启动类">启动类</h3>
+<pre><code class="language-java">package com.kim.gradle.todo;
+
+import java.util.Scanner;
+
+public class App {
+    public static void main(String[] args) {
+        int i = 0;
+        Scanner scanner = new Scanner(System.in);
+        while (++i &gt; 0){
+            System.out.println(i + &quot;. please input todo item name&quot;);
+            ToDoItem item = new ToDoItem(scanner.nextLine());
+            System.out.println(item);
+        }
+    }
+}
+
+</code></pre>
+<h3 id="todoitem">ToDoItem</h3>
+<pre><code class="language-java">package com.kim.gradle.todo;
+
+public class ToDoItem {
+    private String name;
+    private boolean hasDone;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isHasDone() {
+        return hasDone;
+    }
+
+    public void setHasDone(boolean hasDone) {
+        this.hasDone = hasDone;
+    }
+
+    public ToDoItem(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return &quot;ToDoItem{&quot; +
+                &quot;name='&quot; + name + '\'' +
+                &quot;, hasDone=&quot; + hasDone +
+                '}';
+    }
+}
+
+</code></pre>
+<h3 id="打jar包">打jar包</h3>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/eTOKvN_2020_1_31_20_37_44.png" style="zoom:50%;" />
+<h3 id="控制台中运行程序">控制台中运行程序</h3>
+<p><code>java -classpath build/libs/todo-1.0-SNAPSHOT.jar com.kim.gradle.todo.App</code></p>
+<pre><code>1. please input todo item name
+kim
+ToDoItem{name='kim', hasDone=false}
+2. please input todo item name
+</code></pre>
+<h2 id="web版">Web版</h2>
+<h3 id="添加war插件">添加war插件</h3>
+<p>在build.gradle文件中添加war插件</p>
+<pre><code class="language-groovy">plugins {
+    id 'java'
+    id 'war'//添加的内容
+}
+
+//apply plugin:'java'
+//apply plugin:'war'
+
+group 'com.kim.gradle'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+</code></pre>
+<p>plugins方法也可以由apply方法替换</p>
+<h3 id="打war包">打war包</h3>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/8VqsEx_2020_1_31_20_58_8.png" style="zoom:50%;" />
+<p>打包后，在项目根目录/build/libs下会生成war包，将war复制到一个servlet容器中，比如tomcat的webapp目录下，运行即可。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[查询性能优化]]></title>
+        <id>https://xinrong2019.github.io/post/cha-xun-xing-neng-you-hua/</id>
+        <link href="https://xinrong2019.github.io/post/cha-xun-xing-neng-you-hua/">
+        </link>
+        <updated>2020-01-31T11:07:08.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="61-为什么查询速度会慢">6.1 为什么查询速度会慢</h2>
+<h2 id="62-慢查询基础优化数据访问">6.2 慢查询基础：优化数据访问</h2>
+<h3 id="621-是否向服务器请求了不需要的数据">6.2.1 是否向服务器请求了不需要的数据</h3>
+<h3 id="622-mysql是否在扫描额外的记录">6.2.2 MySQL是否在扫描额外的记录</h3>
+<h2 id="63-重构查询的方式">6.3 重构查询的方式</h2>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[创建高性能的索引]]></title>
+        <id>https://xinrong2019.github.io/post/chuang-jian-gao-xing-neng-de-suo-yin/</id>
+        <link href="https://xinrong2019.github.io/post/chuang-jian-gao-xing-neng-de-suo-yin/">
+        </link>
+        <updated>2020-01-31T11:06:33.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="51-索引的基础">5.1 索引的基础</h2>
+<h3 id="511-索引的类型">5.1.1 索引的类型</h3>
+<h2 id="52-索引的优点">5.2 索引的优点</h2>
+<h2 id="53-高性能的索引策略">5.3 高性能的索引策略</h2>
+<h3 id="531-独立的列">5.3.1 独立的列</h3>
+<h3 id="532-前缀索引和索引选择性">5.3.2 前缀索引和索引选择性</h3>
+<h3 id="533-多列索引">5.3.3 多列索引</h3>
+<h3 id="534-选择合适的索引列顺序">5.3.4 选择合适的索引列顺序</h3>
+<h3 id="535-聚簇索引">5.3.5 聚簇索引</h3>
+<h3 id="536-覆盖索引">5.3.6 覆盖索引</h3>
+<h3 id="537-使用索引扫描来做排序">5.3.7 使用索引扫描来做排序</h3>
+<h3 id="538-压缩前缀压缩索引">5.3.8 压缩（前缀压缩）索引</h3>
+<h3 id="539-冗余和重复索引">5.3.9 冗余和重复索引</h3>
+<h3 id="5310-未使用的索引">5.3.10 未使用的索引</h3>
+<h3 id="5311-索引和锁">5.3.11 索引和锁</h3>
+<h2 id="54-索引案例学习">5.4 索引案例学习</h2>
+<h3 id="541-支持多种过滤条件">5.4.1 支持多种过滤条件</h3>
+<h3 id="542-避免多个范围条件">5.4.2 避免多个范围条件</h3>
+<h3 id="543-优化排序">5.4.3 优化排序</h3>
+<h2 id="55-维护索引和表">5.5 维护索引和表</h2>
+<h3 id="551-找到并修复锁坏的表">5.5.1 找到并修复锁坏的表</h3>
+<h3 id="552-更新索引统计信息">5.5.2 更新索引统计信息</h3>
+<h3 id="553-减少索引和数据的碎片">5.5.3 减少索引和数据的碎片</h3>
+<h2 id="56-总结">5.6 总结</h2>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Schema与数据类型优化]]></title>
+        <id>https://xinrong2019.github.io/post/schema-yu-shu-ju-lei-xing-you-hua/</id>
+        <link href="https://xinrong2019.github.io/post/schema-yu-shu-ju-lei-xing-you-hua/">
+        </link>
+        <updated>2020-01-31T11:05:56.000Z</updated>
+        <content type="html"><![CDATA[<p>良好的逻辑设计和物理设计是高性能的基石，应该根据系统将要执行的查询语句来设计schema，这往往需要权衡各种因素。</p>
+<p>例如，反范式的设计可以加快某些类型的查询，但同时可能使另一些类型的查询变慢。比如添加计数表和汇总表是一种很好的优化查询的方式，但这些表的维护成本可能会很高。</p>
+<p>本章主题是schema设计，主要是MySQL数据库的设计，是接下来两章的铺垫。阅读顺序建议先看本章，再顺序看后两章，再回头看看本章。</p>
+<h2 id="41-选择优化的数据类型">4.1 选择优化的数据类型</h2>
+<h3 id="411-整数类型">4.1.1 整数类型</h3>
+<h3 id="412-实数类型">4.1.2 实数类型</h3>
+<h3 id="413-字符串类型">4.1.3 字符串类型</h3>
+<h3 id="414-日期和时间类型">4.1.4 日期和时间类型</h3>
+<h3 id="415-位数据类型">4.1.5 位数据类型</h3>
+<h3 id="416-选择标识符identifier">4.1.6 选择标识符（identifier）</h3>
+<h3 id="417-特殊类型数据">4.1.7 特殊类型数据</h3>
+<h2 id="42-mysql-schema设计中的陷阱">4.2 MySQL schema设计中的陷阱</h2>
+<h2 id="43-范式和反范式">4.3 范式和反范式</h2>
+<h3 id="431-范式的优点和缺点">4.3.1 范式的优点和缺点</h3>
+<h3 id="432-反范式的优点和缺点">4.3.2 反范式的优点和缺点</h3>
+<h3 id="433-混用范式化和反范式化">4.3.3 混用范式化和反范式化</h3>
+<h2 id="44-缓存表和汇总表">4.4 缓存表和汇总表</h2>
+<h3 id="441-物化视图">4.4.1 物化视图</h3>
+<h3 id="442-计数器表">4.4.2 计数器表</h3>
+<h2 id="45-加快alter-table操作的速度">4.5 加快<code>alter table</code>操作的速度</h2>
+<h3 id="451-只修改frm文件">4.5.1 只修改<code>.frm</code>文件</h3>
+<h3 id="452-快速创建myisam索引">4.5.2 快速创建MyISAM索引</h3>
+<h2 id="46-总结">4.6 总结</h2>
+]]></content>
+    </entry>
+</feed>

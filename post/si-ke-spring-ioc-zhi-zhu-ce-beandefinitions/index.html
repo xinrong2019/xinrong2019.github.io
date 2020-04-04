@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<meta HTTP-EQUIV="expires" CONTENT="0"> 
+<title>[死磕Spring]--IOC之注册 BeanDefinitions | Eucaly</title>	
+
+<link rel="stylesheet" href="https://xinrong2019.github.io//styles/main.css">
+<script type="text/javascript">
+function getCSS()
+{
+        datetoday = new Date();
+        timenow=datetoday.getTime();
+        datetoday.setTime(timenow);
+        thehour = datetoday.getHours();
+
+            display = "https://xinrong2019.github.io//media/css/night.css";
+
+            display = "https://xinrong2019.github.io//media/css/night.css";   
+      
+            display = "https://xinrong2019.github.io//media/css/day.css";
+
+            display = "https://xinrong2019.github.io//media/css/day.css";
+      
+
+var css = '<';
+        css+='link rel="stylesheet" href='+display+' \/';
+        css+='>';
+        document.write(css);
+}
+</script>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Noto+Sans+SC:300|Montserrat&display=swap" rel="stylesheet">
+<link href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css" rel="stylesheet" />
+<link href="https://at.alicdn.com/t/font_1651848_tf0hnpbyjfj.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/script.js'></script>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet" />
+  <script src="https://cdn.bootcss.com/wow/1.1.2/wow.min.js"></script>
+  <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>wow=new WOW({boxClass:'wow',animateClass:'animated',offset:0,mobile:true,live:true});wow.init();</script>
+
+<script type="text/javascript">
+window.onload=getCSS();
+</script>
+
+
+</head>
+
+<body class="post-template-default single single-post postid-70 single-format-standard">
+	<div id="wrapper">
+				<header id="header" class="site-header" >
+			<div class="site-branding">
+				<h1 class="site-title">
+					<div class="post-title-name">
+						<a href="https://xinrong2019.github.io/" rel="home">[死磕Spring]--IOC之注册 BeanDefinitions</a>
+					</div>
+				</h1>
+				<h2 class="site-description">Time waits for no one.</h2>
+			</div>
+			<nav id="nav-wrapper">
+				<div class="container">
+					<div class="nav-toggle">
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<ul id="" class="dove">
+						
+
+						<li>
+
+							<a href="/"> 首页</a></li>
+
+						
+
+						<li>
+
+							<a href="/archives"> 归档</a></li>
+
+						
+
+						<li>
+
+							<a href="/tags"> 标签</a></li>
+
+						
+
+						<li>
+
+							<a href="/friends"> 友链</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mysql"> MySQL</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/dubbo"> Dubbo</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mq"> MQ</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/spring"> Spring</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/about"> 关于</a></li>
+
+						
+
+					</ul>
+					</li>
+
+					</ul>
+				</div>
+			</nav>
+
+			<div class="jingge">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			<form id="gridea-search-form" data-update="1585982810028" action="/search/index.html">
+				<div class="search-box">
+					<input class="search-txt" name="q" placeholder="Type to search" />
+					<a class="search-btn">
+						<i class="iconfont icon-search1" action="/search/index.html"></i>
+					</a>
+				</div>
+			</form>
+		</header>
+		<div id="content" class="container">
+			<div class="row">
+				<div class="col-md-8 site-main">
+					<article id="post-70"
+						class="post-70 post type-post status-publish format-standard hentry category-5 tag-10 tag-9 tag-11">
+						<div class="entry-content">
+							<div class="entry-meta">
+								<div class="entry-info">
+									<time>
+										2020-01-19
+									</time>
+									<span>
+										9 min read
+									</span>
+								</div>
+							</div>
+							<div class="wow slideInLeft entry-summary song">
+								<p><strong>本文主要基于 Spring 5.0.6.RELEASE</strong></p>
+<p>摘要: 原创出处 http://cmsblogs.com/?p=2697 「小明哥」，谢谢！</p>
+<p>获取 XML Document 对象后，会根据该对象和 Resource 资源对象调用 <code>XmlBeanDefinitionReader#registerBeanDefinitions(Document doc, Resource resource)</code> 方法，开始注册 BeanDefinitions 之旅。代码如下：</p>
+<pre><code class="language-java">// AbstractBeanDefinitionReader.java
+private final BeanDefinitionRegistry registry;
+
+// XmlBeanDefinitionReader.java
+public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
+	// &lt;1&gt; 创建 BeanDefinitionDocumentReader 对象
+	BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
+	// &lt;2&gt; 获取已注册的 BeanDefinition 数量
+	int countBefore = getRegistry().getBeanDefinitionCount();
+	// &lt;3&gt; 创建 XmlReaderContext 对象
+	// &lt;4&gt; 注册 BeanDefinition
+	documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
+	// 计算新注册的 BeanDefinition 数量
+	return getRegistry().getBeanDefinitionCount() - countBefore;
+}
+</code></pre>
+<ul>
+<li><code>&lt;1&gt;</code> 处，调用 <code>#createBeanDefinitionDocumentReader()</code> 方法，实例化 BeanDefinitionDocumentReader 对象。</li>
+</ul>
+<blockquote>
+<p>FROM 《Spring 源码深度解析》P16 页</p>
+<p>定义读取 Document 并注册 BeanDefinition 功能</p>
+</blockquote>
+<ul>
+<li><code>&lt;2&gt;</code> 处，调用 <code>BeanDefinitionRegistry#getBeanDefinitionCount()</code> 方法，获取<strong>已注册</strong>的 BeanDefinition 数量。</li>
+<li><code>&lt;3&gt;</code> 处，调用 <code>#createReaderContext(Resource resource)</code> 方法，创建 XmlReaderContext 对象。</li>
+<li><code>&lt;4&gt;</code> 处，调用 <code>BeanDefinitionDocumentReader#registerBeanDefinitions(Document doc, XmlReaderContext readerContext)</code> 方法，读取 XML 元素，注册 BeanDefinition 们。</li>
+<li><code>&lt;5&gt;</code> 处，计<strong>算新注册</strong>的 BeanDefinition 数量。</li>
+</ul>
+<h1 id="1-createbeandefinitiondocumentreader">1. createBeanDefinitionDocumentReader</h1>
+<p><code>#createBeanDefinitionDocumentReader()</code>，实例化 BeanDefinitionDocumentReader 对象。代码如下：</p>
+<pre><code class="language-java">/**
+ * documentReader 的类
+ *
+ * @see #createBeanDefinitionDocumentReader() 
+ */
+private Class&lt;? extends BeanDefinitionDocumentReader&gt; documentReaderClass = DefaultBeanDefinitionDocumentReader.class;
+
+protected BeanDefinitionDocumentReader createBeanDefinitionDocumentReader() {
+	return BeanUtils.instantiateClass(this.documentReaderClass);
+}
+</code></pre>
+<p><code>documentReaderClass</code> 的默认值为 <code>DefaultBeanDefinitionDocumentReader.class</code> 。关于它，我们在后续的文章，详细解析。</p>
+<h1 id="2-registerbeandefinitions">2. registerBeanDefinitions</h1>
+<p><code>BeanDefinitionDocumentReader#registerBeanDefinitions(Document doc, XmlReaderContext readerContext)</code> 方法，注册 BeanDefinition ，在接口 BeanDefinitionDocumentReader 中定义。代码如下：</p>
+<pre><code class="language-java">public interface BeanDefinitionDocumentReader {
+
+	/**
+	 * Read bean definitions from the given DOM document and
+	 * register them with the registry in the given reader context.
+	 * @param doc the DOM document
+	 * @param readerContext the current context of the reader
+	 * (includes the target registry and the resource being parsed)
+	 * @throws BeanDefinitionStoreException in case of parsing errors
+	 */
+	void registerBeanDefinitions(Document doc, XmlReaderContext readerContext)
+			throws BeanDefinitionStoreException;
+
+}
+</code></pre>
+<p><strong>从给定的 Document 对象中解析定义的 BeanDefinition 并将他们注册到注册表中</strong>。方法接收两个参数：</p>
+<ul>
+<li><code>doc</code> 方法参数：待解析的 Document 对象。</li>
+<li><code>readerContext</code> 方法，解析器的当前上下文，包括目标注册表和被解析的资源。它是根据 Resource 来创建的，见 <a href="http://svip.iocoder.cn/Spring/IoC-register-BeanDefinitions/#">「3. createReaderContext」</a> 。</li>
+</ul>
+<h2 id="21-defaultbeandefinitiondocumentreader">2.1 DefaultBeanDefinitionDocumentReader</h2>
+<p>BeanDefinitionDocumentReader 有且只有一个默认实现类 DefaultBeanDefinitionDocumentReader 。它对 <code>#registerBeanDefinitions(...)</code> 方法的实现代码如下：</p>
+<p>DefaultBeanDefinitionDocumentReader 对该方法提供了实现：</p>
+<pre><code class="language-java">@Nullable
+private XmlReaderContext readerContext;
+
+@Nullable
+private BeanDefinitionParserDelegate delegate;
+    
+/**
+ * This implementation parses bean definitions according to the &quot;spring-beans&quot; XSD
+ * (or DTD, historically).
+ * &lt;p&gt;Opens a DOM Document; then initializes the default settings
+ * specified at the {@code &lt;beans/&gt;} level; then parses the contained bean definitions.
+ */
+@Override
+public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
+    this.readerContext = readerContext;
+    // 获得 XML Document Root Element
+    // 执行注册 BeanDefinition
+    doRegisterBeanDefinitions(doc.getDocumentElement());
+}
+
+/**
+ * Register each bean definition within the given root {@code &lt;beans/&gt;} element.
+ */
+@SuppressWarnings(&quot;deprecation&quot;)  // for Environment.acceptsProfiles(String...)
+protected void doRegisterBeanDefinitions(Element root) {
+    // Any nested &lt;beans&gt; elements will cause recursion in this method. In
+    // order to propagate and preserve &lt;beans&gt; default-* attributes correctly,
+    // keep track of the current (parent) delegate, which may be null. Create
+    // the new (child) delegate with a reference to the parent for fallback purposes,
+    // then ultimately reset this.delegate back to its original (parent) reference.
+    // this behavior emulates a stack of delegates without actually necessitating one.
+    // 记录老的 BeanDefinitionParserDelegate 对象
+    BeanDefinitionParserDelegate parent = this.delegate;
+    // &lt;1&gt; 创建 BeanDefinitionParserDelegate 对象，并进行设置到 delegate
+    this.delegate = createDelegate(getReaderContext(), root, parent);
+    // &lt;2&gt; 检查 &lt;beans /&gt; 根标签的命名空间是否为空，或者是 http://www.springframework.org/schema/beans
+    if (this.delegate.isDefaultNamespace(root)) {
+        // &lt;2.1&gt; 处理 profile 属性。可参见《Spring3自定义环境配置 &lt;beans profile=&quot;&quot;&gt;》http://nassir.iteye.com/blog/1535799
+        String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
+        if (StringUtils.hasText(profileSpec)) {
+            // &lt;2.2&gt; 使用分隔符切分，可能有多个 profile 。
+            String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
+                    profileSpec, BeanDefinitionParserDelegate.MULTI_VALUE_ATTRIBUTE_DELIMITERS);
+            // &lt;2.3&gt; 如果所有 profile 都无效，则不进行注册
+            // We cannot use Profiles.of(...) since profile expressions are not supported
+            // in XML config. See SPR-12458 for details.
+            if (!getReaderContext().getEnvironment().acceptsProfiles(specifiedProfiles)) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(&quot;Skipped XML bean definition file due to specified profiles [&quot; + profileSpec +
+                            &quot;] not matching: &quot; + getReaderContext().getResource());
+                }
+                return;
+            }
+        }
+    }
+
+    // &lt;3&gt; 解析前处理
+    preProcessXml(root);
+    // &lt;4&gt; 解析
+    parseBeanDefinitions(root, this.delegate);
+    // &lt;5&gt; 解析后处理
+    postProcessXml(root);
+
+    // 设置 delegate 回老的 BeanDefinitionParserDelegate 对象
+    this.delegate = parent;
+}
+</code></pre>
+<ul>
+<li><code>&lt;1&gt;</code> 处，创建 BeanDefinitionParserDelegate 对象，并进行设置到 <code>delegate</code> 。BeanDefinitionParserDelegate 是一个重要的类，它负责<strong>解析 BeanDefinition</strong>。代码如下：</li>
+</ul>
+<blockquote>
+<p>FROM 《Spring 源码深度解析》P16</p>
+<p>定义解析 XML Element 的各种方法</p>
+</blockquote>
+<pre><code class="language-java">protected BeanDefinitionParserDelegate createDelegate(
+        XmlReaderContext readerContext, Element root, @Nullable BeanDefinitionParserDelegate parentDelegate) {
+    // 创建 BeanDefinitionParserDelegate 对象
+    BeanDefinitionParserDelegate delegate = new BeanDefinitionParserDelegate(readerContext);
+    // 初始化默认
+    delegate.initDefaults(root, parentDelegate);
+    return delegate;
+}
+</code></pre>
+<ul>
+<li>
+<p><code>&lt;2&gt;</code> 处，检查 <code>&lt;beans/&gt;</code> <strong>根</strong>标签的命名空间是否为空，或者是 http://www.springframework.org/schema/beans 。</p>
+<ul>
+<li><code>&lt;2.1&gt;</code> 处，判断是否 <code>&lt;beans/&gt;</code> 上配置了 <code>profile</code> 属性。不了解这块的胖友，可以看下 <a href="http://nassir.iteye.com/blog/1535799">《《Spring3自定义环境配置 》》</a> 。</li>
+<li><code>&lt;2.2&gt;</code> 处，使用分隔符切分，可能有<strong>多个</strong> profile 。</li>
+<li><code>&lt;2.3&gt;</code> 处，判断，如果所有 profile 都无效，则 <code>return</code> 不进行注册。</li>
+</ul>
+</li>
+<li>
+<p><code>&lt;4&gt;</code> 处，调用 <code>#parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate)</code> 方法，进行解析逻辑。详细解析，见 <a href="http://svip.iocoder.cn/Spring/IoC-register-BeanDefinitions/#">「3.1 parseBeanDefinitions」</a> 。</p>
+</li>
+<li>
+<p><code>&lt;3&gt;</code> / <code>&lt;5&gt;</code> 处，解析<strong>前后</strong>的处理，目前这两个方法都是空实现，交由子类来实现。代码如下：</p>
+</li>
+</ul>
+<pre><code class="language-java">protected void preProcessXml(Element root) {}
+
+protected void postProcessXml(Element root) {}
+</code></pre>
+<h3 id="211-parsebeandefinitions">2.1.1 parseBeanDefinitions</h3>
+<p><code>#parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate)</code> 方法，进行解析逻辑。代码如下：</p>
+<pre><code class="language-java">/**
+ * Parse the elements at the root level in the document:
+ * &quot;import&quot;, &quot;alias&quot;, &quot;bean&quot;.
+ * @param root the DOM root element of the document
+ */
+protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
+    // &lt;1&gt; 如果根节点使用默认命名空间，执行默认解析
+    if (delegate.isDefaultNamespace(root)) {
+        // 遍历子节点
+        NodeList nl = root.getChildNodes();
+        for (int i = 0; i &lt; nl.getLength(); i++) {
+            Node node = nl.item(i);
+            if (node instanceof Element) {
+                Element ele = (Element) node;
+                // &lt;1&gt; 如果该节点使用默认命名空间，执行默认解析
+                if (delegate.isDefaultNamespace(ele)) {
+                    parseDefaultElement(ele, delegate);
+                // 如果该节点非默认命名空间，执行自定义解析
+                } else {
+                    delegate.parseCustomElement(ele);
+                }
+            }
+        }
+    // &lt;2&gt; 如果根节点非默认命名空间，执行自定义解析
+    } else {
+        delegate.parseCustomElement(root);
+    }
+}
+</code></pre>
+<ul>
+<li>
+<p>Spring 有<strong>两种</strong> Bean 声明方式：</p>
+<ul>
+<li>配置文件式声明：<code>&lt;bean id=&quot;studentService&quot; class=&quot;org.springframework.core.StudentService&quot; /&gt;</code> 。对应 <code>&lt;1&gt;</code> 处。</li>
+<li>自定义注解方式：<code>&lt;tx:annotation-driven&gt;</code> 。对应 <code>&lt;2&gt;</code> 处。</li>
+</ul>
+</li>
+<li>
+<p><code>&lt;1&gt;</code> 处，如果<strong>根</strong>节点或<strong>子</strong>节点<strong>使用</strong>默认命名空间，调用 <code>#parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate)</code> 方法，执行默认解析。代码如下：</p>
+</li>
+</ul>
+<pre><code class="language-java">private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
+	if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) { // import
+		importBeanDefinitionResource(ele);
+	} else if (delegate.nodeNameEquals(ele, ALIAS_ELEMENT)) { // alias
+		processAliasRegistration(ele);
+	} else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) { // bean
+		processBeanDefinition(ele, delegate);
+	} else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) { // beans
+		// recurse
+		doRegisterBeanDefinitions(ele);
+	}
+}
+</code></pre>
+<p>详细的解析，见后续文章。</p>
+<ul>
+<li><code>&lt;2&gt;</code> 处，如果<strong>根</strong>节点或<strong>子</strong>节点<strong>不使用</strong>默认命名空间，调用 <code>BeanDefinitionParserDelegate#parseCustomElement(Element ele)</code> 方法，执行<strong>自定义</strong>解析。详细的解析，见后续文章。</li>
+</ul>
+<h1 id="3-createreadercontext">3. createReaderContext</h1>
+<p><code>#createReaderContext(Resource resource)</code> 方法，创建 XmlReaderContext 对象。代码如下：</p>
+<pre><code class="language-java">private ProblemReporter problemReporter = new FailFastProblemReporter();
+
+private ReaderEventListener eventListener = new EmptyReaderEventListener();
+
+private SourceExtractor sourceExtractor = new NullSourceExtractor();
+
+@Nullable
+private NamespaceHandlerResolver namespaceHandlerResolver;
+
+/**
+ * Create the {@link XmlReaderContext} to pass over to the document reader.
+ */
+public XmlReaderContext createReaderContext(Resource resource) {
+	return new XmlReaderContext(resource, this.problemReporter, this.eventListener,
+			this.sourceExtractor, this, getNamespaceHandlerResolver());
+}
+</code></pre>
+<p>关于 XmlReaderContext 的详细解析，见后续文章。</p>
+<h1 id="4-小结">4. 小结</h1>
+<p>至此，<code>XmlBeanDefinitionReader#doLoadBeanDefinitions(InputSource inputSource, Resource resource)</code> 方法中，做的三件事情已经全部分析完毕，下面将对 <strong>BeanDefinition 的解析过程</strong>做详细分析说明。</p>
+<p>另外，<code>XmlBeanDefinitionReader#doLoadBeanDefinitions(InputSource inputSource, Resource resource)</code> 方法，整体时序图如下：</p>
+<figure data-type="image" tabindex="1"><img src="http://static2.iocoder.cn/images/Spring/2019-02-16/01.jpg" alt="时序图" loading="lazy"></figure>
+<p>红框部分，就是 <strong>BeanDefinition 的解析过程</strong>。</p>
+
+							</div>
+							<div class="wow bounceInDown vt-post-tags">
+								
+								<a href="https://xinrong2019.github.io/tag/y2uDFThMC/" rel="tag">Spring</a>
+								
+							</div>
+							<nav class="navigation3 post-navigation3" role="navigation">
+
+								<div class="nav-links3">
+									
+									<div class="wow bounceInLeft nav-previous3"><a href="https://xinrong2019.github.io/post/mysql-jia-gou/"
+											rel="prev"> MySQL架构</a></div>
+									
+									
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/mian-xiang-jian-li-bian-cheng/"
+											rel="next"> 面向简历编程</a></div>
+									
+								</div>
+							</nav>
+							<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
+								<div class="author-avatar pull-left"><img
+										src="https://xinrong2019.github.io//images/avatar.png"></div>
+								
+								<div class="author-description">
+									<div class="author-title">
+										<div class="author-link" rel="author">Kim</div>
+									</div>
+									
+									
+									<p class="author-bio">Time waits for no one.</p>
+								</div>
+							</div>
+							
+						</div>
+					</article>
+					<div id="marlin_lite_about_widget-2" class="wow bounceInUp widget marlin_lite_about_widget"
+						data-wow-delay="0.1s">
+
+						
+						
+						<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '2f13af052cedc58f1f20',
+    clientSecret: 'ce03139f08944b2398d0f580a3d00ff58958c242',
+    repo: 'xinrong2019.github.io',
+    owner: 'xinrong2019',
+    admin: ['xinrong2019'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+						
+						
+						
+						<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://xinrong2019.github.io//media/scripts/Valine.min.js'></script>
+
+<div class="comment"></div>
+<script>
+        new Valine({
+            // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+            av: AV, 
+            el: '.comment',
+            lang: 'zh-cn',
+            
+            
+     	
+      	
+          
+        });
+    </script> 
+
+
+					</div>
+				</div>
+				<div class="tocc col l3 hide-on-med-and-down">
+
+    <div class="toc-widget">
+
+        <div class="toc-title"></div>
+
+        <div id="toc-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.5.0/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '.entry-summary',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('.entry-summary').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+
+    $(function () {
+        var bt;
+        bt = $('.toc-widget');
+        if ($(document).width() > 480) {
+            $(window).scroll(function () {
+                var st;
+                st = $(window).scrollTop();
+                if (st > 450) {
+                    return bt.css('display', 'block');
+                } else {
+                    return bt.css('display', 'none');
+                }
+            })
+        }
+    });
+</script>
+			</div>
+		</div>
+		<footer id="colophon" class="site-footer">
+	<div class="container">
+		<div class="copyright">
+			Created by Kim.
+			<br>
+			<b>Theme: </b>
+			<a href="https://github.com/alterfang/gridea-theme-pan" target="_blank" title="Pan">
+				<span><b>Pan</b></span>
+			</a>
+			<b>. Powered by </b>
+			<a href="https://gridea.dev/" target="_blank" title="Gridea">
+				<span><b>Gridea</b></span>
+			</a>
+		</div>
+	</div><!-- .container -->
+</footer><!-- #colophon -->
+	</div>
+
+	<script src="https://cdn.bootcss.com/fitvids/1.2.0/jquery.fitvids.min.js"></script>
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/marlin-scripts.js'></script>
+<script src="//tokinx.github.io/lately/lately.min.js"></script>
+<script>
+  jQuery(document).ready(function () {
+    $.lately({
+      'target': '.lately-a,.lately-b,.lately-c'
+    })
+  });
+</script>
+<style type="text/css">
+  /* 一键到顶部 */
+  a.back_to_top {
+    text-decoration: none;
+    position: fixed;
+    bottom: 65px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.back_to_top span {
+    color: #888;
+  }
+
+  a.back_to_top:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.back_to_top:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .back_to_top {
+      display: none !important;
+    }
+  }
+
+  /* 一键到底部 */
+
+  a.down_to_bottom {
+    text-decoration: none;
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.down_to_bottom span {
+    color: #888;
+  }
+
+  a.down_to_bottom:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.down_to_bottom:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .down_to_bottom {
+      display: none !important;
+    }
+  }
+</style>
+
+
+<a id="back_to_top" href="#" class="back_to_top"><span><i class="iconfont icon-xiangshang"></i></span>
+</a>
+
+<a id="down_to_bottom" href="#" class="down_to_bottom"><span><i class="iconfont icon-xiangxia"></i></span>
+</a>
+
+<script src="//instant.page/3.0.0" type="module" defer
+  integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+<script>
+  function getScrollTop() {
+    var scrollTop = 0,
+      bodyScrollTop = 0,
+      documentScrollTop = 0;
+    if (document.body) {
+      bodyScrollTop = document.body.scrollTop;
+    }
+    if (document.documentElement) {
+      documentScrollTop = document.documentElement.scrollTop;
+    }
+    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+    return scrollTop;
+  };
+
+  function getScrollHeight() {
+    var scrollHeight = 0,
+      bodyScrollHeight = 0,
+      documentScrollHeight = 0;
+    if (document.body) {
+      bSH = document.body.scrollHeight;
+    }
+    if (document.documentElement) {
+      dSH = document.documentElement.scrollHeight;
+    }
+    scrollHeight = (bSH - dSH > 0) ? bSH : dSH;
+    return scrollHeight;
+  };
+
+  function getWindowHeight() {
+    var windowHeight = 0;
+    if (document.compatMode == "CSS1Compat") {
+      windowHeight = document.documentElement.clientHeight;
+    } else {
+      windowHeight = document.body.clientHeight;
+    }
+    return windowHeight;
+  };
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block');
+          } else {
+            return bt.css('display', 'none');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: 0
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#down_to_bottom');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+            return bt.css('display', 'none');
+          } else {
+            return bt.css('display', 'block');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: $('body,html')[0].scrollHeight
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+</script>
+	<script data-no-instant>
+		(function ($) {
+			$.extend({
+				adamsOverload: function () {
+					$('.navigation:eq(0)').remove();
+					$("").attr("rel", "external");
+					$("a[rel='external'],a[rel='external nofollow']").attr("target", "_blank");
+					$("a.vi").attr("rel", "");
+					$.viewImage({
+						'target': 'img',
+						'exclude': '.vsmile-icons img,.gallery img',
+						'delay': 300
+					});
+					$.lately({
+						'target': '.commentmetadata a,.infos time,.post-list time'
+					});
+					prettyPrint();
+
+					$('ul.links li a').each(function () {
+						if ($(this).parent().find('.bg').length == 0) {
+							$(this).parent().append(
+								'<!---<div class="bg" style="background-image:url(https://c3.glgoo.top/s2/favicons?domain=' +
+								$(this).attr("href") + ')"></div>--->')
+						}
+					});
+				}
+			});
+		})(jQuery);
+		jQuery.adamsOverload();
+	</script>
+
+</body>
+
+</html>

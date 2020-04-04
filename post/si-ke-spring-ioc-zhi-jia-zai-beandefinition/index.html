@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<meta HTTP-EQUIV="expires" CONTENT="0"> 
+<title>[死磕Spring]--IoC之加载 BeanDefinition | Eucaly</title>	
+
+<link rel="stylesheet" href="https://xinrong2019.github.io//styles/main.css">
+<script type="text/javascript">
+function getCSS()
+{
+        datetoday = new Date();
+        timenow=datetoday.getTime();
+        datetoday.setTime(timenow);
+        thehour = datetoday.getHours();
+
+            display = "https://xinrong2019.github.io//media/css/night.css";
+
+            display = "https://xinrong2019.github.io//media/css/night.css";   
+      
+            display = "https://xinrong2019.github.io//media/css/day.css";
+
+            display = "https://xinrong2019.github.io//media/css/day.css";
+      
+
+var css = '<';
+        css+='link rel="stylesheet" href='+display+' \/';
+        css+='>';
+        document.write(css);
+}
+</script>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Noto+Sans+SC:300|Montserrat&display=swap" rel="stylesheet">
+<link href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css" rel="stylesheet" />
+<link href="https://at.alicdn.com/t/font_1651848_tf0hnpbyjfj.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/script.js'></script>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet" />
+  <script src="https://cdn.bootcss.com/wow/1.1.2/wow.min.js"></script>
+  <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>wow=new WOW({boxClass:'wow',animateClass:'animated',offset:0,mobile:true,live:true});wow.init();</script>
+
+<script type="text/javascript">
+window.onload=getCSS();
+</script>
+
+
+</head>
+
+<body class="post-template-default single single-post postid-70 single-format-standard">
+	<div id="wrapper">
+				<header id="header" class="site-header" >
+			<div class="site-branding">
+				<h1 class="site-title">
+					<div class="post-title-name">
+						<a href="https://xinrong2019.github.io/" rel="home">[死磕Spring]--IoC之加载 BeanDefinition</a>
+					</div>
+				</h1>
+				<h2 class="site-description">Time waits for no one.</h2>
+			</div>
+			<nav id="nav-wrapper">
+				<div class="container">
+					<div class="nav-toggle">
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<ul id="" class="dove">
+						
+
+						<li>
+
+							<a href="/"> 首页</a></li>
+
+						
+
+						<li>
+
+							<a href="/archives"> 归档</a></li>
+
+						
+
+						<li>
+
+							<a href="/tags"> 标签</a></li>
+
+						
+
+						<li>
+
+							<a href="/friends"> 友链</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mysql"> MySQL</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/dubbo"> Dubbo</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mq"> MQ</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/spring"> Spring</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/about"> 关于</a></li>
+
+						
+
+					</ul>
+					</li>
+
+					</ul>
+				</div>
+			</nav>
+
+			<div class="jingge">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			<form id="gridea-search-form" data-update="1585982810028" action="/search/index.html">
+				<div class="search-box">
+					<input class="search-txt" name="q" placeholder="Type to search" />
+					<a class="search-btn">
+						<i class="iconfont icon-search1" action="/search/index.html"></i>
+					</a>
+				</div>
+			</form>
+		</header>
+		<div id="content" class="container">
+			<div class="row">
+				<div class="col-md-8 site-main">
+					<article id="post-70"
+						class="post-70 post type-post status-publish format-standard hentry category-5 tag-10 tag-9 tag-11">
+						<div class="entry-content">
+							<div class="entry-meta">
+								<div class="entry-info">
+									<time>
+										2020-01-17
+									</time>
+									<span>
+										8 min read
+									</span>
+								</div>
+							</div>
+							<div class="wow slideInLeft entry-summary song">
+								<p><strong>本文主要基于 Spring 5.0.6.RELEASE</strong></p>
+<p>摘要: 原创出处 http://cmsblogs.com/?p=2658 「小明哥」</p>
+<p>先看一段熟悉的代码：</p>
+<pre><code class="language-java">ClassPathResource resource = new ClassPathResource(&quot;bean.xml&quot;); // &lt;1&gt;
+DefaultListableBeanFactory factory = new DefaultListableBeanFactory(); // &lt;2&gt;
+XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory); // &lt;3&gt;
+reader.loadBeanDefinitions(resource); // &lt;4&gt;
+</code></pre>
+<p>这段代码是 Spring 中编程式使用 IoC 容器，通过这四段简单的代码，我们可以初步判断 IoC 容器的使用过程。</p>
+<ol>
+<li>获取资源</li>
+<li>获取 BeanFactory</li>
+<li>根据新建的 BeanFactory 创建一个 BeanDefinitionReader 对象，该 Reader 对象为资源的<strong>解析器</strong></li>
+<li>装载资源</li>
+</ol>
+<p>整个过程就分为三个步骤：资源定位、装载、注册，如下：</p>
+<figure data-type="image" tabindex="1"><img src="http://static.iocoder.cn/1e395ffbda4fe58a49897854a7d72ce9" alt="整体步骤" loading="lazy"></figure>
+<ul>
+<li><strong>资源定位</strong>。我们一般用外部资源来描述 Bean 对象，所以在初始化 IoC 容器的第一步就是需要定位这个外部资源。在上一篇博客（<a href="http://svip.iocoder.cn/Spring/IoC-load-Resource">《【死磕 Spring】—— IoC 之 Spring 统一资源加载策略》</a>）已经详细说明了资源加载的过程。</li>
+<li><strong>装载</strong>。装载就是 BeanDefinition 的载入。BeanDefinitionReader 读取、解析 Resource 资源，也就是将用户定义的 Bean 表示成 IoC 容器的内部数据结构：BeanDefinition 。
+<ul>
+<li>在 IoC 容器内部维护着一个 BeanDefinition Map 的数据结构</li>
+<li>在配置文件中每一个<code>&lt;bea&gt;</code> 都对应着一个 BeanDefinition 对象。</li>
+<li>😈 本文，我们分享的就是<strong>装载</strong>这个步骤。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>FROM 《Spring 源码深度解析》P16 页<br>
+BeanDefinitionReader ，主要定义资源文件读取并转换为 BeanDefinition 的各个功能。</p>
+</blockquote>
+<ul>
+<li>
+<p><strong>注册</strong>。向 IoC 容器注册在第二步解析好的 BeanDefinition，这个过程是通过  BeanDefinitionRegistry 接口来实现的。在 IoC 容器内部其实是将第二个过程解析得到的 BeanDefinition  注入到一个 HashMap 容器中，IoC 容器就是通过这个 HashMap 来维护这些 BeanDefinition 的。</p>
+<ul>
+<li>
+<p>在这里需要注意的一点是这个过程并没有完成依赖注入（Bean 创建），Bean 创建是发生在应用第一次调用 <code>#getBean(...)</code> 方法，向容器索要 Bean 时。</p>
+</li>
+<li>
+<p>当然我们可以通过设置预处理，即对某个 Bean 设置 <code>lazyinit = false</code> 属性，那么这个 Bean 的依赖注入就会在容器初始化的时候完成。</p>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>FROM 老艿艿</p>
+<p>简单的说，上面步骤的结果是，XML Resource =&gt; XML Document =&gt; Bean Definition 。</p>
+</blockquote>
+<h1 id="1-loadbeandefinitions">1. loadBeanDefinitions</h1>
+<p>资源定位在前面已经分析了，下面我们直接分析<strong>加载</strong>，上面看到的  <code>reader.loadBeanDefinitions(resource)</code> 代码，才是加载资源的真正实现，所以我们直接从该方法入手。代码如下：</p>
+<pre><code class="language-java">// XmlBeanDefinitionReader.java
+@Override
+public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
+	return loadBeanDefinitions(new EncodedResource(resource));
+}
+</code></pre>
+<ul>
+<li>从指定的 xml 文件加载 Bean Definition ，这里会先对 Resource 资源封装成 <code>org.springframework.core.io.support.EncodedResource</code> 对象。这里为什么需要将 Resource 封装成 EncodedResource 呢？主要是为了对 Resource 进行编码，保证内容读取的正确性。</li>
+<li>然后，再调用 <code>#loadBeanDefinitions(EncodedResource encodedResource)</code> 方法，执行真正的逻辑实现。</li>
+</ul>
+<pre><code class="language-java">/**
+ * 当前线程，正在加载的 EncodedResource 集合。
+ */
+private final ThreadLocal&lt;Set&lt;EncodedResource&gt;&gt; resourcesCurrentlyBeingLoaded = new NamedThreadLocal&lt;&gt;(&quot;XML bean definition resources currently being loaded&quot;);
+
+public int loadBeanDefinitions(EncodedResource encodedResource) throws BeanDefinitionStoreException {
+	Assert.notNull(encodedResource, &quot;EncodedResource must not be null&quot;);
+	if (logger.isTraceEnabled()) {
+		logger.trace(&quot;Loading XML bean definitions from &quot; + encodedResource);
+	}
+
+	// &lt;1&gt; 获取已经加载过的资源
+	Set&lt;EncodedResource&gt; currentResources = this.resourcesCurrentlyBeingLoaded.get();
+	if (currentResources == null) {
+		currentResources = new HashSet&lt;&gt;(4);
+		this.resourcesCurrentlyBeingLoaded.set(currentResources);
+	}
+	if (!currentResources.add(encodedResource)) { // 将当前资源加入记录中。如果已存在，抛出异常
+		throw new BeanDefinitionStoreException(&quot;Detected cyclic loading of &quot; + encodedResource + &quot; - check your import definitions!&quot;);
+	}
+	try {
+		// &lt;2&gt; 从 EncodedResource 获取封装的 Resource ，并从 Resource 中获取其中的 InputStream
+		InputStream inputStream = encodedResource.getResource().getInputStream();
+		try {
+			InputSource inputSource = new InputSource(inputStream);
+			if (encodedResource.getEncoding() != null) { // 设置编码
+				inputSource.setEncoding(encodedResource.getEncoding());
+			}
+			// 核心逻辑部分，执行加载 BeanDefinition
+			return doLoadBeanDefinitions(inputSource, encodedResource.getResource());
+		} finally {
+			inputStream.close();
+		}
+	} catch (IOException ex) {
+		throw new BeanDefinitionStoreException(&quot;IOException parsing XML document from &quot; + encodedResource.getResource(), ex);
+	} finally {
+		// 从缓存中剔除该资源 &lt;3&gt;
+		currentResources.remove(encodedResource);
+		if (currentResources.isEmpty()) {
+			this.resourcesCurrentlyBeingLoaded.remove();
+		}
+	}
+}
+</code></pre>
+<ul>
+<li>
+<p><code>&lt;1&gt;</code> 处，通过 <code>resourcesCurrentlyBeingLoaded.get()</code> 代码，来获取已经加载过的资源，然后将<code>encodedResource</code> 加入其中，如果 <code>resourcesCurrentlyBeingLoaded</code> 中已经存在该资源，则抛出 <code>BeanDefinitionStoreException</code>异常。</p>
+</li>
+<li>
+<p>为什么需要这么做呢？答案在 <code>&quot;Detected cyclic loading&quot;</code> ，避免一个 EncodedResource 在加载时，还没加载完成，又加载自身，从而导致<strong>死循环</strong>。</p>
+<ul>
+<li>也因此，在 <code>&lt;3&gt;</code> 处，当一个 EncodedResource 加载完成后，需要从缓存中剔除。</li>
+</ul>
+</li>
+<li>
+<p><code>&lt;2&gt;</code> 处理，从 <code>encodedResource</code> 获取封装的 Resource 资源，并从 Resource 中获取相应的 InputStream ，然后将 InputStream 封装为 InputSource ，最后调用 <code>#doLoadBeanDefinitions(InputSource inputSource, Resource resource)</code> 方法，执行加载 Bean Definition 的真正逻辑。</p>
+</li>
+</ul>
+<h1 id="2-doloadbeandefinitions">2. doLoadBeanDefinitions</h1>
+<pre><code class="language-java">/**
+ * Actually load bean definitions from the specified XML file.
+ * @param inputSource the SAX InputSource to read from
+ * @param resource the resource descriptor for the XML file
+ * @return the number of bean definitions found
+ * @throws BeanDefinitionStoreException in case of loading or parsing errors
+ * @see #doLoadDocument
+ * @see #registerBeanDefinitions
+ */
+protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
+		throws BeanDefinitionStoreException {
+	try {
+		// &lt;1&gt; 获取 XML Document 实例
+		Document doc = doLoadDocument(inputSource, resource);
+		// &lt;2&gt; 根据 Document 实例，注册 Bean 信息
+		int count = registerBeanDefinitions(doc, resource);
+		if (logger.isDebugEnabled()) {
+			logger.debug(&quot;Loaded &quot; + count + &quot; bean definitions from &quot; + resource);
+		}
+		return count;
+	} catch (BeanDefinitionStoreException ex) {
+		throw ex;
+	} catch (SAXParseException ex) {
+		throw new XmlBeanDefinitionStoreException(resource.getDescription(),
+                &quot;Line &quot; + ex.getLineNumber() + &quot; in XML document from &quot; + resource + &quot; is invalid&quot;, ex);
+	} catch (SAXException ex) {
+		throw new XmlBeanDefinitionStoreException(resource.getDescription(),
+				&quot;XML document from &quot; + resource + &quot; is invalid&quot;, ex);
+	} catch (ParserConfigurationException ex) {
+		throw new BeanDefinitionStoreException(resource.getDescription(),
+				&quot;Parser configuration exception parsing XML from &quot; + resource, ex);
+	} catch (IOException ex) {
+		throw new BeanDefinitionStoreException(resource.getDescription(),
+				&quot;IOException parsing XML document from &quot; + resource, ex);
+	} catch (Throwable ex) {
+		throw new BeanDefinitionStoreException(resource.getDescription(),
+				&quot;Unexpected exception parsing XML document from &quot; + resource, ex);
+	}
+}
+</code></pre>
+<ul>
+<li>在 <code>&lt;1&gt;</code> 处，调用 <code>#doLoadDocument(InputSource inputSource, Resource resource)</code> 方法，根据 xml 文件，获取 Document 实例。</li>
+<li>在 <code>&lt;2&gt;</code> 处，调用 <code>#registerBeanDefinitions(Document doc, Resource resource)</code> 方法，根据获取的 Document 实例，注册 Bean 信息。</li>
+</ul>
+<h2 id="21-doloaddocument">2.1 doLoadDocument</h2>
+<pre><code class="language-java">/**
+ * 获取 XML Document 实例
+ *
+ * Actually load the specified document using the configured DocumentLoader.
+ * @param inputSource the SAX InputSource to read from
+ * @param resource the resource descriptor for the XML file
+ * @return the DOM Document
+ * @throws Exception when thrown from the DocumentLoader
+ * @see #setDocumentLoader
+ * @see DocumentLoader#loadDocument
+ */
+protected Document doLoadDocument(InputSource inputSource, Resource resource) throws Exception {
+	return this.documentLoader.loadDocument(inputSource, getEntityResolver(), this.errorHandler,
+			getValidationModeForResource(resource), isNamespaceAware());
+}
+</code></pre>
+<ol>
+<li>调用 <code>#getValidationModeForResource(Resource resource)</code> 方法，获取指定资源（xml）的<strong>验证模式</strong>。详细解析，见 <a href="http://svip.iocoder.cn/Spring/IoC-Validation-Mode-For-Resource">《【死磕 Spring】—— IoC 之获取验证模型》</a> 。</li>
+<li>调用 <code>DocumentLoader#loadDocument(InputSource inputSource, EntityResolver entityResolver, ErrorHandler errorHandler, int validationMode, boolean namespaceAware)</code> 方法，获取 XML Document 实例。详细解析，见 <a href="http://svip.iocoder.cn/Spring/IoC-load-Document">《【死磕 Spring】—— IoC 之获取 Document 对象》</a> 。</li>
+</ol>
+<h2 id="22-registerbeandefinitions">2.2 registerBeanDefinitions</h2>
+<p>该方法的详细解析，见 <a href="http://svip.iocoder.cn/Spring/IoC-register-BeanDefinitions">《【死磕 Spring】—— IoC 之注册 BeanDefinition》</a> 。</p>
+
+							</div>
+							<div class="wow bounceInDown vt-post-tags">
+								
+								<a href="https://xinrong2019.github.io/tag/y2uDFThMC/" rel="tag">Spring</a>
+								
+							</div>
+							<nav class="navigation3 post-navigation3" role="navigation">
+
+								<div class="nav-links3">
+									
+									<div class="wow bounceInLeft nav-previous3"><a href="https://xinrong2019.github.io/post/si-ke-spring-ioc-zhi-huo-qu-yan-zheng-mo-xing/"
+											rel="prev"> [死磕Spring]--IOC之获取验证模型</a></div>
+									
+									
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/ge-ren-guan-li/"
+											rel="next"> 个人管理</a></div>
+									
+								</div>
+							</nav>
+							<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
+								<div class="author-avatar pull-left"><img
+										src="https://xinrong2019.github.io//images/avatar.png"></div>
+								
+								<div class="author-description">
+									<div class="author-title">
+										<div class="author-link" rel="author">Kim</div>
+									</div>
+									
+									
+									<p class="author-bio">Time waits for no one.</p>
+								</div>
+							</div>
+							
+						</div>
+					</article>
+					<div id="marlin_lite_about_widget-2" class="wow bounceInUp widget marlin_lite_about_widget"
+						data-wow-delay="0.1s">
+
+						
+						
+						<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '2f13af052cedc58f1f20',
+    clientSecret: 'ce03139f08944b2398d0f580a3d00ff58958c242',
+    repo: 'xinrong2019.github.io',
+    owner: 'xinrong2019',
+    admin: ['xinrong2019'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+						
+						
+						
+						<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://xinrong2019.github.io//media/scripts/Valine.min.js'></script>
+
+<div class="comment"></div>
+<script>
+        new Valine({
+            // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+            av: AV, 
+            el: '.comment',
+            lang: 'zh-cn',
+            
+            
+     	
+      	
+          
+        });
+    </script> 
+
+
+					</div>
+				</div>
+				<div class="tocc col l3 hide-on-med-and-down">
+
+    <div class="toc-widget">
+
+        <div class="toc-title"></div>
+
+        <div id="toc-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.5.0/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '.entry-summary',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('.entry-summary').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+
+    $(function () {
+        var bt;
+        bt = $('.toc-widget');
+        if ($(document).width() > 480) {
+            $(window).scroll(function () {
+                var st;
+                st = $(window).scrollTop();
+                if (st > 450) {
+                    return bt.css('display', 'block');
+                } else {
+                    return bt.css('display', 'none');
+                }
+            })
+        }
+    });
+</script>
+			</div>
+		</div>
+		<footer id="colophon" class="site-footer">
+	<div class="container">
+		<div class="copyright">
+			Created by Kim.
+			<br>
+			<b>Theme: </b>
+			<a href="https://github.com/alterfang/gridea-theme-pan" target="_blank" title="Pan">
+				<span><b>Pan</b></span>
+			</a>
+			<b>. Powered by </b>
+			<a href="https://gridea.dev/" target="_blank" title="Gridea">
+				<span><b>Gridea</b></span>
+			</a>
+		</div>
+	</div><!-- .container -->
+</footer><!-- #colophon -->
+	</div>
+
+	<script src="https://cdn.bootcss.com/fitvids/1.2.0/jquery.fitvids.min.js"></script>
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/marlin-scripts.js'></script>
+<script src="//tokinx.github.io/lately/lately.min.js"></script>
+<script>
+  jQuery(document).ready(function () {
+    $.lately({
+      'target': '.lately-a,.lately-b,.lately-c'
+    })
+  });
+</script>
+<style type="text/css">
+  /* 一键到顶部 */
+  a.back_to_top {
+    text-decoration: none;
+    position: fixed;
+    bottom: 65px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.back_to_top span {
+    color: #888;
+  }
+
+  a.back_to_top:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.back_to_top:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .back_to_top {
+      display: none !important;
+    }
+  }
+
+  /* 一键到底部 */
+
+  a.down_to_bottom {
+    text-decoration: none;
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.down_to_bottom span {
+    color: #888;
+  }
+
+  a.down_to_bottom:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.down_to_bottom:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .down_to_bottom {
+      display: none !important;
+    }
+  }
+</style>
+
+
+<a id="back_to_top" href="#" class="back_to_top"><span><i class="iconfont icon-xiangshang"></i></span>
+</a>
+
+<a id="down_to_bottom" href="#" class="down_to_bottom"><span><i class="iconfont icon-xiangxia"></i></span>
+</a>
+
+<script src="//instant.page/3.0.0" type="module" defer
+  integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+<script>
+  function getScrollTop() {
+    var scrollTop = 0,
+      bodyScrollTop = 0,
+      documentScrollTop = 0;
+    if (document.body) {
+      bodyScrollTop = document.body.scrollTop;
+    }
+    if (document.documentElement) {
+      documentScrollTop = document.documentElement.scrollTop;
+    }
+    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+    return scrollTop;
+  };
+
+  function getScrollHeight() {
+    var scrollHeight = 0,
+      bodyScrollHeight = 0,
+      documentScrollHeight = 0;
+    if (document.body) {
+      bSH = document.body.scrollHeight;
+    }
+    if (document.documentElement) {
+      dSH = document.documentElement.scrollHeight;
+    }
+    scrollHeight = (bSH - dSH > 0) ? bSH : dSH;
+    return scrollHeight;
+  };
+
+  function getWindowHeight() {
+    var windowHeight = 0;
+    if (document.compatMode == "CSS1Compat") {
+      windowHeight = document.documentElement.clientHeight;
+    } else {
+      windowHeight = document.body.clientHeight;
+    }
+    return windowHeight;
+  };
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block');
+          } else {
+            return bt.css('display', 'none');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: 0
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#down_to_bottom');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+            return bt.css('display', 'none');
+          } else {
+            return bt.css('display', 'block');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: $('body,html')[0].scrollHeight
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+</script>
+	<script data-no-instant>
+		(function ($) {
+			$.extend({
+				adamsOverload: function () {
+					$('.navigation:eq(0)').remove();
+					$("").attr("rel", "external");
+					$("a[rel='external'],a[rel='external nofollow']").attr("target", "_blank");
+					$("a.vi").attr("rel", "");
+					$.viewImage({
+						'target': 'img',
+						'exclude': '.vsmile-icons img,.gallery img',
+						'delay': 300
+					});
+					$.lately({
+						'target': '.commentmetadata a,.infos time,.post-list time'
+					});
+					prettyPrint();
+
+					$('ul.links li a').each(function () {
+						if ($(this).parent().find('.bg').length == 0) {
+							$(this).parent().append(
+								'<!---<div class="bg" style="background-image:url(https://c3.glgoo.top/s2/favicons?domain=' +
+								$(this).attr("href") + ')"></div>--->')
+						}
+					});
+				}
+			});
+		})(jQuery);
+		jQuery.adamsOverload();
+	</script>
+
+</body>
+
+</html>

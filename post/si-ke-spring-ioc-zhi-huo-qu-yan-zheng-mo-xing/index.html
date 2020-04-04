@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<meta HTTP-EQUIV="expires" CONTENT="0"> 
+<title>[死磕Spring]--IOC之获取验证模型 | Eucaly</title>	
+
+<link rel="stylesheet" href="https://xinrong2019.github.io//styles/main.css">
+<script type="text/javascript">
+function getCSS()
+{
+        datetoday = new Date();
+        timenow=datetoday.getTime();
+        datetoday.setTime(timenow);
+        thehour = datetoday.getHours();
+
+            display = "https://xinrong2019.github.io//media/css/night.css";
+
+            display = "https://xinrong2019.github.io//media/css/night.css";   
+      
+            display = "https://xinrong2019.github.io//media/css/day.css";
+
+            display = "https://xinrong2019.github.io//media/css/day.css";
+      
+
+var css = '<';
+        css+='link rel="stylesheet" href='+display+' \/';
+        css+='>';
+        document.write(css);
+}
+</script>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Noto+Sans+SC:300|Montserrat&display=swap" rel="stylesheet">
+<link href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css" rel="stylesheet" />
+<link href="https://at.alicdn.com/t/font_1651848_tf0hnpbyjfj.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/script.js'></script>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet" />
+  <script src="https://cdn.bootcss.com/wow/1.1.2/wow.min.js"></script>
+  <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>wow=new WOW({boxClass:'wow',animateClass:'animated',offset:0,mobile:true,live:true});wow.init();</script>
+
+<script type="text/javascript">
+window.onload=getCSS();
+</script>
+
+
+</head>
+
+<body class="post-template-default single single-post postid-70 single-format-standard">
+	<div id="wrapper">
+				<header id="header" class="site-header" >
+			<div class="site-branding">
+				<h1 class="site-title">
+					<div class="post-title-name">
+						<a href="https://xinrong2019.github.io/" rel="home">[死磕Spring]--IOC之获取验证模型</a>
+					</div>
+				</h1>
+				<h2 class="site-description">Time waits for no one.</h2>
+			</div>
+			<nav id="nav-wrapper">
+				<div class="container">
+					<div class="nav-toggle">
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<ul id="" class="dove">
+						
+
+						<li>
+
+							<a href="/"> 首页</a></li>
+
+						
+
+						<li>
+
+							<a href="/archives"> 归档</a></li>
+
+						
+
+						<li>
+
+							<a href="/tags"> 标签</a></li>
+
+						
+
+						<li>
+
+							<a href="/friends"> 友链</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mysql"> MySQL</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/dubbo"> Dubbo</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mq"> MQ</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/spring"> Spring</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/about"> 关于</a></li>
+
+						
+
+					</ul>
+					</li>
+
+					</ul>
+				</div>
+			</nav>
+
+			<div class="jingge">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			<form id="gridea-search-form" data-update="1585982810028" action="/search/index.html">
+				<div class="search-box">
+					<input class="search-txt" name="q" placeholder="Type to search" />
+					<a class="search-btn">
+						<i class="iconfont icon-search1" action="/search/index.html"></i>
+					</a>
+				</div>
+			</form>
+		</header>
+		<div id="content" class="container">
+			<div class="row">
+				<div class="col-md-8 site-main">
+					<article id="post-70"
+						class="post-70 post type-post status-publish format-standard hentry category-5 tag-10 tag-9 tag-11">
+						<div class="entry-content">
+							<div class="entry-meta">
+								<div class="entry-info">
+									<time>
+										2020-01-17
+									</time>
+									<span>
+										10 min read
+									</span>
+								</div>
+							</div>
+							<div class="wow slideInLeft entry-summary song">
+								<p><strong>本文主要基于 Spring 5.0.6.RELEASE</strong></p>
+<p>摘要: 原创出处 http://cmsblogs.com/?p=2688 「小明哥」，谢谢！</p>
+<p>在上篇博客<a href="http://svip.iocoder.cn/Spring/IoC-load-BeanDefinitions">【死磕 Spring】—— IoC 之加载 Definitions</a> 中提到，在核心逻辑方法 <code>#doLoadBeanDefinitions(InputSource inputSource, Resource resource)</code> 方法中，中主要是做三件事情：</p>
+<ol>
+<li>调用 <code>#getValidationModeForResource(Resource resource)</code> 方法，获取指定资源（xml）的<strong>验证模式</strong>。</li>
+<li>调用 <code>DocumentLoader#loadDocument(InputSource inputSource, EntityResolver entityResolver,ErrorHandler errorHandler, int validationMode, boolean namespaceAware)</code> 方法，获取 XML Document 实例。</li>
+<li>调用 <code>#registerBeanDefinitions(Document doc, Resource resource)</code> 方法，根据获取的 Document 实例，注册 Bean 信息。</li>
+</ol>
+<p>这篇博客主要<strong>第 1 步</strong>，分析获取 xml 文件的验证模式。为什么需要获取验证模式呢？原因如下：</p>
+<blockquote>
+<p>XML 文件的验证模式保证了 XML 文件的正确性。</p>
+</blockquote>
+<h1 id="1-dtd-与-xsd-的区别">1. DTD 与 XSD 的区别</h1>
+<h2 id="11-dtd">1.1 DTD</h2>
+<p>DTD(Document Type Definition)，即文档类型定义，为 XML 文件的验证机制，属于 XML  文件中组成的一部分。DTD 是一种保证 XML 文档格式正确的有效验证方式，它定义了相关 XML  文档的元素、属性、排列方式、元素的内容类型以及元素的层次结构。其实 DTD 就相当于 XML 中的 “词汇”和“语法”，我们可以通过比较 XML 文件和 DTD 文件 来看文档是否符合规范，元素和标签使用是否正确。</p>
+<p>要在 Spring 中使用 DTD，需要在 Spring XML 文件头部声明：</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE beans PUBLIC  &quot;-//SPRING//DTD BEAN//EN&quot;  &quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;
+</code></pre>
+<ol>
+<li>它没有使用 XML 格式，而是自己定义了一套格式，相对解析器的重用性较差；而且 DTD 的构建和访问没有标准的编程接口，因而解析器很难简单的解析 DTD 文档。</li>
+<li>DTD 对元素的类型限制较少；同时其他的约束力也叫弱。</li>
+<li>DTD 扩展能力较差。</li>
+<li>基于正则表达式的 DTD 文档的描述能力有限。</li>
+</ol>
+<h2 id="12-xsd">1.2 XSD</h2>
+<p>针对 DTD 的缺陷，W3C 在 2001 年推出 XSD。XSD（XML Schemas Definition）即 XML Schema 语言。XML Schema 本身就是一个 XML文档，使用的是 XML 语法，因此可以很方便的解析 XSD 文档。相对于 DTD，XSD  具有如下<strong>优势</strong>：</p>
+<ol>
+<li>XML Schema 基于 XML ，没有专门的语法。</li>
+<li>XML Schema 可以象其他 XML 文件一样解析和处理。</li>
+<li>XML Schema 比 DTD 提供了更丰富的数据类型。</li>
+<li>XML Schema 提供可扩充的数据模型。</li>
+<li>XML Schema 支持综合命名空间。</li>
+<li>XML Schema 支持属性组。</li>
+</ol>
+<h1 id="2-getvalidationmodeforresource">2. getValidationModeForResource</h1>
+<pre><code class="language-java">// XmlBeanDefinitionReader.java
+
+// 禁用验证模式
+public static final int VALIDATION_NONE = XmlValidationModeDetector.VALIDATION_NONE;
+// 自动获取验证模式
+public static final int VALIDATION_AUTO = XmlValidationModeDetector.VALIDATION_AUTO;
+// DTD 验证模式
+public static final int VALIDATION_DTD = XmlValidationModeDetector.VALIDATION_DTD;
+// XSD 验证模式
+public static final int VALIDATION_XSD = XmlValidationModeDetector.VALIDATION_XSD;
+	
+/**
+ * 验证模式。默认为自动模式。
+ */
+private int validationMode = VALIDATION_AUTO;
+	
+protected int getValidationModeForResource(Resource resource) {
+	// &lt;1&gt; 获取指定的验证模式
+	int validationModeToUse = getValidationMode();
+	// 首先，如果手动指定，则直接返回
+	if (validationModeToUse != VALIDATION_AUTO) {
+		return validationModeToUse;
+	}
+	// 其次，自动获取验证模式
+	int detectedMode = detectValidationMode(resource);
+	if (detectedMode != VALIDATION_AUTO) {
+		return detectedMode;
+	}
+	// 最后，使用 VALIDATION_XSD 做为默认
+	// Hmm, we didn't get a clear indication... Let's assume XSD,
+	// since apparently no DTD declaration has been found up until
+	// detection stopped (before finding the document's root tag).
+	return VALIDATION_XSD;
+}
+</code></pre>
+<ul>
+<li><code>&lt;1&gt;</code> 处，调用 <code>#getValidationMode()</code> 方法，获取指定的验证模式( <code>validationMode</code> )。如果有手动指定，则直接返回。另外，对对于 <code>validationMode</code> 属性的设置和获得的代码，代码如下：</li>
+</ul>
+<pre><code class="language-java">public void setValidationMode(int validationMode) {
+	this.validationMode = validationMode;
+}
+
+public int getValidationMode() {
+	return this.validationMode;
+}
+</code></pre>
+<ul>
+<li><code>&lt;2&gt;</code> 处，调用 <code>#detectValidationMode(Resource resource)</code> 方法，自动获取验证模式。代码如下：</li>
+</ul>
+<pre><code class="language-java"> /**
+   * XML 验证模式探测器
+   */
+  private final XmlValidationModeDetector validationModeDetector = new XmlValidationModeDetector();
+	
+  protected int detectValidationMode(Resource resource) {
+// 不可读，抛出 BeanDefinitionStoreException 异常
+  	if (resource.isOpen()) {
+  		throw new BeanDefinitionStoreException(
+  				&quot;Passed-in Resource [&quot; + resource + &quot;] contains an open stream: &quot; +
+  				&quot;cannot determine validation mode automatically. Either pass in a Resource &quot; +
+  				&quot;that is able to create fresh streams, or explicitly specify the validationMode &quot; +
+  				&quot;on your XmlBeanDefinitionReader instance.&quot;);
+  	}
+  
+  	// 打开 InputStream 流
+  	InputStream inputStream;
+  	try {
+  		inputStream = resource.getInputStream();
+  	} catch (IOException ex) {
+  		throw new BeanDefinitionStoreException(
+  				&quot;Unable to determine validation mode for [&quot; + resource + &quot;]: cannot open InputStream. &quot; +
+  				&quot;Did you attempt to load directly from a SAX InputSource without specifying the &quot; +
+  				&quot;validationMode on your XmlBeanDefinitionReader instance?&quot;, ex);
+  	}
+  
+  	// &lt;x&gt; 获取相应的验证模式
+  	try {
+  		return this.validationModeDetector.detectValidationMode(inputStream);
+  	} catch (IOException ex) {
+  		throw new BeanDefinitionStoreException(&quot;Unable to determine validation mode for [&quot; +
+  				resource + &quot;]: an error occurred whilst reading from the InputStream.&quot;, ex);
+  	}
+  }
+</code></pre>
+<p>核心在于 <code>&lt;x&gt;</code>处，调用 <code>XmlValidationModeDetector#detectValidationMode(InputStream inputStream)</code> 方法，获取相应的验证模式。详细解析，见 <a href="http://svip.iocoder.cn/Spring/IoC-Validation-Mode-For-Resource/#">「3. XmlValidationModeDetector」</a> 中。</p>
+<ul>
+<li><code>&lt;3&gt;</code> 处，使用 <code>VALIDATION_XSD</code> 做为默认。</li>
+</ul>
+<h1 id="3-xmlvalidationmodedetector">3. XmlValidationModeDetector</h1>
+<p><code>org.springframework.util.xml.XmlValidationModeDetector</code> ，XML 验证模式探测器。</p>
+<pre><code class="language-java">public int detectValidationMode(InputStream inputStream) throws IOException {
+    // Peek into the file to look for DOCTYPE.
+    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+    try {
+        // 是否为 DTD 校验模式。默认为，非 DTD 模式，即 XSD 模式
+        boolean isDtdValidated = false;
+        String content;
+        // &lt;0&gt; 循环，逐行读取 XML 文件的内容
+        while ((content = reader.readLine()) != null) {
+            content = consumeCommentTokens(content);
+            // 跳过，如果是注释，或者
+            if (this.inComment || !StringUtils.hasText(content)) {
+                continue;
+            }
+            // &lt;1&gt; 包含 DOCTYPE 为 DTD 模式
+            if (hasDoctype(content)) {
+                isDtdValidated = true;
+                break;
+            }
+            // &lt;2&gt;  hasOpeningTag 方法会校验，如果这一行有 &lt; ，并且 &lt; 后面跟着的是字母，则返回 true 。
+            if (hasOpeningTag(content)) {
+                // End of meaningful data...
+                break;
+            }
+        }
+        // 返回 VALIDATION_DTD or VALIDATION_XSD 模式
+        return (isDtdValidated ? VALIDATION_DTD : VALIDATION_XSD);
+    } catch (CharConversionException ex) {
+           
+        // &lt;3&gt; 返回 VALIDATION_AUTO 模式
+        // Choked on some character encoding...
+        // Leave the decision up to the caller.
+        return VALIDATION_AUTO;
+    } finally {
+        reader.close();
+    }
+}
+</code></pre>
+<p><code>&lt;0</code>&gt; 处，从代码中看，主要是通过读取 XML 文件的内容，来进行自动判断。</p>
+<p><code>&lt;1&gt;</code> 处，调用 <code>#hasDoctype(String content)</code> 方法，判断内容中如果包含有 <code>&quot;DOCTYPE</code>“ ，则为 DTD 验证模式。代码如下：</p>
+<pre><code class="language-java">/**
+ * The token in a XML document that declares the DTD to use for validation
+ * and thus that DTD validation is being used.
+ */
+private static final String DOCTYPE = &quot;DOCTYPE&quot;;
+
+private boolean hasDoctype(String content) {
+	return content.contains(DOCTYPE);
+}
+</code></pre>
+<p><code>&lt;2&gt;</code> 处，调用 <code>#hasOpeningTag(String content)</code> 方法，判断如果这一行包含 <code>&lt;</code> ，并且 <code>&lt;</code> 紧跟着的是字母，则为 XSD 验证模式。代码如下：</p>
+<pre><code class="language-java">/**
+ * Does the supplied content contain an XML opening tag. If the parse state is currently
+ * in an XML comment then this method always returns false. It is expected that all comment
+ * tokens will have consumed for the supplied content before passing the remainder to this method.
+ */
+private boolean hasOpeningTag(String content) {
+	if (this.inComment) {
+		return false;
+	}
+	int openTagIndex = content.indexOf('&lt;');
+	return (openTagIndex &gt; -1 // &lt; 存在
+            &amp;&amp; (content.length() &gt; openTagIndex + 1) // &lt; 后面还有内容
+            &amp;&amp; Character.isLetter(content.charAt(openTagIndex + 1))); // &lt; 后面的内容是字母
+}
+</code></pre>
+<p><code>&lt;3&gt;</code> 处，如果发生 CharConversionException 异常，则为 <code>VALIDATION_AUTO</code> 模式。</p>
+<p>关于 <code>#consumeCommentTokens(String content)</code> 方法，代码比较复杂。感兴趣的胖友可以看看。代码如下：</p>
+<pre><code class="language-java">/**
+ * The token that indicates the start of an XML comment.
+ */
+private static final String START_COMMENT = &quot;&lt;!--&quot;;
+
+/**
+ * The token that indicates the end of an XML comment.
+ */
+private static final String END_COMMENT = &quot;--&gt;&quot;;
+
+/**
+ * Consumes all the leading comment data in the given String and returns the remaining content, which
+ * may be empty since the supplied content might be all comment data. For our purposes it is only important
+ * to strip leading comment content on a line since the first piece of non comment content will be either
+ * the DOCTYPE declaration or the root element of the document.
+ */
+@Nullable
+private String consumeCommentTokens(String line) {
+	// 非注释
+	if (!line.contains(START_COMMENT) &amp;&amp; !line.contains(END_COMMENT)) {
+		return line;
+	}
+	String currLine = line;
+	while ((currLine = consume(currLine)) != null) {
+		if (!this.inComment &amp;&amp; !currLine.trim().startsWith(START_COMMENT)) {
+			return currLine;
+		}
+	}
+	return null;
+}
+
+/**
+ * Consume the next comment token, update the &quot;inComment&quot; flag
+ * and return the remaining content.
+ */
+@Nullable
+private String consume(String line) {
+	int index = (this.inComment ? endComment(line) : startComment(line));
+	return (index == -1 ? null : line.substring(index));
+}
+
+/**
+ * Try to consume the {@link #START_COMMENT} token.
+ * @see #commentToken(String, String, boolean)
+ */
+private int startComment(String line) {
+	return commentToken(line, START_COMMENT, true);
+}
+
+private int endComment(String line) {
+	return commentToken(line, END_COMMENT, false);
+}
+
+/**
+ * Try to consume the supplied token against the supplied content and update the
+ * in comment parse state to the supplied value. Returns the index into the content
+ * which is after the token or -1 if the token is not found.
+ */
+private int commentToken(String line, String token, boolean inCommentIfPresent) {
+	int index = line.indexOf(token);
+	if (index &gt; - 1) {
+		this.inComment = inCommentIfPresent;
+	}
+	return (index == -1 ? index : index + token.length());
+}
+</code></pre>
+<p>😈 反正老艿艿没细看。哈哈哈哈。如果真看，如下两篇文章，有一定的辅助：</p>
+<ul>
+<li><a href="https://blog.csdn.net/ljz2016/article/details/82686884">《spring源码（六）–XmlValidationModeDetector（获取xml文档校验模式）》</a></li>
+<li><a href="https://my.oschina.net/u/3579120/blog/1532852">《XmlValidationModeDetector》</a></li>
+</ul>
+<h1 id="4-小结">4. 小结</h1>
+<p>好了，XML 文件的验证模式分析完毕。下篇，我们来分析 <code>#doLoadBeanDefinitions(InputSource inputSource, Resource resource)</code> 方法的<strong>第 2 个</strong>步骤：获取 Document 实例。</p>
+
+							</div>
+							<div class="wow bounceInDown vt-post-tags">
+								
+								<a href="https://xinrong2019.github.io/tag/y2uDFThMC/" rel="tag">Spring</a>
+								
+							</div>
+							<nav class="navigation3 post-navigation3" role="navigation">
+
+								<div class="nav-links3">
+									
+									<div class="wow bounceInLeft nav-previous3"><a href="https://xinrong2019.github.io/post/si-ke-spring-ioc-zhi-huo-qu-document-dui-xiang/"
+											rel="prev"> [死磕Spring]--IOC之获取Document 对象</a></div>
+									
+									
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/si-ke-spring-ioc-zhi-jia-zai-beandefinition/"
+											rel="next"> [死磕Spring]--IoC之加载 BeanDefinition</a></div>
+									
+								</div>
+							</nav>
+							<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
+								<div class="author-avatar pull-left"><img
+										src="https://xinrong2019.github.io//images/avatar.png"></div>
+								
+								<div class="author-description">
+									<div class="author-title">
+										<div class="author-link" rel="author">Kim</div>
+									</div>
+									
+									
+									<p class="author-bio">Time waits for no one.</p>
+								</div>
+							</div>
+							
+						</div>
+					</article>
+					<div id="marlin_lite_about_widget-2" class="wow bounceInUp widget marlin_lite_about_widget"
+						data-wow-delay="0.1s">
+
+						
+						
+						<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '2f13af052cedc58f1f20',
+    clientSecret: 'ce03139f08944b2398d0f580a3d00ff58958c242',
+    repo: 'xinrong2019.github.io',
+    owner: 'xinrong2019',
+    admin: ['xinrong2019'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+						
+						
+						
+						<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://xinrong2019.github.io//media/scripts/Valine.min.js'></script>
+
+<div class="comment"></div>
+<script>
+        new Valine({
+            // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+            av: AV, 
+            el: '.comment',
+            lang: 'zh-cn',
+            
+            
+     	
+      	
+          
+        });
+    </script> 
+
+
+					</div>
+				</div>
+				<div class="tocc col l3 hide-on-med-and-down">
+
+    <div class="toc-widget">
+
+        <div class="toc-title"></div>
+
+        <div id="toc-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.5.0/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '.entry-summary',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('.entry-summary').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+
+    $(function () {
+        var bt;
+        bt = $('.toc-widget');
+        if ($(document).width() > 480) {
+            $(window).scroll(function () {
+                var st;
+                st = $(window).scrollTop();
+                if (st > 450) {
+                    return bt.css('display', 'block');
+                } else {
+                    return bt.css('display', 'none');
+                }
+            })
+        }
+    });
+</script>
+			</div>
+		</div>
+		<footer id="colophon" class="site-footer">
+	<div class="container">
+		<div class="copyright">
+			Created by Kim.
+			<br>
+			<b>Theme: </b>
+			<a href="https://github.com/alterfang/gridea-theme-pan" target="_blank" title="Pan">
+				<span><b>Pan</b></span>
+			</a>
+			<b>. Powered by </b>
+			<a href="https://gridea.dev/" target="_blank" title="Gridea">
+				<span><b>Gridea</b></span>
+			</a>
+		</div>
+	</div><!-- .container -->
+</footer><!-- #colophon -->
+	</div>
+
+	<script src="https://cdn.bootcss.com/fitvids/1.2.0/jquery.fitvids.min.js"></script>
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/marlin-scripts.js'></script>
+<script src="//tokinx.github.io/lately/lately.min.js"></script>
+<script>
+  jQuery(document).ready(function () {
+    $.lately({
+      'target': '.lately-a,.lately-b,.lately-c'
+    })
+  });
+</script>
+<style type="text/css">
+  /* 一键到顶部 */
+  a.back_to_top {
+    text-decoration: none;
+    position: fixed;
+    bottom: 65px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.back_to_top span {
+    color: #888;
+  }
+
+  a.back_to_top:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.back_to_top:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .back_to_top {
+      display: none !important;
+    }
+  }
+
+  /* 一键到底部 */
+
+  a.down_to_bottom {
+    text-decoration: none;
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.down_to_bottom span {
+    color: #888;
+  }
+
+  a.down_to_bottom:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.down_to_bottom:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .down_to_bottom {
+      display: none !important;
+    }
+  }
+</style>
+
+
+<a id="back_to_top" href="#" class="back_to_top"><span><i class="iconfont icon-xiangshang"></i></span>
+</a>
+
+<a id="down_to_bottom" href="#" class="down_to_bottom"><span><i class="iconfont icon-xiangxia"></i></span>
+</a>
+
+<script src="//instant.page/3.0.0" type="module" defer
+  integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+<script>
+  function getScrollTop() {
+    var scrollTop = 0,
+      bodyScrollTop = 0,
+      documentScrollTop = 0;
+    if (document.body) {
+      bodyScrollTop = document.body.scrollTop;
+    }
+    if (document.documentElement) {
+      documentScrollTop = document.documentElement.scrollTop;
+    }
+    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+    return scrollTop;
+  };
+
+  function getScrollHeight() {
+    var scrollHeight = 0,
+      bodyScrollHeight = 0,
+      documentScrollHeight = 0;
+    if (document.body) {
+      bSH = document.body.scrollHeight;
+    }
+    if (document.documentElement) {
+      dSH = document.documentElement.scrollHeight;
+    }
+    scrollHeight = (bSH - dSH > 0) ? bSH : dSH;
+    return scrollHeight;
+  };
+
+  function getWindowHeight() {
+    var windowHeight = 0;
+    if (document.compatMode == "CSS1Compat") {
+      windowHeight = document.documentElement.clientHeight;
+    } else {
+      windowHeight = document.body.clientHeight;
+    }
+    return windowHeight;
+  };
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block');
+          } else {
+            return bt.css('display', 'none');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: 0
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#down_to_bottom');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+            return bt.css('display', 'none');
+          } else {
+            return bt.css('display', 'block');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: $('body,html')[0].scrollHeight
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+</script>
+	<script data-no-instant>
+		(function ($) {
+			$.extend({
+				adamsOverload: function () {
+					$('.navigation:eq(0)').remove();
+					$("").attr("rel", "external");
+					$("a[rel='external'],a[rel='external nofollow']").attr("target", "_blank");
+					$("a.vi").attr("rel", "");
+					$.viewImage({
+						'target': 'img',
+						'exclude': '.vsmile-icons img,.gallery img',
+						'delay': 300
+					});
+					$.lately({
+						'target': '.commentmetadata a,.infos time,.post-list time'
+					});
+					prettyPrint();
+
+					$('ul.links li a').each(function () {
+						if ($(this).parent().find('.bg').length == 0) {
+							$(this).parent().append(
+								'<!---<div class="bg" style="background-image:url(https://c3.glgoo.top/s2/favicons?domain=' +
+								$(this).attr("href") + ')"></div>--->')
+						}
+					});
+				}
+			});
+		})(jQuery);
+		jQuery.adamsOverload();
+	</script>
+
+</body>
+
+</html>

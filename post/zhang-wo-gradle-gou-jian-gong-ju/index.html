@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<meta HTTP-EQUIV="expires" CONTENT="0"> 
+<title>掌握Gradle构建工具 | Eucaly</title>	
+
+<link rel="stylesheet" href="https://xinrong2019.github.io//styles/main.css">
+<script type="text/javascript">
+function getCSS()
+{
+        datetoday = new Date();
+        timenow=datetoday.getTime();
+        datetoday.setTime(timenow);
+        thehour = datetoday.getHours();
+
+            display = "https://xinrong2019.github.io//media/css/night.css";
+
+            display = "https://xinrong2019.github.io//media/css/night.css";   
+      
+            display = "https://xinrong2019.github.io//media/css/day.css";
+
+            display = "https://xinrong2019.github.io//media/css/day.css";
+      
+
+var css = '<';
+        css+='link rel="stylesheet" href='+display+' \/';
+        css+='>';
+        document.write(css);
+}
+</script>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Noto+Sans+SC:300|Montserrat&display=swap" rel="stylesheet">
+<link href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css" rel="stylesheet" />
+<link href="https://at.alicdn.com/t/font_1651848_tf0hnpbyjfj.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/script.js'></script>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet" />
+  <script src="https://cdn.bootcss.com/wow/1.1.2/wow.min.js"></script>
+  <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>wow=new WOW({boxClass:'wow',animateClass:'animated',offset:0,mobile:true,live:true});wow.init();</script>
+
+<script type="text/javascript">
+window.onload=getCSS();
+</script>
+
+
+</head>
+
+<body class="post-template-default single single-post postid-70 single-format-standard">
+	<div id="wrapper">
+				<header id="header" class="site-header" >
+			<div class="site-branding">
+				<h1 class="site-title">
+					<div class="post-title-name">
+						<a href="https://xinrong2019.github.io/" rel="home">掌握Gradle构建工具</a>
+					</div>
+				</h1>
+				<h2 class="site-description">Time waits for no one.</h2>
+			</div>
+			<nav id="nav-wrapper">
+				<div class="container">
+					<div class="nav-toggle">
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<ul id="" class="dove">
+						
+
+						<li>
+
+							<a href="/"> 首页</a></li>
+
+						
+
+						<li>
+
+							<a href="/archives"> 归档</a></li>
+
+						
+
+						<li>
+
+							<a href="/tags"> 标签</a></li>
+
+						
+
+						<li>
+
+							<a href="/friends"> 友链</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mysql"> MySQL</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/dubbo"> Dubbo</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mq"> MQ</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/spring"> Spring</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/about"> 关于</a></li>
+
+						
+
+					</ul>
+					</li>
+
+					</ul>
+				</div>
+			</nav>
+
+			<div class="jingge">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			<form id="gridea-search-form" data-update="1585982810028" action="/search/index.html">
+				<div class="search-box">
+					<input class="search-txt" name="q" placeholder="Type to search" />
+					<a class="search-btn">
+						<i class="iconfont icon-search1" action="/search/index.html"></i>
+					</a>
+				</div>
+			</form>
+		</header>
+		<div id="content" class="container">
+			<div class="row">
+				<div class="col-md-8 site-main">
+					<article id="post-70"
+						class="post-70 post type-post status-publish format-standard hentry category-5 tag-10 tag-9 tag-11">
+						<div class="entry-content">
+							<div class="entry-meta">
+								<div class="entry-info">
+									<time>
+										2020-01-31
+									</time>
+									<span>
+										4 min read
+									</span>
+								</div>
+							</div>
+							<div class="wow slideInLeft entry-summary song">
+								<h2 id="学习动机">学习动机：</h2>
+<p>目前开发的项目使用的构建工具是gradle，最初搭建项目骨架的时候是参照已有gradle项目配置搭建的，遇到问题基本上是靠搜索引擎搜索，对gradle的认知仅仅停留在会使用，想要进一步提高，或者有一个成体系的认知。</p>
+<h2 id="学习目的">学习目的：</h2>
+<h2 id="正文">正文</h2>
+<h3 id="目前主流构建工具">目前主流构建工具</h3>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/DjoPSp_2020_01_31_10_44_23.png" alt="" loading="lazy"></figure>
+<h3 id="gradle是什么">Gradle是什么</h3>
+<p>一个开源的项目自动化构建工具，建立在Apache Ant和Apache Maven概念的基础上，并引入了基于Groovy的特定领域语言（DSL），而不是使用XML形式管理构建脚本。</p>
+<h2 id="学习安排">学习安排</h2>
+<h3 id="快速尝鲜">快速尝鲜</h3>
+<ul>
+<li>准备使用Gradle</li>
+<li>第一个Gradle项目</li>
+</ul>
+<h3 id="基本原理">基本原理</h3>
+<ul>
+<li>构建脚本介绍</li>
+<li>依赖管理</li>
+</ul>
+<h3 id="深入实战">深入实战</h3>
+<ul>
+<li>多项目构建</li>
+<li>测试</li>
+<li>发布</li>
+</ul>
+<h2 id="准备使用gradle">准备使用Gradle</h2>
+<h3 id="安装">安装</h3>
+<ul>
+<li>
+<p>安装和配置好JDK</p>
+</li>
+<li>
+<p>从官网下载Gradle</p>
+</li>
+<li>
+<p>配置环境变量，<code>GRADLE_HOME</code></p>
+</li>
+<li>
+<p>添加到path，<code>%GRADLE_HOME%\bin</code></p>
+</li>
+<li>
+<p>验证是否安装成功，<code>gradle -v</code></p>
+</li>
+</ul>
+<h2 id="groovy基础知识">Groovy基础知识</h2>
+<h3 id="groovy是什么">Groovy是什么</h3>
+<p>Groovy是用于Java虚拟机的一种敏捷的动态语言，它是一种成熟的面向对象编程语言，既可以用于面向对象编程，又可以用作纯粹的脚本语言。使用该种语言不必编写过多的代码，同时又具有闭包和动态语言中的其他特性。</p>
+<h3 id="与java比较">与Java比较</h3>
+<ul>
+<li>完全兼容Java的语法</li>
+<li>分号是可选的</li>
+<li>类、方法默认是public的</li>
+<li>编译器给属性自动添加getter/setter方法</li>
+<li>属性可以直接用点号获取</li>
+<li>最后一个表达式的值会被作为返回值</li>
+<li><code>==</code>等同于<code>equals()</code>，不会有<code>NullPointerExceptions</code></li>
+</ul>
+<h3 id="高效的groovy特性">高效的Groovy特性</h3>
+<ul>
+<li><code>assert</code>语句</li>
+<li>可选类型定义</li>
+<li>可选的括号</li>
+<li>字符串</li>
+<li>集合API</li>
+<li>闭包</li>
+</ul>
+<h2 id="使用idea创建gradle项目">使用IDEA创建Gradle项目</h2>
+<h3 id="1-new-project">1. New Project</h3>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200131112158455_2020_01_31_11_45_57.png" alt="" loading="lazy"></figure>
+<h3 id="2-写上groupid和artifactid">2. 写上GroupId和ArtifactId</h3>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/e0pjDS_2020_01_31_11_24_27.png" alt="" loading="lazy"></figure>
+<h3 id="3-填写project-name点击finish完成">3. 填写Project Name，点击Finish完成</h3>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200131112517494_2020_01_31_11_46_37.png" alt="" loading="lazy"></figure>
+<h3 id="4-打开groovy-console">4. 打开Groovy Console</h3>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/pIMGJg_2020_01_31_11_26_45.png" style="zoom:50%;" />
+<h3 id="5-验证groovy语法">5. 验证Groovy语法</h3>
+<pre><code class="language-groovy">public class ProjectVersion{
+    private int major
+    private int minor
+
+    ProjectVersion(int major, int minor) {
+        this.major = major
+        this.minor = minor
+    }
+}
+ProjectVersion v1 = new ProjectVersion(1,1)
+println v1.minor
+
+ProjectVersion v2 = null;
+v2 == v1
+</code></pre>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/IssJRd_2020_01_31_11_30_55.png" style="zoom:50%;" />
+<p>执行结果：</p>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/nrbJYM_2020_01_31_11_32_09.png" style="zoom:50%;" />
+<p>上面可以看到<code>v2==v1</code>的表达式返回<code>false</code>，其实调用的是<code>Object</code>类的<code>equals</code>方法。</p>
+<h2 id="groovy高级特性实操">Groovy高级特性实操</h2>
+<pre><code class="language-groovy">def version = 1
+assert version == 1
+println version
+
+//字符串
+def s1 = 'Eucaly'
+def s2 = &quot;gradle version is ${version}&quot;
+def s3 = '''my
+name
+is
+Eucaly'''
+
+println(s1)
+println(s2)
+println(s3)
+
+//集合api
+def buildTools = ['ant','maven']
+buildTools &lt;&lt; 'gradle'
+assert buildTools.getClass() == ArrayList
+assert buildTools.size() == 3
+
+def buildYears = ['ant':2000,'maven':'2004']
+buildYears.gradle = 2009
+
+println(buildYears.ant)
+println(buildYears['gradle'])
+println(buildYears.getClass())
+println(buildYears)
+
+//闭包,经常被当作方法参数使用
+def c1 = {
+    v -&gt; print v
+}
+
+def c2 = {
+    print 'hello'
+}
+
+def method1(Closure closure){
+    closure('param')
+}
+
+def method2(Closure closure){
+    closure()
+}
+
+method1(c1)
+method2(c2)
+</code></pre>
+<h2 id="读懂groovy构建脚本">读懂Groovy构建脚本</h2>
+<pre><code class="language-groovy">apply plugin:'java'
+
+version ='0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'common-codec:commons-condec:1.6'
+}
+</code></pre>
+<p>上面的脚本代码通常是项目中build.gradle文件中的构建代码模板，下面从groovy脚本的角度来一句句分析是什么意思。</p>
+<ol>
+<li>
+<p><strong>构建脚本中默认都有一个Project实例，脚本中默认的作用域都是Project</strong></p>
+</li>
+<li>
+<p><code>apply plugin:'java'</code></p>
+<p>plugin:'java'是命名参数，意思是plugin参数的值是java；</p>
+<p>apply是Project实例中的方法,这里调用apply方法，省略了括号。</p>
+</li>
+<li>
+<p><code>version ='0.1'</code></p>
+<p>version是Project实例中的一个属性</p>
+</li>
+<li>
+<p><code>repositories { mavenCentral() }</code></p>
+</li>
+</ol>
+<p>repositories也是Project实例中的方法，入参是一个闭包；<br>
+整个花括号部分代码块<code>{mavenCentral()}</code>是一个闭包。</p>
+<ol start="5">
+<li><code>dependencies { compile 'common-codec:commons-condec:1.6' }</code></li>
+</ol>
+<p>dependencies也是Project实例中的方法，入参是一个闭包</p>
+
+							</div>
+							<div class="wow bounceInDown vt-post-tags">
+								
+								<a href="https://xinrong2019.github.io/tag/NQUK_6zNO/" rel="tag">gradle</a>
+								
+							</div>
+							<nav class="navigation3 post-navigation3" role="navigation">
+
+								<div class="nav-links3">
+									
+									<div class="wow bounceInLeft nav-previous3"><a href="https://xinrong2019.github.io/post/schema-yu-shu-ju-lei-xing-you-hua/"
+											rel="prev"> Schema与数据类型优化</a></div>
+									
+									
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/hao-hao-shuo-hua-zi-ji-shun-xin-dui-fang-shu-fu/"
+											rel="next"> 好好说话：自己顺心，对方舒服</a></div>
+									
+								</div>
+							</nav>
+							<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
+								<div class="author-avatar pull-left"><img
+										src="https://xinrong2019.github.io//images/avatar.png"></div>
+								
+								<div class="author-description">
+									<div class="author-title">
+										<div class="author-link" rel="author">Kim</div>
+									</div>
+									
+									
+									<p class="author-bio">Time waits for no one.</p>
+								</div>
+							</div>
+							
+						</div>
+					</article>
+					<div id="marlin_lite_about_widget-2" class="wow bounceInUp widget marlin_lite_about_widget"
+						data-wow-delay="0.1s">
+
+						
+						
+						<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '2f13af052cedc58f1f20',
+    clientSecret: 'ce03139f08944b2398d0f580a3d00ff58958c242',
+    repo: 'xinrong2019.github.io',
+    owner: 'xinrong2019',
+    admin: ['xinrong2019'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+						
+						
+						
+						<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://xinrong2019.github.io//media/scripts/Valine.min.js'></script>
+
+<div class="comment"></div>
+<script>
+        new Valine({
+            // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+            av: AV, 
+            el: '.comment',
+            lang: 'zh-cn',
+            
+            
+     	
+      	
+          
+        });
+    </script> 
+
+
+					</div>
+				</div>
+				<div class="tocc col l3 hide-on-med-and-down">
+
+    <div class="toc-widget">
+
+        <div class="toc-title"></div>
+
+        <div id="toc-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.5.0/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '.entry-summary',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('.entry-summary').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+
+    $(function () {
+        var bt;
+        bt = $('.toc-widget');
+        if ($(document).width() > 480) {
+            $(window).scroll(function () {
+                var st;
+                st = $(window).scrollTop();
+                if (st > 450) {
+                    return bt.css('display', 'block');
+                } else {
+                    return bt.css('display', 'none');
+                }
+            })
+        }
+    });
+</script>
+			</div>
+		</div>
+		<footer id="colophon" class="site-footer">
+	<div class="container">
+		<div class="copyright">
+			Created by Kim.
+			<br>
+			<b>Theme: </b>
+			<a href="https://github.com/alterfang/gridea-theme-pan" target="_blank" title="Pan">
+				<span><b>Pan</b></span>
+			</a>
+			<b>. Powered by </b>
+			<a href="https://gridea.dev/" target="_blank" title="Gridea">
+				<span><b>Gridea</b></span>
+			</a>
+		</div>
+	</div><!-- .container -->
+</footer><!-- #colophon -->
+	</div>
+
+	<script src="https://cdn.bootcss.com/fitvids/1.2.0/jquery.fitvids.min.js"></script>
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/marlin-scripts.js'></script>
+<script src="//tokinx.github.io/lately/lately.min.js"></script>
+<script>
+  jQuery(document).ready(function () {
+    $.lately({
+      'target': '.lately-a,.lately-b,.lately-c'
+    })
+  });
+</script>
+<style type="text/css">
+  /* 一键到顶部 */
+  a.back_to_top {
+    text-decoration: none;
+    position: fixed;
+    bottom: 65px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.back_to_top span {
+    color: #888;
+  }
+
+  a.back_to_top:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.back_to_top:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .back_to_top {
+      display: none !important;
+    }
+  }
+
+  /* 一键到底部 */
+
+  a.down_to_bottom {
+    text-decoration: none;
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.down_to_bottom span {
+    color: #888;
+  }
+
+  a.down_to_bottom:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.down_to_bottom:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .down_to_bottom {
+      display: none !important;
+    }
+  }
+</style>
+
+
+<a id="back_to_top" href="#" class="back_to_top"><span><i class="iconfont icon-xiangshang"></i></span>
+</a>
+
+<a id="down_to_bottom" href="#" class="down_to_bottom"><span><i class="iconfont icon-xiangxia"></i></span>
+</a>
+
+<script src="//instant.page/3.0.0" type="module" defer
+  integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+<script>
+  function getScrollTop() {
+    var scrollTop = 0,
+      bodyScrollTop = 0,
+      documentScrollTop = 0;
+    if (document.body) {
+      bodyScrollTop = document.body.scrollTop;
+    }
+    if (document.documentElement) {
+      documentScrollTop = document.documentElement.scrollTop;
+    }
+    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+    return scrollTop;
+  };
+
+  function getScrollHeight() {
+    var scrollHeight = 0,
+      bodyScrollHeight = 0,
+      documentScrollHeight = 0;
+    if (document.body) {
+      bSH = document.body.scrollHeight;
+    }
+    if (document.documentElement) {
+      dSH = document.documentElement.scrollHeight;
+    }
+    scrollHeight = (bSH - dSH > 0) ? bSH : dSH;
+    return scrollHeight;
+  };
+
+  function getWindowHeight() {
+    var windowHeight = 0;
+    if (document.compatMode == "CSS1Compat") {
+      windowHeight = document.documentElement.clientHeight;
+    } else {
+      windowHeight = document.body.clientHeight;
+    }
+    return windowHeight;
+  };
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block');
+          } else {
+            return bt.css('display', 'none');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: 0
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#down_to_bottom');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+            return bt.css('display', 'none');
+          } else {
+            return bt.css('display', 'block');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: $('body,html')[0].scrollHeight
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+</script>
+	<script data-no-instant>
+		(function ($) {
+			$.extend({
+				adamsOverload: function () {
+					$('.navigation:eq(0)').remove();
+					$("").attr("rel", "external");
+					$("a[rel='external'],a[rel='external nofollow']").attr("target", "_blank");
+					$("a.vi").attr("rel", "");
+					$.viewImage({
+						'target': 'img',
+						'exclude': '.vsmile-icons img,.gallery img',
+						'delay': 300
+					});
+					$.lately({
+						'target': '.commentmetadata a,.infos time,.post-list time'
+					});
+					prettyPrint();
+
+					$('ul.links li a').each(function () {
+						if ($(this).parent().find('.bg').length == 0) {
+							$(this).parent().append(
+								'<!---<div class="bg" style="background-image:url(https://c3.glgoo.top/s2/favicons?domain=' +
+								$(this).attr("href") + ')"></div>--->')
+						}
+					});
+				}
+			});
+		})(jQuery);
+		jQuery.adamsOverload();
+	</script>
+
+</body>
+
+</html>

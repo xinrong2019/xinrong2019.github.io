@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<meta HTTP-EQUIV="expires" CONTENT="0"> 
+<title>Java基础知识清单 | Eucaly</title>	
+
+<link rel="stylesheet" href="https://xinrong2019.github.io//styles/main.css">
+<script type="text/javascript">
+function getCSS()
+{
+        datetoday = new Date();
+        timenow=datetoday.getTime();
+        datetoday.setTime(timenow);
+        thehour = datetoday.getHours();
+
+            display = "https://xinrong2019.github.io//media/css/night.css";
+
+            display = "https://xinrong2019.github.io//media/css/night.css";   
+      
+            display = "https://xinrong2019.github.io//media/css/day.css";
+
+            display = "https://xinrong2019.github.io//media/css/day.css";
+      
+
+var css = '<';
+        css+='link rel="stylesheet" href='+display+' \/';
+        css+='>';
+        document.write(css);
+}
+</script>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Noto+Sans+SC:300|Montserrat&display=swap" rel="stylesheet">
+<link href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css" rel="stylesheet" />
+<link href="https://at.alicdn.com/t/font_1651848_tf0hnpbyjfj.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/script.js'></script>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet" />
+  <script src="https://cdn.bootcss.com/wow/1.1.2/wow.min.js"></script>
+  <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>wow=new WOW({boxClass:'wow',animateClass:'animated',offset:0,mobile:true,live:true});wow.init();</script>
+
+<script type="text/javascript">
+window.onload=getCSS();
+</script>
+
+
+</head>
+
+<body class="post-template-default single single-post postid-70 single-format-standard">
+	<div id="wrapper">
+				<header id="header" class="site-header" >
+			<div class="site-branding">
+				<h1 class="site-title">
+					<div class="post-title-name">
+						<a href="https://xinrong2019.github.io/" rel="home">Java基础知识清单</a>
+					</div>
+				</h1>
+				<h2 class="site-description">Time waits for no one.</h2>
+			</div>
+			<nav id="nav-wrapper">
+				<div class="container">
+					<div class="nav-toggle">
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<ul id="" class="dove">
+						
+
+						<li>
+
+							<a href="/"> 首页</a></li>
+
+						
+
+						<li>
+
+							<a href="/archives"> 归档</a></li>
+
+						
+
+						<li>
+
+							<a href="/tags"> 标签</a></li>
+
+						
+
+						<li>
+
+							<a href="/friends"> 友链</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mysql"> MySQL</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/dubbo"> Dubbo</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mq"> MQ</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/spring"> Spring</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/about"> 关于</a></li>
+
+						
+
+					</ul>
+					</li>
+
+					</ul>
+				</div>
+			</nav>
+
+			<div class="jingge">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			<form id="gridea-search-form" data-update="1585982810028" action="/search/index.html">
+				<div class="search-box">
+					<input class="search-txt" name="q" placeholder="Type to search" />
+					<a class="search-btn">
+						<i class="iconfont icon-search1" action="/search/index.html"></i>
+					</a>
+				</div>
+			</form>
+		</header>
+		<div id="content" class="container">
+			<div class="row">
+				<div class="col-md-8 site-main">
+					<article id="post-70"
+						class="post-70 post type-post status-publish format-standard hentry category-5 tag-10 tag-9 tag-11">
+						<div class="entry-content">
+							<div class="entry-meta">
+								<div class="entry-info">
+									<time>
+										2020-04-04
+									</time>
+									<span>
+										13 min read
+									</span>
+								</div>
+							</div>
+							<div class="wow slideInLeft entry-summary song">
+								<p><a href="https://class.imooc.com/lesson/1222#mid=29173"><strong>1-17 福利：Java基础面试考点清单</strong></a><br>
+<strong>带着问题与技术关键词，有目标的开启体系化学习之旅~</strong></p>
+<ul>
+<li>
+<p><strong>基础：</strong></p>
+</li>
+<li>
+<ul>
+<li>强引用、弱引用、虚引用、软引用</li>
+<li>final关键字的作用 (方法、变量、类)</li>
+<li>泛型、泛型继承、泛型擦除</li>
+<li>jdk ServiceLoader</li>
+<li>LinkedList、LinkedHashMap、LRU</li>
+<li>装饰者模式、代理模式、责任链模式、工厂模式、适配器模式、建造者模式、单例模式、模板模式、观察者模式…</li>
+<li>关于精度损失问题：int、long 超过最大值</li>
+<li>关于注解：元注解的种类、继承java.lang.Annotation、注解的基础类型、注解的常用方法</li>
+<li>关于ClassLoader，类加载器，双亲委派模型</li>
+</ul>
+</li>
+<li>
+<p><strong>J.U.C</strong></p>
+</li>
+<li>
+<ul>
+<li>线程池参数说明，线程池的线程回收、shutdown</li>
+<li>线程池的生命周期？</li>
+<li>线程池的核心模型Worker对象的运作流程是怎样的？</li>
+<li>线程池的拒绝策略有哪4种？</li>
+<li>线程池的提交，execute与submit有什么区别？在实际开发中需要注意哪些问题？</li>
+<li>threadlocal原理，数据结构</li>
+<li>并发集合类了解哪些？</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>ConcurrentHashMap</li>
+<li>CopyOnWrite集合、原理、锁机制</li>
+<li>ConcurrentLinkedQueue、LinkedTransferQueue、ArrayBlockingQueue、PriorityBlockingQueue、SynchronousQueue、DelayQueue</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>AQS 原理：</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>独占 &amp; 共享</li>
+<li>state &amp; CHL队列</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>锁：</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>Synchronized、ReentrantLock、RWLock、Condition、LockSupport、StampedLock、</li>
+<li>概念：CAS 自旋、重入、偏向</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>volatile：</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>多线程共享 &amp; 阻止指令重排序</li>
+<li>jvm的逃逸分析 &amp; Tlab &amp; 消除伪共享 &amp; UNsafe &amp;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>atomic:</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>CAS的缺点，自旋、ABA问题</li>
+<li>atomic 原子性、Reference、referenceArray、longadder</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>并发控制：</li>
+<li>barrier、countdownlatch、exchanger、future、semaphore</li>
+</ul>
+</li>
+<li>
+<p><strong>jvm虚拟机：</strong></p>
+</li>
+<li>
+<ul>
+<li>虚拟机内存模型</li>
+<li>新生代（Eden S0 S1）、老年代 、MetaSpace （比例）</li>
+<li>垃圾回收算法（引用计数、标记压缩、清除、复制算法、分区）、垃圾收集器</li>
+<li>GC停顿、吞吐量，进入老年代阈值、大对象回收问题等</li>
+<li>jvm性能调优、参数配置</li>
+<li>常用命令：jstat、jmap、jstack等</li>
+<li>内存溢出分析：堆内、堆外 （含义、如何设置）</li>
+<li>CPU飙升：死锁、线程阻塞</li>
+<li>关于GC: minor major full</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>stw，安全点等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>数据结构&amp;算法</strong></p>
+</li>
+<li>
+<ul>
+<li>数组、链表、树、队列…</li>
+<li>关于时间复杂度，时间换空间转换案例</li>
+<li>关于排序、冒泡、快排、递归、二分搜索、位运算</li>
+</ul>
+</li>
+<li>
+<p><strong>Spring</strong></p>
+</li>
+<li>
+<ul>
+<li>Spring生命周期，流程梳理</li>
+<li>Spring扩展点作用</li>
+<li>Spring IOC AOP 基本原理</li>
+<li>动态代理</li>
+<li>BeanPostProcessor 作用？</li>
+<li>ApplicationContextAware 的作用和使用？</li>
+<li>BeanNameAware与BeanFactoryAware的先后顺序？</li>
+<li>InitializingBean 和 BeanPostProcessor 的after方法先后顺序？</li>
+<li>ApplicationListener监控的Application事件有哪些？</li>
+<li>Spring模块装配的概念，比如@EnableScheduling @EnableRetry @EnableAsync，@Import注解的作用？</li>
+<li>ImportBeanDefinitionRegistrar 扩展点用于做什么事情？</li>
+<li>ClassPathBeanDefinitionScanner 的作用？</li>
+<li>NamespaceHandlerSupport 命名空间扩展点的作用？</li>
+<li>如何实现动态注入一个Bean？</li>
+<li>如何把自定义注解所在的Class 初始化注入到Spring容器？</li>
+<li>BeanDefinition指的是什么，与BeanDefinitionHolder的区别，Spring如何存储BeanDefinition实例？</li>
+<li>ASM 与 CGlib</li>
+<li>Spring的条件装配，自动装配</li>
+</ul>
+</li>
+<li>
+<p><strong>RPC通信框架</strong></p>
+</li>
+<li>
+<ul>
+<li>Dubbo</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>Dubbo的Spi机制？</li>
+<li>Dubbo的核心模型 invoker、invocation、filter</li>
+<li>Dubbo的隐式传递?</li>
+<li>Dubbo的泛化调用？</li>
+<li>Dubbo的export与importer时机？</li>
+<li>Dubbo的服务调用过程？</li>
+<li>Dubbo的负载均衡策略？</li>
+<li>Dubbo的集群容错？</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>网络通信</strong></p>
+</li>
+<li>
+<ul>
+<li>IO / NIO</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>IO NIO区别？</li>
+<li>多路复用的概念，Selector</li>
+<li>Channel的概念、Bytebuf的概念，flip、position…</li>
+<li>FileChannel 如何使用？</li>
+<li>RAF使用，seek、skip方法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>Netty</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>关于Netty的Reactor实现？</li>
+<li>Netty的ByteBuf有哪些？</li>
+<li>内存与非内存Bytebuffer的区别与使用场景？</li>
+<li>池化与非池化buffer的区别与使用场景？</li>
+<li>关于Netty的请求Buffer和响应Buffer?</li>
+<li>Netty的ChannelPipeline设计模式？</li>
+<li>Netty的核心option参数配置？</li>
+<li>Netty的ChannelInboundHandlerAdapter和SimpleChannelInboundHandler关系？</li>
+<li>Netty的EventLoop核心实现？</li>
+<li>Netty的连接管理事件接口有哪些常用方法（ChannelDuplexHandler）？</li>
+<li>Netty的编解码与序列化手段</li>
+<li>Netty的FastThreadLocal实现？</li>
+<li>Netty中应用的装饰者 和 观察者模式在哪里体现？</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>MQ</strong></p>
+</li>
+<li>
+<ul>
+<li>API使用，常用生产消费模型，集群架构搭建</li>
+<li>常见问题，消息可靠性投递、幂等性保障</li>
+<li>概念、原理、存储、消息投递、通信机制、性能相关优化</li>
+<li>MQ常见的作用于目的、服务解耦、削峰填谷等</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>RocketMQ</li>
+<li>Kafka</li>
+<li>RabbitMQ</li>
+<li>ActiveMQ</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>缓存</strong></p>
+</li>
+<li>
+<ul>
+<li>内存缓存</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>堆外内存缓存 回收释放</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>Redis</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>缓存穿透、雪崩、热点Key、大Key、无底洞问题，缓存更新与淘汰、缓存与数据库的一致性</li>
+<li>Redis的幂等性</li>
+<li>Redis的分布式锁实现</li>
+<li>Redis的原子性，Redis的特点</li>
+<li>Redis集群相关问题、一致性hash、slot概念等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>流控组件</strong></p>
+</li>
+<li>
+<ul>
+<li>Hystrix</li>
+<li>Sentinel</li>
+</ul>
+</li>
+<li>
+<p><strong>高可用服务中间件</strong></p>
+</li>
+<li>
+<ul>
+<li>Zookeeper / Curator</li>
+<li>Nginx</li>
+<li>Haproxy</li>
+<li>LVS</li>
+<li>Haproxy</li>
+</ul>
+</li>
+<li>
+<p><strong>数据库存储&amp;调度</strong></p>
+</li>
+<li>
+<ul>
+<li>Sharding-JDBC</li>
+<li>ElasticJob</li>
+<li>调度平台相关：DAG、airflow等</li>
+</ul>
+</li>
+<li>
+<p><strong>搜索相关度</strong></p>
+</li>
+<li>
+<ul>
+<li>ELK ，数据库加速、主搜（算法）</li>
+</ul>
+</li>
+<li>
+<p>Logback、Slf4j2</p>
+</li>
+<li>
+<p>Solr &amp; Lucene</p>
+</li>
+</ul>
+<h2 id="toc">TOC</h2>
+<p>[TOC]</p>
+<h2 id="目标">目标</h2>
+<p>以面试为导向，知识点要全面，查漏补缺。突出重点。</p>
+<p>学完后有一个基本的认知是什么，对于重点内容要知道为什么，了解实现原理。</p>
+<h2 id="基础">基础</h2>
+<h3 id="强引用-弱引用-虚引用-软引用">强引用、弱引用、虚引用、软引用</h3>
+<p>参见<a href="https://juejin.im/post/5a5129f5f265da3e317dfc08">Java中的四种引用类型</a></p>
+<h4 id="背景">背景</h4>
+<p>简单了解即可。和引用关联的知识点，不得不提对象的生命周期，再远点就是GC如何管理对象的生命周期的。这里假设读者已经知道这些内容了。</p>
+<h4 id="引用强度认知">引用强度认知：</h4>
+<p>引用强度从强到弱分别为：强引用、软引用、弱引用、虚引用。</p>
+<h4 id="强引用-strongreference">强引用 StrongReference</h4>
+<p>默认引用形式，使用时不需要显示定义。任何通过强引用所使用的对象不管系统资源有多紧张，Java GC都不会主动回收具有强引用的对象。</p>
+<h4 id="弱引用-weakreference">弱引用 WeakReference</h4>
+<p>如果一个对象只具有弱引用，无论内存充足与否，Java GC后对象如果只有弱引用将会被自动回收。</p>
+<h4 id="软引用-softreference">软引用 SoftReference</h4>
+<p>软引用和弱引用的特性基本一致， 主要的区别在于软引用在内存不足时才会被回收。如果一个对象只具有软引用，Java GC在内存充足的时候不会回收它，内存不足时才会被回收。</p>
+<h4 id="虚引用-phantomreference">虚引用 PhantomReference</h4>
+<p>从PhantomReference类的源代码可以知道，它的get()方法无论何时返回的都只会是null。所以单独使用虚引用时，没有什么意义，需要<strong>和引用队列ReferenceQueue类联合使用</strong>。当执行Java GC时如果一个对象只有虚引用，就会把这个对象加入到与之关联的ReferenceQueue中。</p>
+<blockquote>
+<p>文字干巴巴，去看原文代码</p>
+</blockquote>
+<h4 id="小结">小结</h4>
+<p>强引用是 Java 的默认引用形式，使用时不需要显示定义，是我们平时最常使用到的引用方式。不管系统资源有多紧张，Java GC都不会主动回收具有强引用的对象。<br>
+  弱引用和软引用一般在引用对象为非必需对象的时候使用。它们的区别是被弱引用关联的对象在垃圾回收时总是会被回收，被软引用关联的对象只有在内存不足时才会被回收。<br>
+  虚引用的get()方法获取的永远是null，无法获取对象实例。Java GC会把虚引用的对象放到引用队列里面。可用来在对象被回收时做额外的一些资源清理或事物回滚等处理。<br>
+  由于无法从虚引获取到引用对象的实例。它的使用情况比较特别，所以这里不把虚引用放入表格进行对比。这里对强引用、弱引用、软引用进行对比：</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200403134544324_2020_04_03_13_47_09.png" alt="" loading="lazy"></figure>
+<h3 id="final关键字的作用-方法-变量-类">final关键字的作用 (方法、变量、类)</h3>
+<p>参见<a href="https://www.jianshu.com/p/e43c3273d7d5">final 关键字</a></p>
+<p>应用在方法、变量、类上的作用不赘述，已经掌握，只查漏补缺</p>
+<ul>
+<li>
+<p>被final修饰的方法，不可以被重写。但是不影响本类的重载以及重载函数的重写。</p>
+</li>
+<li>
+<p>final成员变量必须在声明的时候初始化或者在构造器中初始化，否则就会报编译错误。</p>
+</li>
+</ul>
+<p>不可变的类是天然无状态的，线程安全的。</p>
+<h4 id="如何写一个不可变类呢">如何写一个不可变类呢？</h4>
+<ul>
+<li>将类声明为final，所以它不能被继承</li>
+<li>将所有的成员声明为私有的，这样就不允许直接访问这些成员</li>
+<li>对变量不要提供setter方法</li>
+<li>将所有可变的成员声明为final，这样只能对它们赋值一次</li>
+<li>通过构造器初始化所有成员，进行深拷贝(deep copy)</li>
+<li>在getter方法中，不要直接返回对象本身，而是克隆对象，并返回对象的拷贝</li>
+</ul>
+<p>具体可参考String和Integer等的写法</p>
+<h4 id="和static一起使用">和static一起使用</h4>
+<p>对于静态final变量，我们可以直接初始化，或者使用静态代码块。而不可以使用构造函数或者构造代码块。</p>
+<p>因为static要求在编译期间就确定值，然后放入静态区。而构造函数和构造代码块发生在运行期间。</p>
+<h4 id="final和private">final和private</h4>
+<p>类中所有的private方法都隐式的指定为final的，由于无法取用private方法，所以也就无法覆盖它，可以对private方法添加final修饰符，但并没有添加任何额外意义。（了解即可）</p>
+<h3 id="泛型-泛型继承-泛型擦除">泛型、泛型继承、泛型擦除</h3>
+<p><a href="https://blog.csdn.net/u012706811/article/details/53464612">泛型擦除分析</a><br>
+<a href="https://juejin.im/post/5e61fb10e51d4526d6406cb0#heading-4">泛型擦除是什么，会带来什么问题？</a></p>
+<h4 id="泛型擦除">泛型擦除</h4>
+<p>使用泛型的话,<strong>运行期把对象都是当成object来处理的</strong>,所以可以运用的方法都是object的方法,且在赋值操作时,编译器会自动强转为指定泛型类型,另一个好处就是在编译期更早的发现向下转型可能出现的错误,因为向下转型是不安全的.</p>
+<h4 id="带来什么样的问题">带来什么样的问题？</h4>
+<p>在运行时反编译添加不同类型的数据，数据错误，代码不报错。</p>
+<h4 id="泛型继承带上界的擦除">泛型继承，带上界的擦除</h4>
+<p>当使用上界时泛型擦除擦除为上界的类型,因此也就解释了为啥可以调用上界的方法.并且会和赋值操作的时候一样自动强转为对应的泛型,向上转型,为安全的操作。</p>
+<h4 id="带通配符的上界">带通配符的上界</h4>
+<h4 id="带通配符的下界">带通配符的下界</h4>
+<h4 id="总结">总结</h4>
+<p>泛型的出现是为了减少向下转型出现的错误,泛型的目的是<strong>尽可能的在编译器发现转型时的错误</strong>,所以对于不安全的操作(编译器认为的)会绝对禁止,存储进去的都是绝对安全(编译器认为的)的数据.</p>
+<h3 id="jdk-serviceloader">jdk ServiceLoader</h3>
+<p>参见<a href="https://juejin.im/post/5d2db85d6fb9a07ea7134408">Java SPI机制：ServiceLoader实现原理及应用剖析</a></p>
+<p>SPI，全称<code>Service Provider Interfaces</code>，服务提供接口。可以用来<strong>解耦服务的实现和使用，增强应用的可扩展性</strong>。</p>
+<p>JDK中，基于SPI的思想，提供了默认具体的实现，<code>ServiceLoader</code>。利用JDK自带的<code>ServiceLoader</code>，可以轻松实现面向<code>服务的注册与发现</code>，完成服务提供与使用的<code>解耦</code>。</p>
+<h4 id="使用">使用</h4>
+<p>外部使用时，往往通过<code>load(Class service, ClassLoader loader)</code>或<code>load(Class service)</code>调用，最后都是在<code>reload</code>方法中创建了<code>LazyIterator</code>对象，<code>LazyIterator</code>是<code>ServiceLoader</code>的内部类，实现了<code>Iterator</code>接口，其作用是一个懒加载的迭代器，在<code>hasNextService</code>方法中，完成了对位于<code>META-INF/services/</code>目录下的配置文件的解析，并在<code>nextService</code>方法中，完成了对具体实现类的实例化。</p>
+<p><code>META-INF/services/</code>，是<code>ServiceLoader</code>中约定的接口与实现类的关系配置目录，文件名是接口全限定类名，内容是接口对应的具体实现类，如果有多个实现类，分别将不同的实现类都分别作为每一行去配置。解析过程中，通过<code>LinkedHashMap&lt;String,S&gt;</code>数据结构的<code>providers</code>，将已经发现了的接口实现类进行了缓存，并对外提供的<code>iterator()</code>方法，方便外部遍历。</p>
+<h4 id="总结-2">总结</h4>
+<p>基于服务提供与发现的思想，系统自带的<code>ServiceLoader</code>以及基于此思想基础上的演化形式，被广泛的使用到实际的项目中。本质上，<strong>通过服务接口约定、服务注册与服务发现，完成将服务提供方与服务使用方的解耦，大大扩展了系统的可扩展性</strong>。<strong>服务注册的本质，是将服务接口与具体服务实现的映射关系注册到系统或特定实现中。服务发现的过程，本质上是向系统或特定实现去匹配对应的具体实现类</strong>，但在写法上是基于接口的编程方式，因为服务使用方和服务提供方彼此都是透明与未感知的。基于<code>SPI</code>思想的<code>ServiceLoader</code>实现及演化，在项目的组件化，或实现扩展性功能，甚至完成具有可插拔能力的插件化模块时，往往都被广泛使用到。</p>
+<h3 id="linkedlist-linkedhashmap-lru">LinkedList、LinkedHashMap、LRU</h3>
+<h4 id="linkedlist">LinkedList</h4>
+<p>底层数据结构</p>
+<h3 id="设计模式">设计模式</h3>
+<h4 id="装饰者模式">装饰者模式</h4>
+<h4 id="代理模式">代理模式</h4>
+<h4 id="责任链模式">责任链模式</h4>
+<h4 id="工厂模式">工厂模式</h4>
+<h4 id="适配器模式">适配器模式</h4>
+<h4 id="建造者模式">建造者模式</h4>
+<h4 id="单例模式">单例模式</h4>
+<h4 id="模板模式">模板模式</h4>
+<h4 id="观察者模式">观察者模式</h4>
+<h3 id="关于精度损失问题int-long-超过最大值">关于精度损失问题：int、long 超过最大值</h3>
+<h3 id="关于注解元注解的种类-继承javalangannotation-注解的基础类型-注解的常用方法">关于注解：元注解的种类、继承java.lang.Annotation、注解的基础类型、注解的常用方法</h3>
+<h3 id="关于classloader类加载器双亲委派模型">关于ClassLoader，类加载器，双亲委派模型</h3>
+
+							</div>
+							<div class="wow bounceInDown vt-post-tags">
+								
+							</div>
+							<nav class="navigation3 post-navigation3" role="navigation">
+
+								<div class="nav-links3">
+									
+									
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/springcloud-alibaba-xue-xi-bi-ji/"
+											rel="next"> SpringCloud Alibaba学习笔记</a></div>
+									
+								</div>
+							</nav>
+							<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
+								<div class="author-avatar pull-left"><img
+										src="https://xinrong2019.github.io//images/avatar.png"></div>
+								
+								<div class="author-description">
+									<div class="author-title">
+										<div class="author-link" rel="author">Kim</div>
+									</div>
+									
+									
+									<p class="author-bio">Time waits for no one.</p>
+								</div>
+							</div>
+							
+						</div>
+					</article>
+					<div id="marlin_lite_about_widget-2" class="wow bounceInUp widget marlin_lite_about_widget"
+						data-wow-delay="0.1s">
+
+						
+						
+						<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '2f13af052cedc58f1f20',
+    clientSecret: 'ce03139f08944b2398d0f580a3d00ff58958c242',
+    repo: 'xinrong2019.github.io',
+    owner: 'xinrong2019',
+    admin: ['xinrong2019'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+						
+						
+						
+						<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://xinrong2019.github.io//media/scripts/Valine.min.js'></script>
+
+<div class="comment"></div>
+<script>
+        new Valine({
+            // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+            av: AV, 
+            el: '.comment',
+            lang: 'zh-cn',
+            
+            
+     	
+      	
+          
+        });
+    </script> 
+
+
+					</div>
+				</div>
+				<div class="tocc col l3 hide-on-med-and-down">
+
+    <div class="toc-widget">
+
+        <div class="toc-title"></div>
+
+        <div id="toc-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.5.0/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '.entry-summary',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('.entry-summary').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+
+    $(function () {
+        var bt;
+        bt = $('.toc-widget');
+        if ($(document).width() > 480) {
+            $(window).scroll(function () {
+                var st;
+                st = $(window).scrollTop();
+                if (st > 450) {
+                    return bt.css('display', 'block');
+                } else {
+                    return bt.css('display', 'none');
+                }
+            })
+        }
+    });
+</script>
+			</div>
+		</div>
+		<footer id="colophon" class="site-footer">
+	<div class="container">
+		<div class="copyright">
+			Created by Kim.
+			<br>
+			<b>Theme: </b>
+			<a href="https://github.com/alterfang/gridea-theme-pan" target="_blank" title="Pan">
+				<span><b>Pan</b></span>
+			</a>
+			<b>. Powered by </b>
+			<a href="https://gridea.dev/" target="_blank" title="Gridea">
+				<span><b>Gridea</b></span>
+			</a>
+		</div>
+	</div><!-- .container -->
+</footer><!-- #colophon -->
+	</div>
+
+	<script src="https://cdn.bootcss.com/fitvids/1.2.0/jquery.fitvids.min.js"></script>
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/marlin-scripts.js'></script>
+<script src="//tokinx.github.io/lately/lately.min.js"></script>
+<script>
+  jQuery(document).ready(function () {
+    $.lately({
+      'target': '.lately-a,.lately-b,.lately-c'
+    })
+  });
+</script>
+<style type="text/css">
+  /* 一键到顶部 */
+  a.back_to_top {
+    text-decoration: none;
+    position: fixed;
+    bottom: 65px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.back_to_top span {
+    color: #888;
+  }
+
+  a.back_to_top:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.back_to_top:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .back_to_top {
+      display: none !important;
+    }
+  }
+
+  /* 一键到底部 */
+
+  a.down_to_bottom {
+    text-decoration: none;
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.down_to_bottom span {
+    color: #888;
+  }
+
+  a.down_to_bottom:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.down_to_bottom:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .down_to_bottom {
+      display: none !important;
+    }
+  }
+</style>
+
+
+<a id="back_to_top" href="#" class="back_to_top"><span><i class="iconfont icon-xiangshang"></i></span>
+</a>
+
+<a id="down_to_bottom" href="#" class="down_to_bottom"><span><i class="iconfont icon-xiangxia"></i></span>
+</a>
+
+<script src="//instant.page/3.0.0" type="module" defer
+  integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+<script>
+  function getScrollTop() {
+    var scrollTop = 0,
+      bodyScrollTop = 0,
+      documentScrollTop = 0;
+    if (document.body) {
+      bodyScrollTop = document.body.scrollTop;
+    }
+    if (document.documentElement) {
+      documentScrollTop = document.documentElement.scrollTop;
+    }
+    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+    return scrollTop;
+  };
+
+  function getScrollHeight() {
+    var scrollHeight = 0,
+      bodyScrollHeight = 0,
+      documentScrollHeight = 0;
+    if (document.body) {
+      bSH = document.body.scrollHeight;
+    }
+    if (document.documentElement) {
+      dSH = document.documentElement.scrollHeight;
+    }
+    scrollHeight = (bSH - dSH > 0) ? bSH : dSH;
+    return scrollHeight;
+  };
+
+  function getWindowHeight() {
+    var windowHeight = 0;
+    if (document.compatMode == "CSS1Compat") {
+      windowHeight = document.documentElement.clientHeight;
+    } else {
+      windowHeight = document.body.clientHeight;
+    }
+    return windowHeight;
+  };
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block');
+          } else {
+            return bt.css('display', 'none');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: 0
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#down_to_bottom');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+            return bt.css('display', 'none');
+          } else {
+            return bt.css('display', 'block');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: $('body,html')[0].scrollHeight
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+</script>
+	<script data-no-instant>
+		(function ($) {
+			$.extend({
+				adamsOverload: function () {
+					$('.navigation:eq(0)').remove();
+					$("").attr("rel", "external");
+					$("a[rel='external'],a[rel='external nofollow']").attr("target", "_blank");
+					$("a.vi").attr("rel", "");
+					$.viewImage({
+						'target': 'img',
+						'exclude': '.vsmile-icons img,.gallery img',
+						'delay': 300
+					});
+					$.lately({
+						'target': '.commentmetadata a,.infos time,.post-list time'
+					});
+					prettyPrint();
+
+					$('ul.links li a').each(function () {
+						if ($(this).parent().find('.bg').length == 0) {
+							$(this).parent().append(
+								'<!---<div class="bg" style="background-image:url(https://c3.glgoo.top/s2/favicons?domain=' +
+								$(this).attr("href") + ')"></div>--->')
+						}
+					});
+				}
+			});
+		})(jQuery);
+		jQuery.adamsOverload();
+	</script>
+
+</body>
+
+</html>
