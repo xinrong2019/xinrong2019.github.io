@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://xinrong2019.github.io/</id>
     <title>Eucaly</title>
-    <updated>2020-04-04T06:46:53.518Z</updated>
+    <updated>2020-04-04T06:50:37.047Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://xinrong2019.github.io/"/>
     <link rel="self" href="https://xinrong2019.github.io/atom.xml"/>
@@ -10,6 +10,106 @@
     <logo>https://xinrong2019.github.io/images/avatar.png</logo>
     <icon>https://xinrong2019.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Eucaly</rights>
+    <entry>
+        <title type="html"><![CDATA[Java基础知识]]></title>
+        <id>https://xinrong2019.github.io/post/java-ji-chu-zhi-shi/</id>
+        <link href="https://xinrong2019.github.io/post/java-ji-chu-zhi-shi/">
+        </link>
+        <updated>2020-04-04T06:50:12.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="目标">目标</h2>
+<p>以面试为导向，知识点要全面，查漏补缺。突出重点。</p>
+<p>学完后有一个基本的认知是什么，对于重点内容要知道为什么，了解实现原理。</p>
+<h2 id="基础">基础</h2>
+<h3 id="强引用-弱引用-虚引用-软引用">强引用、弱引用、虚引用、软引用</h3>
+<p>参见<a href="https://juejin.im/post/5a5129f5f265da3e317dfc08">Java中的四种引用类型</a></p>
+<h4 id="背景">背景</h4>
+<p>简单了解即可。和引用关联的知识点，不得不提对象的生命周期，再远点就是GC如何管理对象的生命周期的。这里假设读者已经知道这些内容了。</p>
+<h4 id="引用强度认知">引用强度认知：</h4>
+<p>引用强度从强到弱分别为：强引用、软引用、弱引用、虚引用。</p>
+<h4 id="强引用-strongreference">强引用 StrongReference</h4>
+<p>默认引用形式，使用时不需要显示定义。任何通过强引用所使用的对象不管系统资源有多紧张，Java GC都不会主动回收具有强引用的对象。</p>
+<h4 id="弱引用-weakreference">弱引用 WeakReference</h4>
+<p>如果一个对象只具有弱引用，无论内存充足与否，Java GC后对象如果只有弱引用将会被自动回收。</p>
+<h4 id="软引用-softreference">软引用 SoftReference</h4>
+<p>软引用和弱引用的特性基本一致， 主要的区别在于软引用在内存不足时才会被回收。如果一个对象只具有软引用，Java GC在内存充足的时候不会回收它，内存不足时才会被回收。</p>
+<h4 id="虚引用-phantomreference">虚引用 PhantomReference</h4>
+<p>从PhantomReference类的源代码可以知道，它的get()方法无论何时返回的都只会是null。所以单独使用虚引用时，没有什么意义，需要<strong>和引用队列ReferenceQueue类联合使用</strong>。当执行Java GC时如果一个对象只有虚引用，就会把这个对象加入到与之关联的ReferenceQueue中。</p>
+<blockquote>
+<p>文字干巴巴，去看原文代码</p>
+</blockquote>
+<h4 id="小结">小结</h4>
+<p>强引用是 Java 的默认引用形式，使用时不需要显示定义，是我们平时最常使用到的引用方式。不管系统资源有多紧张，Java GC都不会主动回收具有强引用的对象。<br>
+  弱引用和软引用一般在引用对象为非必需对象的时候使用。它们的区别是被弱引用关联的对象在垃圾回收时总是会被回收，被软引用关联的对象只有在内存不足时才会被回收。<br>
+  虚引用的get()方法获取的永远是null，无法获取对象实例。Java GC会把虚引用的对象放到引用队列里面。可用来在对象被回收时做额外的一些资源清理或事物回滚等处理。<br>
+  由于无法从虚引获取到引用对象的实例。它的使用情况比较特别，所以这里不把虚引用放入表格进行对比。这里对强引用、弱引用、软引用进行对比：</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200403134544324_2020_04_03_13_47_09.png" alt="" loading="lazy"></figure>
+<h3 id="final关键字的作用-方法-变量-类">final关键字的作用 (方法、变量、类)</h3>
+<p>参见<a href="https://www.jianshu.com/p/e43c3273d7d5">final 关键字</a></p>
+<p>应用在方法、变量、类上的作用不赘述，已经掌握，只查漏补缺</p>
+<ul>
+<li>
+<p>被final修饰的方法，不可以被重写。但是不影响本类的重载以及重载函数的重写。</p>
+</li>
+<li>
+<p>final成员变量必须在声明的时候初始化或者在构造器中初始化，否则就会报编译错误。</p>
+</li>
+</ul>
+<p>不可变的类是天然无状态的，线程安全的。</p>
+<h4 id="如何写一个不可变类呢">如何写一个不可变类呢？</h4>
+<ul>
+<li>将类声明为final，所以它不能被继承</li>
+<li>将所有的成员声明为私有的，这样就不允许直接访问这些成员</li>
+<li>对变量不要提供setter方法</li>
+<li>将所有可变的成员声明为final，这样只能对它们赋值一次</li>
+<li>通过构造器初始化所有成员，进行深拷贝(deep copy)</li>
+<li>在getter方法中，不要直接返回对象本身，而是克隆对象，并返回对象的拷贝</li>
+</ul>
+<p>具体可参考String和Integer等的写法</p>
+<h4 id="和static一起使用">和static一起使用</h4>
+<p>对于静态final变量，我们可以直接初始化，或者使用静态代码块。而不可以使用构造函数或者构造代码块。</p>
+<p>因为static要求在编译期间就确定值，然后放入静态区。而构造函数和构造代码块发生在运行期间。</p>
+<h4 id="final和private">final和private</h4>
+<p>类中所有的private方法都隐式的指定为final的，由于无法取用private方法，所以也就无法覆盖它，可以对private方法添加final修饰符，但并没有添加任何额外意义。（了解即可）</p>
+<h3 id="泛型-泛型继承-泛型擦除">泛型、泛型继承、泛型擦除</h3>
+<p><a href="https://blog.csdn.net/u012706811/article/details/53464612">泛型擦除分析</a><br>
+<a href="https://juejin.im/post/5e61fb10e51d4526d6406cb0#heading-4">泛型擦除是什么，会带来什么问题？</a></p>
+<h4 id="泛型擦除">泛型擦除</h4>
+<p>使用泛型的话,<strong>运行期把对象都是当成object来处理的</strong>,所以可以运用的方法都是object的方法,且在赋值操作时,编译器会自动强转为指定泛型类型,另一个好处就是在编译期更早的发现向下转型可能出现的错误,因为向下转型是不安全的.</p>
+<h4 id="带来什么样的问题">带来什么样的问题？</h4>
+<p>在运行时反编译添加不同类型的数据，数据错误，代码不报错。</p>
+<h4 id="泛型继承带上界的擦除">泛型继承，带上界的擦除</h4>
+<p>当使用上界时泛型擦除擦除为上界的类型,因此也就解释了为啥可以调用上界的方法.并且会和赋值操作的时候一样自动强转为对应的泛型,向上转型,为安全的操作。</p>
+<h4 id="带通配符的上界">带通配符的上界</h4>
+<h4 id="带通配符的下界">带通配符的下界</h4>
+<h4 id="总结">总结</h4>
+<p>泛型的出现是为了减少向下转型出现的错误,泛型的目的是<strong>尽可能的在编译器发现转型时的错误</strong>,所以对于不安全的操作(编译器认为的)会绝对禁止,存储进去的都是绝对安全(编译器认为的)的数据.</p>
+<h3 id="jdk-serviceloader">jdk ServiceLoader</h3>
+<p>参见<a href="https://juejin.im/post/5d2db85d6fb9a07ea7134408">Java SPI机制：ServiceLoader实现原理及应用剖析</a></p>
+<p>SPI，全称<code>Service Provider Interfaces</code>，服务提供接口。可以用来<strong>解耦服务的实现和使用，增强应用的可扩展性</strong>。</p>
+<p>JDK中，基于SPI的思想，提供了默认具体的实现，<code>ServiceLoader</code>。利用JDK自带的<code>ServiceLoader</code>，可以轻松实现面向<code>服务的注册与发现</code>，完成服务提供与使用的<code>解耦</code>。</p>
+<h4 id="使用">使用</h4>
+<p>外部使用时，往往通过<code>load(Class service, ClassLoader loader)</code>或<code>load(Class service)</code>调用，最后都是在<code>reload</code>方法中创建了<code>LazyIterator</code>对象，<code>LazyIterator</code>是<code>ServiceLoader</code>的内部类，实现了<code>Iterator</code>接口，其作用是一个懒加载的迭代器，在<code>hasNextService</code>方法中，完成了对位于<code>META-INF/services/</code>目录下的配置文件的解析，并在<code>nextService</code>方法中，完成了对具体实现类的实例化。</p>
+<p><code>META-INF/services/</code>，是<code>ServiceLoader</code>中约定的接口与实现类的关系配置目录，文件名是接口全限定类名，内容是接口对应的具体实现类，如果有多个实现类，分别将不同的实现类都分别作为每一行去配置。解析过程中，通过<code>LinkedHashMap&lt;String,S&gt;</code>数据结构的<code>providers</code>，将已经发现了的接口实现类进行了缓存，并对外提供的<code>iterator()</code>方法，方便外部遍历。</p>
+<h4 id="总结-2">总结</h4>
+<p>基于服务提供与发现的思想，系统自带的<code>ServiceLoader</code>以及基于此思想基础上的演化形式，被广泛的使用到实际的项目中。本质上，<strong>通过服务接口约定、服务注册与服务发现，完成将服务提供方与服务使用方的解耦，大大扩展了系统的可扩展性</strong>。<strong>服务注册的本质，是将服务接口与具体服务实现的映射关系注册到系统或特定实现中。服务发现的过程，本质上是向系统或特定实现去匹配对应的具体实现类</strong>，但在写法上是基于接口的编程方式，因为服务使用方和服务提供方彼此都是透明与未感知的。基于<code>SPI</code>思想的<code>ServiceLoader</code>实现及演化，在项目的组件化，或实现扩展性功能，甚至完成具有可插拔能力的插件化模块时，往往都被广泛使用到。</p>
+<h3 id="linkedlist-linkedhashmap-lru">LinkedList、LinkedHashMap、LRU</h3>
+<h4 id="linkedlist">LinkedList</h4>
+<p>底层数据结构</p>
+<h3 id="设计模式">设计模式</h3>
+<h4 id="装饰者模式">装饰者模式</h4>
+<h4 id="代理模式">代理模式</h4>
+<h4 id="责任链模式">责任链模式</h4>
+<h4 id="工厂模式">工厂模式</h4>
+<h4 id="适配器模式">适配器模式</h4>
+<h4 id="建造者模式">建造者模式</h4>
+<h4 id="单例模式">单例模式</h4>
+<h4 id="模板模式">模板模式</h4>
+<h4 id="观察者模式">观察者模式</h4>
+<h3 id="关于精度损失问题int-long-超过最大值">关于精度损失问题：int、long 超过最大值</h3>
+<h3 id="关于注解元注解的种类-继承javalangannotation-注解的基础类型-注解的常用方法">关于注解：元注解的种类、继承java.lang.Annotation、注解的基础类型、注解的常用方法</h3>
+<h3 id="关于classloader类加载器双亲委派模型">关于ClassLoader，类加载器，双亲委派模型</h3>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Java基础知识清单]]></title>
         <id>https://xinrong2019.github.io/post/java-ji-chu/</id>
@@ -361,100 +461,6 @@
 <p>Solr &amp; Lucene</p>
 </li>
 </ul>
-<h2 id="toc">TOC</h2>
-<p>[TOC]</p>
-<h2 id="目标">目标</h2>
-<p>以面试为导向，知识点要全面，查漏补缺。突出重点。</p>
-<p>学完后有一个基本的认知是什么，对于重点内容要知道为什么，了解实现原理。</p>
-<h2 id="基础">基础</h2>
-<h3 id="强引用-弱引用-虚引用-软引用">强引用、弱引用、虚引用、软引用</h3>
-<p>参见<a href="https://juejin.im/post/5a5129f5f265da3e317dfc08">Java中的四种引用类型</a></p>
-<h4 id="背景">背景</h4>
-<p>简单了解即可。和引用关联的知识点，不得不提对象的生命周期，再远点就是GC如何管理对象的生命周期的。这里假设读者已经知道这些内容了。</p>
-<h4 id="引用强度认知">引用强度认知：</h4>
-<p>引用强度从强到弱分别为：强引用、软引用、弱引用、虚引用。</p>
-<h4 id="强引用-strongreference">强引用 StrongReference</h4>
-<p>默认引用形式，使用时不需要显示定义。任何通过强引用所使用的对象不管系统资源有多紧张，Java GC都不会主动回收具有强引用的对象。</p>
-<h4 id="弱引用-weakreference">弱引用 WeakReference</h4>
-<p>如果一个对象只具有弱引用，无论内存充足与否，Java GC后对象如果只有弱引用将会被自动回收。</p>
-<h4 id="软引用-softreference">软引用 SoftReference</h4>
-<p>软引用和弱引用的特性基本一致， 主要的区别在于软引用在内存不足时才会被回收。如果一个对象只具有软引用，Java GC在内存充足的时候不会回收它，内存不足时才会被回收。</p>
-<h4 id="虚引用-phantomreference">虚引用 PhantomReference</h4>
-<p>从PhantomReference类的源代码可以知道，它的get()方法无论何时返回的都只会是null。所以单独使用虚引用时，没有什么意义，需要<strong>和引用队列ReferenceQueue类联合使用</strong>。当执行Java GC时如果一个对象只有虚引用，就会把这个对象加入到与之关联的ReferenceQueue中。</p>
-<blockquote>
-<p>文字干巴巴，去看原文代码</p>
-</blockquote>
-<h4 id="小结">小结</h4>
-<p>强引用是 Java 的默认引用形式，使用时不需要显示定义，是我们平时最常使用到的引用方式。不管系统资源有多紧张，Java GC都不会主动回收具有强引用的对象。<br>
-  弱引用和软引用一般在引用对象为非必需对象的时候使用。它们的区别是被弱引用关联的对象在垃圾回收时总是会被回收，被软引用关联的对象只有在内存不足时才会被回收。<br>
-  虚引用的get()方法获取的永远是null，无法获取对象实例。Java GC会把虚引用的对象放到引用队列里面。可用来在对象被回收时做额外的一些资源清理或事物回滚等处理。<br>
-  由于无法从虚引获取到引用对象的实例。它的使用情况比较特别，所以这里不把虚引用放入表格进行对比。这里对强引用、弱引用、软引用进行对比：</p>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200403134544324_2020_04_03_13_47_09.png" alt="" loading="lazy"></figure>
-<h3 id="final关键字的作用-方法-变量-类">final关键字的作用 (方法、变量、类)</h3>
-<p>参见<a href="https://www.jianshu.com/p/e43c3273d7d5">final 关键字</a></p>
-<p>应用在方法、变量、类上的作用不赘述，已经掌握，只查漏补缺</p>
-<ul>
-<li>
-<p>被final修饰的方法，不可以被重写。但是不影响本类的重载以及重载函数的重写。</p>
-</li>
-<li>
-<p>final成员变量必须在声明的时候初始化或者在构造器中初始化，否则就会报编译错误。</p>
-</li>
-</ul>
-<p>不可变的类是天然无状态的，线程安全的。</p>
-<h4 id="如何写一个不可变类呢">如何写一个不可变类呢？</h4>
-<ul>
-<li>将类声明为final，所以它不能被继承</li>
-<li>将所有的成员声明为私有的，这样就不允许直接访问这些成员</li>
-<li>对变量不要提供setter方法</li>
-<li>将所有可变的成员声明为final，这样只能对它们赋值一次</li>
-<li>通过构造器初始化所有成员，进行深拷贝(deep copy)</li>
-<li>在getter方法中，不要直接返回对象本身，而是克隆对象，并返回对象的拷贝</li>
-</ul>
-<p>具体可参考String和Integer等的写法</p>
-<h4 id="和static一起使用">和static一起使用</h4>
-<p>对于静态final变量，我们可以直接初始化，或者使用静态代码块。而不可以使用构造函数或者构造代码块。</p>
-<p>因为static要求在编译期间就确定值，然后放入静态区。而构造函数和构造代码块发生在运行期间。</p>
-<h4 id="final和private">final和private</h4>
-<p>类中所有的private方法都隐式的指定为final的，由于无法取用private方法，所以也就无法覆盖它，可以对private方法添加final修饰符，但并没有添加任何额外意义。（了解即可）</p>
-<h3 id="泛型-泛型继承-泛型擦除">泛型、泛型继承、泛型擦除</h3>
-<p><a href="https://blog.csdn.net/u012706811/article/details/53464612">泛型擦除分析</a><br>
-<a href="https://juejin.im/post/5e61fb10e51d4526d6406cb0#heading-4">泛型擦除是什么，会带来什么问题？</a></p>
-<h4 id="泛型擦除">泛型擦除</h4>
-<p>使用泛型的话,<strong>运行期把对象都是当成object来处理的</strong>,所以可以运用的方法都是object的方法,且在赋值操作时,编译器会自动强转为指定泛型类型,另一个好处就是在编译期更早的发现向下转型可能出现的错误,因为向下转型是不安全的.</p>
-<h4 id="带来什么样的问题">带来什么样的问题？</h4>
-<p>在运行时反编译添加不同类型的数据，数据错误，代码不报错。</p>
-<h4 id="泛型继承带上界的擦除">泛型继承，带上界的擦除</h4>
-<p>当使用上界时泛型擦除擦除为上界的类型,因此也就解释了为啥可以调用上界的方法.并且会和赋值操作的时候一样自动强转为对应的泛型,向上转型,为安全的操作。</p>
-<h4 id="带通配符的上界">带通配符的上界</h4>
-<h4 id="带通配符的下界">带通配符的下界</h4>
-<h4 id="总结">总结</h4>
-<p>泛型的出现是为了减少向下转型出现的错误,泛型的目的是<strong>尽可能的在编译器发现转型时的错误</strong>,所以对于不安全的操作(编译器认为的)会绝对禁止,存储进去的都是绝对安全(编译器认为的)的数据.</p>
-<h3 id="jdk-serviceloader">jdk ServiceLoader</h3>
-<p>参见<a href="https://juejin.im/post/5d2db85d6fb9a07ea7134408">Java SPI机制：ServiceLoader实现原理及应用剖析</a></p>
-<p>SPI，全称<code>Service Provider Interfaces</code>，服务提供接口。可以用来<strong>解耦服务的实现和使用，增强应用的可扩展性</strong>。</p>
-<p>JDK中，基于SPI的思想，提供了默认具体的实现，<code>ServiceLoader</code>。利用JDK自带的<code>ServiceLoader</code>，可以轻松实现面向<code>服务的注册与发现</code>，完成服务提供与使用的<code>解耦</code>。</p>
-<h4 id="使用">使用</h4>
-<p>外部使用时，往往通过<code>load(Class service, ClassLoader loader)</code>或<code>load(Class service)</code>调用，最后都是在<code>reload</code>方法中创建了<code>LazyIterator</code>对象，<code>LazyIterator</code>是<code>ServiceLoader</code>的内部类，实现了<code>Iterator</code>接口，其作用是一个懒加载的迭代器，在<code>hasNextService</code>方法中，完成了对位于<code>META-INF/services/</code>目录下的配置文件的解析，并在<code>nextService</code>方法中，完成了对具体实现类的实例化。</p>
-<p><code>META-INF/services/</code>，是<code>ServiceLoader</code>中约定的接口与实现类的关系配置目录，文件名是接口全限定类名，内容是接口对应的具体实现类，如果有多个实现类，分别将不同的实现类都分别作为每一行去配置。解析过程中，通过<code>LinkedHashMap&lt;String,S&gt;</code>数据结构的<code>providers</code>，将已经发现了的接口实现类进行了缓存，并对外提供的<code>iterator()</code>方法，方便外部遍历。</p>
-<h4 id="总结-2">总结</h4>
-<p>基于服务提供与发现的思想，系统自带的<code>ServiceLoader</code>以及基于此思想基础上的演化形式，被广泛的使用到实际的项目中。本质上，<strong>通过服务接口约定、服务注册与服务发现，完成将服务提供方与服务使用方的解耦，大大扩展了系统的可扩展性</strong>。<strong>服务注册的本质，是将服务接口与具体服务实现的映射关系注册到系统或特定实现中。服务发现的过程，本质上是向系统或特定实现去匹配对应的具体实现类</strong>，但在写法上是基于接口的编程方式，因为服务使用方和服务提供方彼此都是透明与未感知的。基于<code>SPI</code>思想的<code>ServiceLoader</code>实现及演化，在项目的组件化，或实现扩展性功能，甚至完成具有可插拔能力的插件化模块时，往往都被广泛使用到。</p>
-<h3 id="linkedlist-linkedhashmap-lru">LinkedList、LinkedHashMap、LRU</h3>
-<h4 id="linkedlist">LinkedList</h4>
-<p>底层数据结构</p>
-<h3 id="设计模式">设计模式</h3>
-<h4 id="装饰者模式">装饰者模式</h4>
-<h4 id="代理模式">代理模式</h4>
-<h4 id="责任链模式">责任链模式</h4>
-<h4 id="工厂模式">工厂模式</h4>
-<h4 id="适配器模式">适配器模式</h4>
-<h4 id="建造者模式">建造者模式</h4>
-<h4 id="单例模式">单例模式</h4>
-<h4 id="模板模式">模板模式</h4>
-<h4 id="观察者模式">观察者模式</h4>
-<h3 id="关于精度损失问题int-long-超过最大值">关于精度损失问题：int、long 超过最大值</h3>
-<h3 id="关于注解元注解的种类-继承javalangannotation-注解的基础类型-注解的常用方法">关于注解：元注解的种类、继承java.lang.Annotation、注解的基础类型、注解的常用方法</h3>
-<h3 id="关于classloader类加载器双亲委派模型">关于ClassLoader，类加载器，双亲委派模型</h3>
 ]]></content>
     </entry>
     <entry>
@@ -1560,37 +1566,6 @@ dependencies {
 <h3 id="552-更新索引统计信息">5.5.2 更新索引统计信息</h3>
 <h3 id="553-减少索引和数据的碎片">5.5.3 减少索引和数据的碎片</h3>
 <h2 id="56-总结">5.6 总结</h2>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Schema与数据类型优化]]></title>
-        <id>https://xinrong2019.github.io/post/schema-yu-shu-ju-lei-xing-you-hua/</id>
-        <link href="https://xinrong2019.github.io/post/schema-yu-shu-ju-lei-xing-you-hua/">
-        </link>
-        <updated>2020-01-31T11:05:56.000Z</updated>
-        <content type="html"><![CDATA[<p>良好的逻辑设计和物理设计是高性能的基石，应该根据系统将要执行的查询语句来设计schema，这往往需要权衡各种因素。</p>
-<p>例如，反范式的设计可以加快某些类型的查询，但同时可能使另一些类型的查询变慢。比如添加计数表和汇总表是一种很好的优化查询的方式，但这些表的维护成本可能会很高。</p>
-<p>本章主题是schema设计，主要是MySQL数据库的设计，是接下来两章的铺垫。阅读顺序建议先看本章，再顺序看后两章，再回头看看本章。</p>
-<h2 id="41-选择优化的数据类型">4.1 选择优化的数据类型</h2>
-<h3 id="411-整数类型">4.1.1 整数类型</h3>
-<h3 id="412-实数类型">4.1.2 实数类型</h3>
-<h3 id="413-字符串类型">4.1.3 字符串类型</h3>
-<h3 id="414-日期和时间类型">4.1.4 日期和时间类型</h3>
-<h3 id="415-位数据类型">4.1.5 位数据类型</h3>
-<h3 id="416-选择标识符identifier">4.1.6 选择标识符（identifier）</h3>
-<h3 id="417-特殊类型数据">4.1.7 特殊类型数据</h3>
-<h2 id="42-mysql-schema设计中的陷阱">4.2 MySQL schema设计中的陷阱</h2>
-<h2 id="43-范式和反范式">4.3 范式和反范式</h2>
-<h3 id="431-范式的优点和缺点">4.3.1 范式的优点和缺点</h3>
-<h3 id="432-反范式的优点和缺点">4.3.2 反范式的优点和缺点</h3>
-<h3 id="433-混用范式化和反范式化">4.3.3 混用范式化和反范式化</h3>
-<h2 id="44-缓存表和汇总表">4.4 缓存表和汇总表</h2>
-<h3 id="441-物化视图">4.4.1 物化视图</h3>
-<h3 id="442-计数器表">4.4.2 计数器表</h3>
-<h2 id="45-加快alter-table操作的速度">4.5 加快<code>alter table</code>操作的速度</h2>
-<h3 id="451-只修改frm文件">4.5.1 只修改<code>.frm</code>文件</h3>
-<h3 id="452-快速创建myisam索引">4.5.2 快速创建MyISAM索引</h3>
-<h2 id="46-总结">4.6 总结</h2>
 ]]></content>
     </entry>
 </feed>
