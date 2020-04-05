@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://xinrong2019.github.io/</id>
     <title>Eucaly</title>
-    <updated>2020-04-04T06:55:58.243Z</updated>
+    <updated>2020-04-05T16:27:30.906Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://xinrong2019.github.io/"/>
     <link rel="self" href="https://xinrong2019.github.io/atom.xml"/>
@@ -824,6 +824,512 @@ server:
 </li>
 </ul>
 <h4 id="个人心得">个人心得</h4>
+<h5 id="职责划分">职责划分</h5>
+<p>规划好微服务的边界。比如订单微服务只负责订单功能。</p>
+<h5 id="通用性划分">通用性划分</h5>
+<p>把一些通用功能做成微服务。比如消息中心和用户中心。</p>
+<h4 id="合理的粒度">合理的粒度</h4>
+<ul>
+<li>良好的满足业务（这是前提）</li>
+<li>幸福感（你的团队没有人认为微服务太大，难以维护，同时部署也非常高效，不会每次发布都发布N多微服务）</li>
+<li>增量迭代</li>
+<li>持续进化</li>
+</ul>
+<h4 id="小程序的拆分">小程序的拆分</h4>
+<p>以面向对象方式拆分</p>
+<figure data-type="image" tabindex="8"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/XeHfxG.png" alt="" loading="lazy"></figure>
+<p>用户中心按照通用性划分，内容中心按照职责划分。</p>
+<p>项目初期不建议拆分太细，后期如果发现某个微服务过分庞大再细分。</p>
+<h4 id="项目架构图">项目架构图</h4>
+<figure data-type="image" tabindex="9"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/uHGDQ8.png" alt="" loading="lazy"></figure>
+<h4 id="数据库设计">数据库设计</h4>
+<h5 id="数据建模">数据建模</h5>
+<h5 id="建表">建表</h5>
+<p><strong>user-center-create-table.sql</strong></p>
+<pre><code class="language-sql">USE `user_center`;
+
+-- -----------------------------------------------------
+-- Table `user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` INT NOT NULL AUTO_INCREMENT COMMENT 'Id',
+  `wx_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '微信id',
+  `wx_nickname` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '微信昵称',
+  `roles` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '角色',
+  `avatar_url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '头像地址',
+  `create_time` DATETIME NOT NULL COMMENT '创建时间',
+  `update_time` DATETIME NOT NULL COMMENT '修改时间',
+  `bonus` INT NOT NULL DEFAULT 300 COMMENT '积分',
+  PRIMARY KEY (`id`))
+COMMENT = '分享';
+
+
+-- -----------------------------------------------------
+-- Table `bonus_event_log`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `bonus_event_log` (
+  `id` INT NOT NULL AUTO_INCREMENT COMMENT 'Id',
+  `user_id` INT NULL COMMENT 'user.id',
+  `value` INT NULL COMMENT '积分操作值',
+  `event` VARCHAR(20) NULL COMMENT '发生的事件',
+  `create_time` DATETIME NULL COMMENT '创建时间',
+  `description` VARCHAR(100) NULL COMMENT '描述',
+  PRIMARY KEY (`id`),
+  INDEX `fk_bonus_event_log_user1_idx` (`user_id` ASC) )
+ENGINE = InnoDB
+COMMENT = '积分变更记录表';
+</code></pre>
+<p><strong>content-center-create-table.sql</strong></p>
+<pre><code class="language-sql">USE `content_center`;
+
+-- -----------------------------------------------------
+-- Table `share`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `share` (
+  `id` INT NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `user_id` INT NOT NULL DEFAULT 0 COMMENT '发布人id',
+  `title` VARCHAR(80) NOT NULL DEFAULT '' COMMENT '标题',
+  `create_time` DATETIME NOT NULL COMMENT '创建时间',
+  `update_time` DATETIME NOT NULL COMMENT '修改时间',
+  `is_original` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否原创 0:否 1:是',
+  `author` VARCHAR(45) NOT NULL DEFAULT '' COMMENT '作者',
+  `cover` VARCHAR(256) NOT NULL DEFAULT '' COMMENT '封面',
+  `summary` VARCHAR(256) NOT NULL DEFAULT '' COMMENT '概要信息',
+  `price` INT NOT NULL DEFAULT 0 COMMENT '价格（需要的积分）',
+  `download_url` VARCHAR(256) NOT NULL DEFAULT '' COMMENT '下载地址',
+  `buy_count` INT NOT NULL DEFAULT 0 COMMENT '下载数 ',
+  `show_flag` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否显示 0:否 1:是',
+  `audit_status` VARCHAR(10) NOT NULL DEFAULT 0 COMMENT '审核状态 NOT_YET: 待审核 PASSED:审核通过 REJECTED:审核不通过',
+  `reason` VARCHAR(200) NOT NULL DEFAULT '' COMMENT '审核不通过原因',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+COMMENT = '分享表';
+
+
+-- -----------------------------------------------------
+-- Table `mid_user_share`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mid_user_share` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `share_id` INT NOT NULL COMMENT 'share.id',
+  `user_id` INT NOT NULL COMMENT 'user.id',
+  PRIMARY KEY (`id`),
+  INDEX `fk_mid_user_share_share1_idx` (`share_id` ASC) ,
+  INDEX `fk_mid_user_share_user1_idx` (`user_id` ASC) )
+ENGINE = InnoDB
+COMMENT = '用户-分享中间表【描述用户购买的分享】';
+
+
+-- -----------------------------------------------------
+-- Table `notice`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `notice` (
+  `id` INT NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `content` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '内容',
+  `show_flag` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否显示 0:否 1:是',
+  `create_time` DATETIME NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`));
+</code></pre>
+<h4 id="api-文档">API 文档</h4>
+<p>课程文档主要分四类：</p>
+<ol>
+<li>API文档：https://t.itmuch.com/doc.html</li>
+<li>课程配套代码：https://git.imooc.com/coding-358/</li>
+<li>课程相关资源（例如检表语句、数据模型、课上用到的软件等）：https://git.imooc.com/coding-358/resource</li>
+<li>课上用到的一些课外读物（慕课网手记）：http://www.imooc.com/t/1863086</li>
+</ol>
+<h4 id="如何创建小程序">如何创建小程序</h4>
+<p>注册账号：https://mp.weixin.qq.com</p>
+<p>按照提示填写信息</p>
+<h4 id="前端代码如何使用">前端代码如何使用</h4>
+<h4 id="创建项目">创建项目</h4>
+<h5 id="技术选型">技术选型</h5>
+<ul>
+<li>Spring Boot</li>
+<li>Spring MVC</li>
+<li>Mybatis+通用Mapper</li>
+<li>Spring Cloud Alibaba（分布式）</li>
+</ul>
+<h5 id="工程结构规划">工程结构规划</h5>
+<figure data-type="image" tabindex="10"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/DIgVS4.png" alt="" loading="lazy"></figure>
+<h5 id="创建项目整合框架">创建项目，整合框架</h5>
+<p>pom.xml</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;parent&gt;
+		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+		&lt;version&gt;2.1.13.RELEASE&lt;/version&gt;
+		&lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+	&lt;/parent&gt;
+	&lt;groupId&gt;com.itmuch&lt;/groupId&gt;
+	&lt;artifactId&gt;user-center&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;name&gt;user-center&lt;/name&gt;
+	&lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
+
+	&lt;properties&gt;
+		&lt;java.version&gt;1.8&lt;/java.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+		&lt;/dependency&gt;
+&lt;!--		引入通用mapper--&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;tk.mybatis&lt;/groupId&gt;
+			&lt;artifactId&gt;mapper-spring-boot-starter&lt;/artifactId&gt;
+			&lt;version&gt;2.1.5&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;mysql&lt;/groupId&gt;
+			&lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+			&lt;scope&gt;runtime&lt;/scope&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+			&lt;exclusions&gt;
+				&lt;exclusion&gt;
+					&lt;groupId&gt;org.junit.vintage&lt;/groupId&gt;
+					&lt;artifactId&gt;junit-vintage-engine&lt;/artifactId&gt;
+				&lt;/exclusion&gt;
+			&lt;/exclusions&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+				&lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+			&lt;/plugin&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
+				&lt;artifactId&gt;mybatis-generator-maven-plugin&lt;/artifactId&gt;
+				&lt;version&gt;1.3.6&lt;/version&gt;
+				&lt;configuration&gt;
+					&lt;configurationFile&gt;
+						${basedir}/src/main/resources/generator/generatorConfig.xml
+					&lt;/configurationFile&gt;
+					&lt;overwrite&gt;true&lt;/overwrite&gt;
+					&lt;verbose&gt;true&lt;/verbose&gt;
+				&lt;/configuration&gt;
+				&lt;dependencies&gt;
+					&lt;dependency&gt;
+						&lt;groupId&gt;mysql&lt;/groupId&gt;
+						&lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+						&lt;version&gt;8.0.19&lt;/version&gt;
+					&lt;/dependency&gt;
+					&lt;dependency&gt;
+						&lt;groupId&gt;tk.mybatis&lt;/groupId&gt;
+						&lt;artifactId&gt;mapper&lt;/artifactId&gt;
+						&lt;version&gt;4.1.5&lt;/version&gt;
+					&lt;/dependency&gt;
+				&lt;/dependencies&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+
+&lt;/project&gt;
+
+</code></pre>
+<p>通用Mapper包扫描配置</p>
+<pre><code class="language-java">import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import tk.mybatis.spring.annotation.MapperScan;//注意是tk的MapperScan注解
+
+@SpringBootApplication
+@MapperScan(&quot;com.itmuch&quot;)
+public class UserCenterApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(UserCenterApplication.class, args);
+	}
+
+}
+</code></pre>
+<p>在resources目录下新建generator目录，添加mybatis.generator配置</p>
+<figure data-type="image" tabindex="11"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/9ijlzo.png" alt="" loading="lazy"></figure>
+<p>generator/generatorConfig.xml</p>
+<pre><code class="language-xml">&lt;!DOCTYPE generatorConfiguration
+        PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;
+
+&lt;generatorConfiguration&gt;
+    &lt;properties resource=&quot;generator/config.properties&quot;/&gt;
+
+    &lt;context id=&quot;Mysql&quot; targetRuntime=&quot;MyBatis3Simple&quot; defaultModelType=&quot;flat&quot;&gt;
+        &lt;property name=&quot;beginningDelimiter&quot; value=&quot;`&quot;/&gt;
+        &lt;property name=&quot;endingDelimiter&quot; value=&quot;`&quot;/&gt;
+
+        &lt;plugin type=&quot;tk.mybatis.mapper.generator.MapperPlugin&quot;&gt;
+            &lt;property name=&quot;mappers&quot; value=&quot;tk.mybatis.mapper.common.Mapper&quot;/&gt;
+            &lt;property name=&quot;caseSensitive&quot; value=&quot;true&quot;/&gt;
+        &lt;/plugin&gt;
+
+        &lt;jdbcConnection driverClass=&quot;${jdbc.driverClass}&quot;
+                        connectionURL=&quot;${jdbc.url}&quot;
+                        userId=&quot;${jdbc.user}&quot;
+                        password=&quot;${jdbc.password}&quot;&gt;
+        &lt;/jdbcConnection&gt;
+
+        &lt;javaModelGenerator targetPackage=&quot;com.itmuch.usercenter.domain.entity.${moduleName}&quot;
+                            targetProject=&quot;src/main/java&quot;/&gt;
+
+        &lt;sqlMapGenerator targetPackage=&quot;com.itmuch.usercenter.dao.${moduleName}&quot;
+                         targetProject=&quot;src/main/resources&quot;/&gt;
+
+        &lt;javaClientGenerator targetPackage=&quot;com.itmuch.usercenter.dao.${moduleName}&quot;
+                             targetProject=&quot;src/main/java&quot;
+                             type=&quot;XMLMAPPER&quot;/&gt;
+
+        &lt;table tableName=&quot;${tableName}&quot;&gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;JDBC&quot;/&gt;
+        &lt;/table&gt;
+    &lt;/context&gt;
+&lt;/generatorConfiguration&gt;
+</code></pre>
+<p>generator/config.properties</p>
+<pre><code class="language-properties">jdbc.driverClass=com.mysql.cj.jdbc.Driver
+# nullCatalogMeansCurrent=true 如果不加这个配置，出现表名user在其他库，比如系统库的，会生产系统库的user
+jdbc.url=jdbc:mysql://localhost:3306/user_center?nullCatalogMeansCurrent=true
+jdbc.user=root
+jdbc.password=kim@2020
+
+# 包名
+moduleName=user
+# 表名
+tableName=user
+</code></pre>
+<p>application.yml</p>
+<pre><code class="language-yaml">spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/user_center
+    hikari:
+      username: root
+      password: kim@2020
+      # &gt;=6.x com.mysql.cj.jdbc.Driver
+      # &lt;=5.x com.mysql.jdbc.Driver
+      driver-class-name: com.mysql.cj.jdbc.Driver
+</code></pre>
+<p>执行逆向生产代码</p>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/sezcpm.png" style="zoom:50%;" />
+<h4 id="整合lombok简化代码">整合Lombok简化代码</h4>
+<pre><code class="language-xml">&lt;dependency&gt;
+			&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+			&lt;artifactId&gt;lombok&lt;/artifactId&gt;
+			&lt;version&gt;1.18.10&lt;/version&gt;
+			&lt;scope&gt;provided&lt;/scope&gt;
+		&lt;/dependency&gt;
+</code></pre>
+<p>常用注解</p>
+<pre><code class="language-java">@Data
+@NoArgsConstructor//生成无参构造
+@AllArgsConstructor//为所有参数生成构造
+@RequiredArgsConstructor//为final属性生成构造方法
+@Builder //建造者模式
+@Slf4j
+</code></pre>
+<p>更多查询<a href="https://projectlombok.org/">官网</a></p>
+<p>在<a href="https://github.com/abel533/Mapper"><code>通用mapper</code></a> <a href="https://github.com/abel533/Mapper/wiki/4.1.mappergenerator"><code>wiki</code></a>搜<code>lombok</code>，看有没有生成支持<code>lombok</code>的配置</p>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/5odMfS.png" style="zoom:50%;" />
+<h5 id="mybatisgenerator添加lombok支持">mybatis.generator添加lombok支持</h5>
+<pre><code class="language-xml">&lt;plugin type=&quot;tk.mybatis.mapper.generator.MapperPlugin&quot;&gt;
+            &lt;property name=&quot;mappers&quot; value=&quot;tk.mybatis.mapper.common.Mapper&quot;/&gt;
+            &lt;property name=&quot;caseSensitive&quot; value=&quot;true&quot;/&gt;
+            &lt;property name=&quot;lombok&quot; value=&quot;Getter,Setter,ToString&quot;/&gt;&lt;!-- 添加的行 --&gt;
+        &lt;/plugin&gt;
+</code></pre>
+<p>文档也说了，目前只支持<code>@Getter@Setter@ToString@Accessors(chain = true)</code>4种注解，一般我们自己的domain上还是习惯加如下注解：</p>
+<pre><code class="language-java">@Data
+@NoArgsConstructor//生成无参构造
+@AllArgsConstructor//为所有参数生成构造
+@Builder //建造者模式
+</code></pre>
+<p>可以手动加，更简单。</p>
+<h4 id="解决idea的红色警告">解决IDEA的红色警告</h4>
+<p>出现警告的原因：</p>
+<p>IDEA是非常智能的，它可以理解Spring的上下文。然而 <code>UserMapper</code> 这个接口是Mybatis的，IDEA理解不了。</p>
+<p>而 <code>@Autowired</code> 注解，默认情况下要求依赖对象（也就是 <code>userMapper</code> ）必须存在。而IDEA认为这个对象的实例/代理是个null，所以就<strong>友好地给个提示</strong>。</p>
+<p>解决方法：参见这篇<a href="https://www.imooc.com/article/287865">手记</a></p>
+<h5 id="作业1-课后研究一下resource和autowired注解">作业1: 课后研究一下@Resource和@Autowired注解</h5>
+<h5 id="作业2-研究repository-component-service-controller之间的区别和联系">作业2: 研究@Repository、@Component、@Service、@Controller之间的区别和联系</h5>
+<h4 id="编写用户微服务和内容微服务">编写用户微服务和内容微服务</h4>
+<p>注意：核心业务，一定要设计好业务流程，分析的过程中，使用业务流程图、活动图、用例图、序列图。重视业务和建模，没有建模的微服务是没有灵魂的。</p>
+<h5 id="实际开发流程">实际开发流程</h5>
+<p>Schema First</p>
+<p>1、分析业务（流程图、用例图...架构图等） 建模业务，确定架构</p>
+<p>2、敲定业务流程（评审）</p>
+<p>3、设计API/数据模型（表结构设计|类图|ER图）</p>
+<p>4、编写API文档</p>
+<p>5、编写代码</p>
+<p>API First</p>
+<p>1、分析业务（流程图、用例图...架构图等） 建模业务，确定架构</p>
+<p>2、敲定业务流程（评审）</p>
+<p>3、设计API/数据模型（表结构设计|类图|ER图）</p>
+<p>4、编写代码</p>
+<p>5、编写API文档</p>
+<p>但是实际也不是完全按照这样等流程走。</p>
+<p>编码。。。</p>
+<h5 id="resttemplate的使用">RestTemplate的使用</h5>
+<h4 id="现有架构存在的问题">现有架构存在的问题</h4>
+<ul>
+<li>硬编码IP，IP变化怎么办</li>
+<li>如何实现负载均衡？</li>
+<li>用户中心挂了怎么办？</li>
+</ul>
+<h2 id="spring-cloud介绍">Spring Cloud介绍</h2>
+<h3 id="什么是spring-cloud-alibaba">什么是Spring Cloud Alibaba</h3>
+<figure data-type="image" tabindex="12"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/s3ySrH.png" alt="" loading="lazy"></figure>
+<ul>
+<li>Spring Cloud的子项目</li>
+<li>致力于提供微服务开发的一站式解决方案
+<ul>
+<li>包含微服务开发的必备组件</li>
+<li>基于Spring Cloud，符合Spring Cloud标准</li>
+<li>阿里的微服务解决方案</li>
+</ul>
+</li>
+</ul>
+<h3 id="版本与兼容性">版本与兼容性</h3>
+<ul>
+<li>Spring Cloud 版本命名</li>
+<li>Spring Cloud 生命周期</li>
+<li>Spring Boot 、Spring Cloud、Spring Cloud Alibaba的兼容性关系</li>
+<li>生产环境怎么选择版本？</li>
+</ul>
+<h4 id="spring-cloud-版本命名">Spring Cloud 版本命名</h4>
+<p>语义化</p>
+<p>2.1.13.RELEASE</p>
+<p>2：主版本，第几代</p>
+<p>1：次版本，一些功能的增加，但是架构没有太大变化，是兼容的</p>
+<p>13：增量版本，bug修复</p>
+<p>RELEASE：里程碑。SNAPSHOT：开发版 ，M：里程碑 ，RELEASE：正式版</p>
+<p>Greenwich SR1 ：Greenwich版本的第一个bug修复版</p>
+<p>SR：Service Release bug修复</p>
+<p>Release Train. 发布列车</p>
+<p>伦敦地铁站站名。避免混淆，噱头。</p>
+<p>Greenwich RELEASE： Greenwich版本的第一个正式版</p>
+<h4 id="spring-cloud-生命周期">Spring Cloud 生命周期</h4>
+<ul>
+<li>版本发布规划
+<ul>
+<li>https://github.com/spring-cloud/spring-cloud-release/milestones</li>
+</ul>
+</li>
+<li>版本发布记录
+<ul>
+<li>https://github.com/spring-cloud/spring-cloud-release/release</li>
+</ul>
+</li>
+<li>版本终止声明
+<ul>
+<li>https://spring.io/projects/spring-cloud#overview</li>
+</ul>
+</li>
+</ul>
+<h4 id="版本兼容性">版本兼容性</h4>
+<figure data-type="image" tabindex="13"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/gF4NW5.png" alt="" loading="lazy"></figure>
+<p>https://spring.io/projects/spring-cloud-alibaba#overview</p>
+<p>https://github.com/alibaba/spring-cloud-alibaba/blob/master/README-zh.md</p>
+<h4 id="生产环境怎么选择版本">生产环境怎么选择版本？</h4>
+<ul>
+<li>坚决不用非稳定版本/end-of-life版本</li>
+<li>尽量用最新一代
+<ul>
+<li>xxx.RELEASE版本缓一缓</li>
+<li>SR2之后一般可大规模使用</li>
+</ul>
+</li>
+</ul>
+<h3 id="整合spring-cloud-alibaba">整合Spring Cloud Alibaba</h3>
+<ul>
+<li><a href="https://cloud.spring.io/spring-cloud-static/Greenwich.SR1/single/spring-cloud.html#_client_side_usage">整合Spring Cloud</a></li>
+<li><a href="https://spring.io/projects/spring-cloud-alibaba#overview">整合Spring Cloud Alibaba</a></li>
+</ul>
+<p>整合好后，引入组件不需要指定版本</p>
+<h2 id="服务发现">服务发现</h2>
+<h3 id="服务提供者与服务消费者">服务提供者与服务消费者</h3>
+<table>
+<thead>
+<tr>
+<th>名次</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>服务提供者</td>
+<td>服务的被调用方（即：为其他微服务提供接口的微服务）</td>
+</tr>
+<tr>
+<td>服务消费者</td>
+<td>服务的调用方（即：调用其他微服务接口的微服务）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="如何让服务消费者感知到服务提供者">如何让服务消费者感知到服务提供者</h3>
+<figure data-type="image" tabindex="14"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/3iJUdW.png" alt="" loading="lazy"></figure>
+<p>服务消费者内部使用定时任务去服务发现组件获取提供者信息，并缓存到本地，服务消费者每次调用服务提供者从本地缓存那提供者信息。</p>
+<figure data-type="image" tabindex="15"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/WNeJFv.png" alt="" loading="lazy"></figure>
+<p>添加心跳机制，通过心跳机制改变服务状态</p>
+<h3 id="什么是nacos">什么是Nacos</h3>
+<p><a href="https://nacos.io/zh-cn/docs/what-is-nacos.html">官网什么是Nacos</a></p>
+<figure data-type="image" tabindex="16"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/DDmYIw.png" alt="" loading="lazy"></figure>
+<h3 id="搭建nacos-server">搭建Nacos Server</h3>
+<p>选择<code>Nacos Server</code>版本</p>
+<p>查看引入到<code>spring-cloud-alibaba-dependencie</code>依赖</p>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/cneRHA.png" style="zoom:63%;" />
+<ul>
+<li>下载地址
+<ul>
+<li>https://github.com/alibaba/nacos/releases</li>
+</ul>
+</li>
+<li>搭建Nacos Server
+<ul>
+<li>参考文档：https://nacos.io/zh-cn/docs/quick-start.html</li>
+</ul>
+</li>
+</ul>
+<p>启动服务器</p>
+<p><code>startup.sh -m standalone</code></p>
+<p>访问控制台</p>
+<p>http://localhost:8848/nacos</p>
+<p>默认用户名密码都是nacos</p>
+<h3 id="将应用注册到nacos">将应用注册到Nacos</h3>
+<ul>
+<li>用户中心注册到Nacos</li>
+<li>内容中心注册到Nacos</li>
+<li>测试：内容中心总能找到用户中心</li>
+</ul>
+<p>引入依赖</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>配置</p>
+<pre><code class="language-yaml">spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+  application:
+    # 服务名称尽量用-，不要用_，不要用特殊字符
+    name: content-center
+</code></pre>
+<h3 id="引入服务发现">引入服务发现</h3>
+<pre><code class="language-java">@Autowired
+private DiscoveryClient discoveryClient;
+</code></pre>
 ]]></content>
     </entry>
     <entry>
