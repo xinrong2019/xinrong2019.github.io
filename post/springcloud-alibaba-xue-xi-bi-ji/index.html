@@ -163,7 +163,7 @@ window.onload=getCSS();
 				
 				
 			</div>
-			<form id="gridea-search-form" data-update="1586104047445" action="/search/index.html">
+			<form id="gridea-search-form" data-update="1586601738173" action="/search/index.html">
 				<div class="search-box">
 					<input class="search-txt" name="q" placeholder="Type to search" />
 					<a class="search-btn">
@@ -184,7 +184,7 @@ window.onload=getCSS();
 										2020-04-04
 									</time>
 									<span>
-										22 min read
+										29 min read
 									</span>
 								</div>
 							</div>
@@ -1047,9 +1047,296 @@ tableName=user
     name: content-center
 </code></pre>
 <h3 id="引入服务发现">引入服务发现</h3>
-<pre><code class="language-java">@Autowired
-private DiscoveryClient discoveryClient;
+<pre><code class="language-java">@Slf4j
+@Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class ShareService {
+    private final ShareMapper shareMapper;
+
+    private final RestTemplate restTemplate;
+
+    private final DiscoveryClient discoveryClient;
+
+    public ShareDto findById(Integer id){
+        //获取分享详情
+        Share share = this.shareMapper.selectByPrimaryKey(id);
+        //发布人id
+        Integer userId = share.getUserId();
+        //用户中心所有实例的信息
+        List&lt;ServiceInstance&gt; instances = discoveryClient.getInstances(&quot;user-center&quot;);
+        String targetURL = instances.stream()
+                .map(instance -&gt; instance.getUri().toString() + &quot;/users/{id}&quot;)
+                .findFirst()
+                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;当前没有实例！&quot;));
+
+        log.info(&quot;请求的目标地址：{}&quot;, targetURL);
+        UserDto userDto = restTemplate.getForObject(
+                targetURL,
+                UserDto.class,
+                userId);
+        ShareDto shareDto = new ShareDto();
+
+        //消息的装配
+        BeanUtils.copyProperties(share, shareDto);
+        shareDto.setWxNickName(userDto.getWxNickname());
+        return shareDto;
+    }
+}
 </code></pre>
+<h3 id="nacos服务发现的领域模型">Nacos服务发现的领域模型</h3>
+<figure data-type="image" tabindex="17"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/IIbYWQ.png" alt="" loading="lazy"></figure>
+<p>Namespace：只要用来实现环境隔离，默认public</p>
+<p>Group：默认DEFAULT_GROUP，管理服务分组</p>
+<p>Service：微服务</p>
+<p>Cluster：微服务集群，对指定微服务的虚拟划分</p>
+<p>Instance：微服务实例</p>
+<h4 id="如何使用">如何使用</h4>
+<p>Namespace，在控制台页面创建。配置的时候使用生成的uuid。</p>
+<pre><code class="language-yaml">spring:
+  cloud:
+    nacos:
+      discovery:
+        # 指定nacos server的地址
+        server-addr: localhost:8848
+        cluster-name: BJ
+        namespace: 56116141-d837-4d15-8842-94e153bb6cfb
+</code></pre>
+<h3 id="nacos元数据">Nacos元数据</h3>
+<ul>
+<li>官方描述：https://nacos.io/zh-ch/docs/concepts.html</li>
+<li>级别：【服务级别、集群级别、实例级别】</li>
+</ul>
+<p>元数据的作用：</p>
+<ul>
+<li>提供描述信息</li>
+<li>让微服务调用更灵活
+<ul>
+<li>例如：微服务版本控制</li>
+</ul>
+</li>
+</ul>
+<p>如何为微服务设置元数据</p>
+<ul>
+<li>控制台界面</li>
+<li>配置文件指定</li>
+</ul>
+<pre><code class="language-yaml">spring:
+  cloud:
+    nacos:
+      discovery:
+        # 指定nacos server的地址
+        server-addr: localhost:8848
+        cluster-name: BJ
+        namespace: 56116141-d837-4d15-8842-94e153bb6cfb
+        metadata:
+          instance: c
+          haha: hehe
+          version: 1
+</code></pre>
+<h2 id="实现负载均衡-ribbon">实现负载均衡-Ribbon</h2>
+<h3 id="负载均衡的两种方式">负载均衡的两种方式</h3>
+<ul>
+<li>服务端负载均衡</li>
+<li>客户端负载均衡（客户端调用的时候使用选择负载均衡算法）</li>
+</ul>
+<h3 id="手写一个客户端负载均衡器">手写一个客户端负载均衡器</h3>
+<p>改写一下<code>ShareService</code>的<code>findById</code>方法。从<code>Nacos</code>获取到<code>URL</code>列表，然后随机从列表中取一个作为本次请求的服务提供者实例。</p>
+<pre><code class="language-java">List&lt;String&gt; targetURLs = instances.stream()
+                .map(instance -&gt; instance.getUri().toString() + &quot;/users/{id}&quot;).collect(Collectors.toList());
+
+        int i = ThreadLocalRandom.current().nextInt(targetURLs.size());
+        String targetURL= targetURLs.get(i);
+</code></pre>
+<p>随后启动content-center</p>
+<h4 id="启动多个user-center">启动多个user-center</h4>
+<p>配置允许并行运行</p>
+<figure data-type="image" tabindex="18"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/Uz9a20.png" alt="" loading="lazy"></figure>
+<p>修改端口，运行启动类</p>
+<pre><code class="language-yaml">server:
+  port: 8082
+</code></pre>
+<h3 id="使用ribbon实现负载均衡">使用Ribbon实现负载均衡</h3>
+<ul>
+<li>Ribbon是什么</li>
+<li>引入Ribbon后到架构演进</li>
+<li>整合Ribbon实现负载均衡</li>
+</ul>
+<h4 id="ribbon是什么">Ribbon是什么</h4>
+<p>负载均衡器</p>
+<h4 id="架构演进">架构演进</h4>
+<figure data-type="image" tabindex="19"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/Gjk65Z.png" alt="" loading="lazy"></figure>
+<h4 id="整合ribbon实现负载均衡">整合Ribbon实现负载均衡</h4>
+<p>引入Nacos</p>
+<figure data-type="image" tabindex="20"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/QOcDIR.png" alt="" loading="lazy"></figure>
+<p>我们引入<code>spring-cloud-starter-alibaba-nacos-discovery</code>时，已经引入了<code>Ribbon</code>。</p>
+<p>直接使用就行了。</p>
+<p>写注解</p>
+<pre><code class="language-java">@Bean
+@LoadBalanced
+public RestTemplate restTemplate(){
+  return new RestTemplate();
+}
+</code></pre>
+<p>配置<code>RestTemplate</code>的地方添加<code>@LoadBalanced</code>注解即可。</p>
+<h4 id="使用">使用</h4>
+<pre><code class="language-java">UserDto userDto = restTemplate.getForObject(
+                &quot;http://user-center/users/{userId}&quot;,
+                UserDto.class,
+                userId);
+</code></pre>
+<h3 id="ribbon组成">Ribbon组成</h3>
+<p><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/jUK5ij.png" alt="" loading="lazy">先有个印象。二次开发再回头看</p>
+<h3 id="ribbon内置的负载均衡规则">Ribbon内置的负载均衡规则</h3>
+<figure data-type="image" tabindex="21"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200411121526731.png" alt="" loading="lazy"></figure>
+<p>默认是ZoneAvoidanceRule。</p>
+<p>每一个负载均衡算法源码都值得看一下。</p>
+<h3 id="细粒度配置自定义">细粒度配置自定义</h3>
+<ul>
+<li>Java代码配置</li>
+<li>用配置属性配置</li>
+<li>最佳实践总结</li>
+</ul>
+<p>场景：当内容中心调用用户中心微服务的时候使用随机负载，当内容中心调用其他微服务的时候使用默认负载均衡策略。</p>
+<h4 id="java代码配置">Java代码配置</h4>
+<p>新建配置类，注册一个RandomRule。</p>
+<pre><code class="language-java">package ribbonconfiguration;
+
+import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.RandomRule;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * 配置类所在的包必须是和启动类不一样的包
+ */
+@Configuration
+public class RibbonConfiguration {
+
+    @Bean
+    public IRule ribbonRule(){
+        return new RandomRule();
+    }
+}
+</code></pre>
+<p>新建一个<code>user-center</code>的<code>ribbon</code>负载配置类，配置规则使用上面的随机规则。</p>
+<pre><code class="language-java">package com.itmuch.contentcenter.configuration;
+
+import org.springframework.cloud.netflix.ribbon.RibbonClient;
+import org.springframework.context.annotation.Configuration;
+import ribbonconfiguration.RibbonConfiguration;
+
+@Configuration
+@RibbonClient(name = &quot;user-center&quot;,configuration = RibbonConfiguration.class)
+public class UserCenterRibbonConfiguration {
+}
+</code></pre>
+<p><code>@RibbonClient</code>注解配置<code>Ribbon</code>自定义配置</p>
+<p><code>name=&quot;user-center&quot;</code>表示为<code>user-center</code>配置的。</p>
+<p><code>configuration = RibbonConfiguration.class</code>用来指定负载均衡算法，或者负载均衡规则</p>
+<h5 id="父子上下文">父子上下文</h5>
+<p>这里的上下文是指<code>Spring Context</code>。</p>
+<p>启动类拥有一个上下文，是父上下文，Ribbon会启动一个子上下文，<strong>父子上下文不能重叠</strong>。</p>
+<p>启动类的上下文，会扫描启动类所在包及子包下的Bean。</p>
+<p><code>Ribbon</code>的配置类不能被启动类的上下文扫描到。因为<code>Spring context</code>是一个树状上下文。父子上下文扫描到包如果重叠会有各种问题。比如，<a href="https://blog.csdn.net/qq_32588349/article/details/52097943"><strong>导致事务不生效</strong></a>。</p>
+<p><strong>如果上面配置的RibbonConfiguration在启动类扫描范围内，会导致自定义配置失效，RibbonConfiguration配置的随机负载均衡全局生效。</strong></p>
+<h4 id="配置属性方式">配置属性方式</h4>
+<pre><code class="language-yaml">user-center:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+</code></pre>
+<p>这种方式没有上下文重叠的坑</p>
+<h4 id="两种配置方式的对比">两种配置方式的对比</h4>
+<figure data-type="image" tabindex="22"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200411175449054.png" alt="image-20200411175449054" loading="lazy"></figure>
+<h4 id="细粒度配置最佳实践">细粒度配置最佳实践</h4>
+<ul>
+<li>尽量使用属性配置，属性方式实现不了的情况下再考虑用代码配置</li>
+<li>在同一个微服务内尽量保持单一性，比如统一使用属性配置，不要两种方式混用，增加定位代码的复杂性</li>
+</ul>
+<h3 id="全局配置">全局配置</h3>
+<ul>
+<li>方式一：让<code>ComponentScan</code>上下文重叠（强烈不建议使用）</li>
+<li>方式二：唯一正确的途径：<code>@RibbonClients(defaultConfiguration = xxx.class)</code></li>
+</ul>
+<pre><code class="language-java">package com.itmuch.contentcenter.configuration;
+
+import org.springframework.cloud.netflix.ribbon.RibbonClients;
+import org.springframework.context.annotation.Configuration;
+import ribbonconfiguration.RibbonConfiguration;
+
+@Configuration
+@RibbonClients(defaultConfiguration = RibbonConfiguration.class)
+public class UserCenterRibbonConfiguration {
+}
+</code></pre>
+<h3 id="支持的配置项">支持的配置项</h3>
+<p>Java Config方式：见<code>Ribbon组成</code>一节的接口</p>
+<p>配置文件方式：</p>
+<figure data-type="image" tabindex="23"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200411180522524.png" alt="image-20200411180522524" loading="lazy"></figure>
+<h3 id="饥饿加载">饥饿加载</h3>
+<p>默认是懒加载，在调用<code>restTemplate</code>时才会创建一个叫<code>user-center</code>的<code>Ribbon Client</code></p>
+<blockquote>
+<p><code>user-center</code>是要调用的客户端名字</p>
+</blockquote>
+<p>懒加载的问题：在第一次调用<code>user-center</code>的接口时，访问会慢。</p>
+<p>可以使用饥饿加载避免这个问题。</p>
+<pre><code class="language-yaml">ribbon:
+  eager-load:
+    enabled: true
+    clients: user-center
+</code></pre>
+<h3 id="扩展ribbon">扩展Ribbon</h3>
+<h4 id="支持nacos权重">支持Nacos权重</h4>
+<p>首先了解一下，Nacos的权重在<code>0-1</code>之间，<code>1</code>最大</p>
+<p>Ribbon内置的负载均衡规则都不支持Nacos的权重，需要自己定义一个负载均衡规则。</p>
+<pre><code class="language-java">@Slf4j
+public class NacosWeightedRule extends AbstractLoadBalancerRule {
+
+    @Autowired
+    private NacosDiscoveryProperties nacosDiscoveryProperties;
+
+    @Override
+    public void initWithNiwsConfig(IClientConfig iClientConfig) {
+        //读取配置文件，并初始化当前配置NacosWeightedRule，一般不需要实现
+    }
+
+    @Override
+    public Server choose(Object key) {
+        BaseLoadBalancer loadBalancer = (BaseLoadBalancer) this.getLoadBalancer();
+        log.info(&quot;loadBalancer = {}&quot;, loadBalancer);
+
+        //想要请求的微服务的名称
+        String name = loadBalancer.getName();
+
+        //实现负载均衡算法
+        //这里不自己实现，直接使用nacos提供的
+        //拿到服务发现的相关API
+        NamingService namingService = nacosDiscoveryProperties.namingServiceInstance();
+        try {
+            Instance instance = namingService.selectOneHealthyInstance(name);
+            log.info(&quot;选择的实例是：port = {}, instance = {}&quot;, instance.getPort(), instance);
+            return new NacosServer(instance);
+        } catch (NacosException e) {
+            return null;
+        }
+    }
+}
+</code></pre>
+<p>配置为全局规则</p>
+<pre><code class="language-java">/**
+ * 配置类所在的包必须是和启动类不一样的包
+ */
+@Configuration
+public class RibbonConfiguration {
+
+    @Bean
+    public IRule ribbonRule(){
+        return new NacosWeightedRule();
+    }
+}
+</code></pre>
+<p>更多扩展方式可以<a href="https://www.imooc.com/article/288660"><strong>扩展Ribbon支持Nacos权重的三种方式</strong></a></p>
+<h4 id="同一集群优先调用">同一集群优先调用</h4>
+<p>为了实现容灾，把内容中心和用户中心部署在北京机房和南京机房里，希望调用的时候同机房优先。</p>
 
 							</div>
 							<div class="wow bounceInDown vt-post-tags">
