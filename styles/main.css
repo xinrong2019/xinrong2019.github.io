@@ -1398,6 +1398,7 @@ body {
   font-family: "Lato", sans-serif;
   font-size: 13px;
   line-height: 25px;
+  cursor: url('https://cdn.jsdelivr.net/gh/hsxyhao/hsxyhao.github.io@1.1.6/media/curs/normal.cur'), default;
 }
 h1,
 h2,
@@ -2590,6 +2591,23 @@ ul.links li:hover .bg {
   height: 70px;
   overflow: hidden;
   line-height: 24px;
+}
+a {
+  cursor: url('https://cdn.jsdelivr.net/gh/hsxyhao/hsxyhao.github.io@1.1.6/media/curs/link.cur'), pointer !important;
+}
+input,
+textarea,
+code {
+  cursor: url('https://cdn.jsdelivr.net/gh/hsxyhao/hsxyhao.github.io@1.1.6/media/curs/texto.cur'), text !important;
+}
+code > span.copy-code {
+  cursor: url('https://cdn.jsdelivr.net/gh/hsxyhao/hsxyhao.github.io@1.1.6/media/curs/normal.cur'), text !important;
+}
+.post img {
+  cursor: url('https://cdn.jsdelivr.net/gh/hsxyhao/hsxyhao.github.io@1.1.6/media/curs/zoomout.cur'), zoom-in !important;
+}
+.post img {
+  cursor: zoom-out;
 }
 
     header {background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),url(https://gitee.com/jinxin.70/oss/raw/master/uPic/flower_2020_03_18_21_53_46.jpeg);}
