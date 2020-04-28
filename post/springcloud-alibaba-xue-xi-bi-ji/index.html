@@ -165,7 +165,7 @@ window.onload=getCSS();
 				
 				
 			</div>
-			<form id="gridea-search-form" data-update="1587910474895" action="/search/index.html">
+			<form id="gridea-search-form" data-update="1588032937050" action="/search/index.html">
 				<div class="search-box">
 					<input class="search-txt" name="q" placeholder="Type to search" />
 					<a class="search-btn">
@@ -186,7 +186,7 @@ window.onload=getCSS();
 										2020-04-04
 									</time>
 									<span>
-										34 min read
+										42 min read
 									</span>
 								</div>
 							</div>
@@ -495,7 +495,7 @@ server:
 <h4 id="微服务的特性">微服务的特性</h4>
 <ul>
 <li>每个微服务可独立运行在自己的进程里；（每个服务一个Tomcat）</li>
-<li>一些列独立运行的微服务共同构建起整个系统</li>
+<li>一系列独立运行的微服务共同构建起整个系统</li>
 <li>每个服务为独立的业务开发，一个微服务只关注某个特定的功能，例如订单管理、用户管理</li>
 <li>可以使用不同的语言与数据存储技术（契合项目情况和团队实力）</li>
 <li>微服务之间通过轻量的通信机制进行通信，例如通过Rest API进行调用；（通信协议轻量、跨平台）</li>
@@ -1513,6 +1513,7 @@ NamingService namingService = nacosDiscoveryProperties.namingServiceInstance();
             //从列表中选出一个实例
           Instance instance = ExtendBalancer.getHostByRandomWeight2(instancesToBeChosen);
 </code></pre>
+<p>具体实现参见<a href="https://www.imooc.com/article/288674">手记</a></p>
 <h3 id="深入理解namespace">深入理解Namespace</h3>
 <p>配置namespace</p>
 <figure data-type="image" tabindex="28"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412110517289.png" alt="image-20200412110517289" loading="lazy"></figure>
@@ -1548,6 +1549,305 @@ NamingService namingService = nacosDiscoveryProperties.namingServiceInstance();
 <li>编程体验不统一</li>
 </ol>
 <h2 id="声明式http客户端feign">声明式HTTP客户端Feign</h2>
+<ul>
+<li>Feign是Netflix开源的声明式HTTP客户端</li>
+<li>Github地址
+<ul>
+<li>https://github.com/openfeign/feign</li>
+</ul>
+</li>
+</ul>
+<h3 id="使用feign实现远程http调用">使用Feign实现远程HTTP调用</h3>
+<h4 id="引入依赖">引入依赖</h4>
+<pre><code class="language-xml">&lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<h4 id="写注解">写注解</h4>
+<p>启动类上加上<code>@EnableFeignClients</code>注解</p>
+<h4 id="写配置">写配置</h4>
+<p>暂时没有</p>
+<p>实现一个Feign接口</p>
+<pre><code class="language-java">@FeignClient(name = &quot;user-center&quot;)
+public interface UserCenterFeignClient {
+
+    /**
+     * http://user-center/users/{id}
+     * @param id
+     * @return
+     */
+    @GetMapping(&quot;/users/{id}&quot;)
+    UserDto findById(@PathVariable Integer id);
+}
+</code></pre>
+<pre><code class="language-java">@Slf4j
+@Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class ShareService {
+    private final ShareMapper shareMapper;
+
+    private final UserCenterFeignClient userCenterFeignClient;
+
+    public ShareDto findById(Integer id){
+        //获取分享详情
+        Share share = this.shareMapper.selectByPrimaryKey(id);
+        //发布人id
+        Integer userId = share.getUserId();
+
+        UserDto userDto = this.userCenterFeignClient.findById(userId);
+        ShareDto shareDto = new ShareDto();
+
+        //消息的装配
+        BeanUtils.copyProperties(share, shareDto);
+        shareDto.setWxNickName(userDto.getWxNickname());
+        return shareDto;
+    }
+}
+</code></pre>
+<p>所谓的声明式HTTP客户端，就是只需要声明一个Feign Client接口，Feign就会根据声明的接口，自动帮我们构造请求的目标地址，并帮助你请求。</p>
+<h3 id="feign的组成">Feign的组成</h3>
+<figure data-type="image" tabindex="29"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412165849453.png" alt="image-20200412165849453" loading="lazy"></figure>
+<h3 id="细粒度配置自定义-2">细粒度配置自定义</h3>
+<p>默认Feign不打印任何日志，可以自定义Feign日志级别，让其打印日志</p>
+<p>Feign日志级别</p>
+<figure data-type="image" tabindex="30"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412170429751.png" alt="image-20200412170429751" loading="lazy"></figure>
+<h4 id="java配置方式">Java配置方式</h4>
+<p>UserCenterFeignConfiguration</p>
+<pre><code class="language-java">/**
+ * feign的配置类，最佳实践不要加@Configuration注解，否则必须挪到@ComponentScan能扫描的包以外。
+ * 是因为重复扫描，父子上下文的问题
+ */
+public class UserCenterFeignConfiguration {
+
+    @Bean
+    public Logger.Level level(){
+        //打印所有请求的细节
+        return Logger.Level.FULL;
+    }
+}
+</code></pre>
+<p>UserCenterFeignClient</p>
+<pre><code class="language-java">@FeignClient(name = &quot;user-center&quot;, configuration = UserCenterFeignConfiguration.class)
+public interface UserCenterFeignClient {
+
+    /**
+     * http://user-center/users/{id}
+     * @param id
+     * @return
+     */
+    @GetMapping(&quot;/users/{id}&quot;)
+    UserDto findById(@PathVariable Integer id);
+}
+</code></pre>
+<pre><code class="language-yaml">logging:
+  level:
+    com.itmuch.usercenter.dao.content: debug
+    com.itmuch.contentcenter.feignclient.UserCenterFeignClient: debug
+</code></pre>
+<h4 id="属性方式配置">属性方式配置</h4>
+<pre><code class="language-yaml">feign:
+  client:
+    config:
+      # 想要调用的微服务的名称
+      user-center:
+        loggerLevel: full
+</code></pre>
+<h3 id="全局配置-2">全局配置</h3>
+<h4 id="代码方式">代码方式</h4>
+<p>将细粒度的配置方式都注释掉</p>
+<p>在启动类配置上全局配置</p>
+<pre><code class="language-java">@EnableFeignClients(defaultConfiguration = UserCenterFeignConfiguration.class)
+</code></pre>
+<h4 id="配置属性方式-2">配置属性方式</h4>
+<pre><code class="language-yaml">feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
+</code></pre>
+<h3 id="支持的配置项-2">支持的配置项</h3>
+<p>代码方式</p>
+<figure data-type="image" tabindex="31"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412173444979.png" alt="image-20200412173444979" loading="lazy"></figure>
+<p>属性配置方式</p>
+<figure data-type="image" tabindex="32"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412173508756.png" alt="image-20200412173508756" loading="lazy"></figure>
+<h3 id="配置最佳实践">配置最佳实践</h3>
+<h4 id="ribbon配置-vs-feign配置">Ribbon配置 vs Feign配置</h4>
+<p>Ribbon是一个负载均衡器，帮我们选择一个实例</p>
+<p>Feign是一个声明式HTTP客户端，帮助我们更优雅的请求</p>
+<figure data-type="image" tabindex="33"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412175511967.png" alt="image-20200412175511967" loading="lazy"></figure>
+<h4 id="feign代码方式vs属性方式">Feign代码方式vs属性方式</h4>
+<figure data-type="image" tabindex="34"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412175730431.png" alt="image-20200412175730431" loading="lazy"></figure>
+<p>优先级：全局代码&lt;全局属性&lt;细粒度代码&lt;细粒度属性</p>
+<h4 id="最佳实践-3">最佳实践</h4>
+<ul>
+<li>尽量使用属性配置，属性方式实现不了的情况再考虑用代码配置</li>
+<li>在同一个微服务内尽量保持单一性，比如统一使用属性配置，不要两种方式混用，增加定位代码的复杂性</li>
+</ul>
+<h3 id="feign的继承">Feign的继承</h3>
+<p>这个特性带来了紧耦合，因为在微服务间共享接口，官方不建议使用。</p>
+<p>现状：很多公司用，代码复用。</p>
+<p>新项目如何选择：权衡利弊，会得到什么好处，失去什么，是不是划算，划算就上。</p>
+<h3 id="多参数请求构造">多参数请求构造</h3>
+<p><a href="https://www.imooc.com/article/289000">如何使用Feign构造多参数的请求</a></p>
+<p>Get请求参数使用@SpringQueryMap注解</p>
+<pre><code class="language-java">@FeignClient(name = &quot;user-center&quot;)
+public interface TestUserCenterFeignClient {
+
+    @GetMapping(&quot;/q&quot;)
+    UserDto query(@SpringQueryMap UserDto userDto);
+}
+</code></pre>
+<p>Post请求多参数，也可以使用@RequestBody。</p>
+<h3 id="feign脱离ribbon使用">Feign脱离Ribbon使用</h3>
+<pre><code class="language-java">@FeignClient(name = &quot;baidu&quot;, url=&quot;http://www.baidu.com&quot;)
+public interface TestBaiduFeignClient {
+
+    @GetMapping(&quot;&quot;)
+    String index();
+}
+</code></pre>
+<pre><code class="language-java">@GetMapping(&quot;baidu&quot;)
+    public String baiduIndex(){
+        return this.testBaiduFeignClient.index();
+    }
+</code></pre>
+<h3 id="resttemplate-vs-feign">RestTemplate vs Feign</h3>
+<figure data-type="image" tabindex="35"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412205018818.png" alt="image-20200412205018818" loading="lazy"></figure>
+<p>如何选择？</p>
+<ul>
+<li>原则：尽量用Feign，杜绝使用RestTemplate</li>
+</ul>
+<p>尽量减少开发人员的选择，共存会带来风格的不统一，额外的学习成本和额外的代码理解成本</p>
+<ul>
+<li>事无绝对，合理选择</li>
+</ul>
+<p>Feign解决不了，才用RestTemplate</p>
+<h3 id="feign的性能优化">Feign的性能优化</h3>
+<ul>
+<li>连接池【提升15%左右】，默认使用URLConnection，可以修改</li>
+</ul>
+<p>可以选用httpclient或者okhttp</p>
+<p>添加依赖</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+            &lt;groupId&gt;io.github.openfeign&lt;/groupId&gt;
+            &lt;artifactId&gt;feign-httpclient&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.github.openfeign&lt;/groupId&gt;
+            &lt;artifactId&gt;feign-okhttp&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<pre><code class="language-yaml">feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
+  httpclient:
+    # 让feign使用apache httpclient做请求，而不是默认的urlclient
+    enabled: true
+    # feign的最大连接数
+    max-connections: 200
+    # feign单个路径的最大连接数
+    max-connections-per-route: 50
+  okhttp:
+    enabled: true
+    # feign的最大连接数
+    max-connections: 200
+    # feign单个路径的最大连接数
+    max-connections-per-route: 50
+</code></pre>
+<ul>
+<li>日志级别</li>
+</ul>
+<p>生产环境建议设置为basic</p>
+<h3 id="feign常见问题总结">Feign常见问题总结</h3>
+<p><a href="https://www.imooc.com/article/289005">常见问题总结</a></p>
+<h3 id="现有架构总结">现有架构总结</h3>
+<figure data-type="image" tabindex="36"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412210834103.png" alt="image-20200412210834103" loading="lazy"></figure>
+<h2 id="服务容错-sentinel">服务容错-Sentinel</h2>
+<p>雪崩效应：基础服务故障，导致导致上层服务故障，并且故障不断放大。又称为cascading failure，级联失效，级联故障。</p>
+<figure data-type="image" tabindex="37"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412211328332.png" alt="image-20200412211328332" loading="lazy"></figure>
+<p>雪崩效应是因为服务没有做好容错。</p>
+<h3 id="常见的容错方案容错思想">常见的容错方案（容错思想）</h3>
+<ul>
+<li>超时</li>
+<li>限流</li>
+<li>仓壁模式（线程池隔离）</li>
+<li>断路器模式</li>
+</ul>
+<p>5秒内错误率、错误次数达到就跳闸。</p>
+<p>断路器三态：</p>
+<figure data-type="image" tabindex="38"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200418230211926.png" alt="image-20200418230211926" loading="lazy"></figure>
+<h3 id="使用sentinel实现容错">使用Sentinel实现容错</h3>
+<p>是什么：轻量级的流量控制、熔断降级Java库。</p>
+<h3 id="整合sentinel">整合Sentinel</h3>
+<pre><code class="language-xml">&lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>可以使用/actuator/sentinel断点查看sentinel相关信息。</p>
+<h3 id="整合actuator">整合Actuator</h3>
+<pre><code class="language-xml">&lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>需要加入配置才能暴露sentinel端点。</p>
+<pre><code class="language-yaml">management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+</code></pre>
+<h3 id="sentinel控制台">Sentinel控制台</h3>
+<h4 id="搭建sentinel控制台">搭建Sentinel控制台</h4>
+<p>https://github.com/alibaba/Sentinel/releases</p>
+<p>生产环境，控制台版本最好和整体版本一致。</p>
+<p>启动sentinel控制台</p>
+<p><code>java -jar /Users/kim/Downloads/sentinel-dashboard-1.7.2.jar</code></p>
+<p>默认在localhost:8080端口，用户名密码都是sentinel。</p>
+<p>为内容中心整合sentinel控制台</p>
+<pre><code class="language-yaml"># 指定sentinel 控制台地址
+spring.cloud.sentinel.transport.dashboard: localhost:8080
+</code></pre>
+<p>确保nacos、sentinel控制台、内容中心和用户中心都启动了。然后访问http://localhost:8010/shares/1多次，就可以在实时监控里看到效果。</p>
+<figure data-type="image" tabindex="39"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200418233034998.png" alt="image-20200418233034998" loading="lazy"></figure>
+<h3 id="流控规则">流控规则</h3>
+<p>点击簇点链路，点击/shares/1的流控按钮，就可以为这个访问路径设置流控规则。</p>
+<figure data-type="image" tabindex="40"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200419110648290.png" alt="image-20200419110648290" loading="lazy"></figure>
+<figure data-type="image" tabindex="41"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200419110733958.png" alt="image-20200419110733958" loading="lazy"></figure>
+<h4 id="资源名">资源名</h4>
+<p>默认是请求路径。</p>
+<h4 id="针对来源">针对来源</h4>
+<p>针对调用者限流。针对来源是调用者微服务名称。</p>
+<h4 id="阈值类型">阈值类型</h4>
+<p>QPS、线程数。比如选择QPS，表示：当调用当前资源的QPS达到阈值时，就去限流。</p>
+<h4 id="是否集群">是否集群</h4>
+<h4 id="流控模式">流控模式</h4>
+<h5 id="直接">直接</h5>
+<h5 id="关联">关联</h5>
+<p><code>&lt;1&gt;</code>当关联的资源达到阈值，就限流自己</p>
+<p>比如我们设置关联资源为<code>/actuator/sentinel</code>，当关联资源的qps达到1时，就限流<code>/shares/1</code></p>
+<figure data-type="image" tabindex="42"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200419120020951.png" alt="image-20200419120020951" loading="lazy"></figure>
+<p>写一个测试类，调用<code>/actuator/sentinel</code></p>
+<pre><code class="language-java">public class SentinelTest {
+    public static void main(String[] args) throws InterruptedException {
+        RestTemplate restTemplate = new RestTemplate();
+        for (int i = 0; i &lt; 10000; i++) {
+            String forObject = restTemplate.getForObject(&quot;http://localhost:8010/actuator/sentinel&quot;, String.class);
+            Thread.sleep(500);
+        }
+    }
+}
+</code></pre>
+<p>运行这个测试类，再去调用<code>/shares/1</code>,发信啊已经被限流了。</p>
+<figure data-type="image" tabindex="43"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200419121201930.png" alt="image-20200419121201930" loading="lazy"></figure>
+<p>实际应用，如果希望修改优先，可以配置关联API为修改的API，资源名设置为查询的API。当修改的测试过多，就限流查询，保证性能。</p>
+<h5 id="链路">链路</h5>
+<p>只记录指定链路上的流量</p>
+<h4 id="流控效果">流控效果</h4>
 
 							</div>
 							<div class="wow bounceInDown vt-post-tags">

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://xinrong2019.github.io/</id>
     <title>Eucaly</title>
-    <updated>2020-04-26T15:13:15.406Z</updated>
+    <updated>2020-04-28T00:15:39.085Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://xinrong2019.github.io/"/>
     <link rel="self" href="https://xinrong2019.github.io/atom.xml"/>
@@ -10,6 +10,206 @@
     <logo>https://xinrong2019.github.io/images/avatar.png</logo>
     <icon>https://xinrong2019.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Eucaly</rights>
+    <entry>
+        <title type="html"><![CDATA[Zookeeper深度实践]]></title>
+        <id>https://xinrong2019.github.io/post/zookeeper-shen-du-shi-jian/</id>
+        <link href="https://xinrong2019.github.io/post/zookeeper-shen-du-shi-jian/">
+        </link>
+        <updated>2020-04-28T00:11:55.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="zookeeper">Zookeeper</h1>
+<h2 id="toc">TOC</h2>
+<p>[TOC]</p>
+<p>分布式系统之间如何协作，信息同步和共享。</p>
+<ul>
+<li>通过网络进行信息共享</li>
+<li>通过共享存储</li>
+</ul>
+<p>Zookeeper通过对节点的更新订阅，通知，达到信息共享。</p>
+<h2 id="zookeeper的基本概念">Zookeeper的基本概念</h2>
+<p>开源的分布式协调服务。可以基于它实现数据订阅发布、负载均衡、命名服务、集群管理、分布式锁和分布式队列等功能。</p>
+<h3 id="基本概念">基本概念</h3>
+<h4 id="集群角色">集群角色</h4>
+<p>Leader：选举产生，Leader为客户端提供读写服务</p>
+<p>Follower：提供读服务</p>
+<p>Observer：提供读服务，不参与Leader选举，不参与写操作过半写成功策略，可以在不影响写性能等情况下提升集群的性能</p>
+<h4 id="会话session">会话（session）</h4>
+<p>客户端会话，一个客户端连接是指客户端和服务端之间的一个TCP长连接</p>
+<p>Zookeeper对外的服务端口默认为2181</p>
+<p>客户端启动的时候，首先会与服务器建立一个TCP长连接，从第一次连接建立开始，客户</p>
+<p>端的生命周期也开始了，通过这个连接，客户端能够心跳检测与服务端保持有效的会话，</p>
+<p>也能够向Zookeeper服务器发送请求并接受响应，</p>
+<p>同时还能通过该连接接受来自服务器的Watch事件通知。</p>
+<h4 id="数据节点znode">数据节点（Znode）</h4>
+<p>节点的两种含义：机器节点，数据单元。</p>
+<p>Zookeeper将所有数据存储在内存中，数据模型是一棵树，由斜杠（/）进行分割的路径，就是一个Znode，例如/app/path1。每个ZNode上都会保存自己的数据内容，同时还会保存一系列属性信息。</p>
+<h4 id="版本">版本</h4>
+<p>对于每个ZNode，Zookeeper都会为期维护一个叫作Stat的数据结构，Stat记录了这个ZNode的三个版本，分别是</p>
+<ul>
+<li>version(当前ZNode版本)</li>
+<li>cversion(当前ZNode子节点的版本)</li>
+<li>aversion(当前ZNode的ACL版本)</li>
+</ul>
+<h4 id="watcher事件监听器">Watcher（事件监听器）</h4>
+<p>Zookeeper允许用户在指定节点上注册一些Watcher，并且在一些特定事件触发的时候，Zookeeper服务端会将事件通知到感兴趣的客户端，该机制是Zookeeper实现分布式协调服务的重要特性。</p>
+<h4 id="acl">ACL</h4>
+<p>Access Control Lists，权限控制，其定义了五种权限：</p>
+<ul>
+<li>CREATE，创建自节点的权限</li>
+<li>READ，获取节点数据和子节点列表的权限</li>
+<li>WRITE，更新节点数据的权限</li>
+<li>DELETE，删除子节点的权限</li>
+<li>ADMIN，设置节点ACL的权限</li>
+</ul>
+<p>其中需要注意的是，CREATE和DELETE这两种权限都是针对子节点的权限控制</p>
+<h2 id="zookeeper环境等搭建">Zookeeper环境等搭建</h2>
+<h3 id="搭建方式">搭建方式</h3>
+<h4 id="单机模式">单机模式</h4>
+<ol>
+<li>下载</li>
+<li>解压 <code>tar -xzvf zookeeper-3.6.0.tar.gz</code></li>
+<li>进入目录，创建data文件夹</li>
+</ol>
+<pre><code class="language-shell">cd zookeeper-3.6.0
+mkdir data
+</code></pre>
+<ol start="4">
+<li>修改配置文件</li>
+</ol>
+<p><code>dataDir='你的zookeeper存放目录'/data</code></p>
+<ol start="5">
+<li>启动Zookeeper服务</li>
+</ol>
+<p>进入bin目录，启动服务输入命令</p>
+<p><code>./zkServer.sh start</code></p>
+<ol start="6">
+<li>关闭服务命令</li>
+</ol>
+<p><code>./zkServer.sh stop</code></p>
+<ol start="7">
+<li>查看状态</li>
+</ol>
+<p><code>./zkServer.sh status</code></p>
+<h4 id="伪集群模式">伪集群模式</h4>
+<p>注意事项：</p>
+<p>clientPort不同，</p>
+<p>dataDir不同，</p>
+<p>dataLogDir不同，</p>
+<p>还要在dataDir所对应的目录中创建myid文件来指定对应Zookeeper服务器的实例</p>
+<p>server.X这个数字就是对应，data/myid中的数字。在3个server的myid文件中分别写入了1,2,3那么每个server中的zoo.cfg都配了server.1 server.2 server.3就行了。因为在同一台机器上，后面连着的2个端口，3个server都不要一样，否则会端口冲突。</p>
+<ol>
+<li>下载</li>
+<li>解压，创建zkcluster目录</li>
+</ol>
+<p><code>mkdir zkcluster</code></p>
+<ol start="3">
+<li>改变名称</li>
+</ol>
+<p><code>mv zookeeper-3.6.0 zookeeper01</code></p>
+<ol start="4">
+<li>复制并改名</li>
+</ol>
+<pre><code class="language-shell">cp -r zookeeper01/ zookeeper02
+cp -r zookeeper01/ zookeeper03
+</code></pre>
+<ol start="5">
+<li>分别在三个zookeeper根目录下创建data和logs目录</li>
+</ol>
+<pre><code class="language-shell">mkdir data
+cd data
+mkdir logs
+</code></pre>
+<ol start="7">
+<li>修改配置文件名称</li>
+</ol>
+<pre><code class="language-shell">cd conf
+mv zoo.sample.cfg zoo.cfg
+</code></pre>
+<ol start="8">
+<li>配置每一个ZK的dataDir（zoo.cfg）clientPort分别为2181,2182,2183</li>
+</ol>
+<pre><code class="language-shell">clientPort=2181
+dataDir=/zkcluster/zookeeper01/data
+dataLogDir=/zkcluster/zookeeper01/data/logs
+</code></pre>
+<pre><code class="language-shell">clientPort=2182
+dataDir=/zkcluster/zookeeper02/data
+dataLogDir=/zkcluster/zookeeper02/data/logs
+</code></pre>
+<pre><code class="language-shell">clientPort=2183
+dataDir=/zkcluster/zookeeper03/data
+dataLogDir=/zkcluster/zookeeper03/data/logs
+</code></pre>
+<ol start="9">
+<li>配置集群</li>
+</ol>
+<p>在每个zookeeper的data目录下创建一个myid文件，内容分别是1,2,3。这个文件就是记录每个服务器的ID。</p>
+<p><code>touch myid</code></p>
+<p>在每个zookeeper的zoo.cfg文件中配置客户端访问端口和集群服务器IP列表</p>
+<pre><code class="language-shell">server.1=192.168.101.25:2181:3881
+server.2=192.168.101.25:2182:3882
+server.3=192.168.101.25:2183:3882
+#server.服务器ID=服务器IP地址:服务器之间通信端口:服务器之间投票选举端口
+</code></pre>
+<ol start="10">
+<li>启动集群</li>
+</ol>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200428073640324.png" alt="image-20200428073640324" loading="lazy"></figure>
+<h2 id="zookeeper的基本使用">Zookeeper的基本使用</h2>
+<h3 id="zookeeper系统模型">Zookeeper系统模型</h3>
+<h4 id="zookeeper数据模型znode">Zookeeper数据模型ZNode</h4>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200428075537809.png" alt="image-20200428075537809" loading="lazy"></figure>
+<h4 id="znode的类型">ZNode的类型</h4>
+<ul>
+<li>持久性节点（Persistent）</li>
+<li>临时性节点（Ephemeral）</li>
+<li>顺序性节点（Sequential）</li>
+</ul>
+<p>在开发中，创建节点的时候通过组合可以生成以下四种节点类型：持久节点、持久顺序节点、临时节点、临时顺序节点。</p>
+<p><strong>持久节点</strong>：节点被创建后，会一直存在服务器，直到服务器操作主动删除</p>
+<p><strong>持久顺序节点</strong>：持久性和上面一样，顺序特性，就是节点在创建的时候，在节点名后面添加一个数字后缀，来表示其顺序。</p>
+<p><strong>临时节点</strong>：会被自动清理的节点，客户端会话结束，节点就会被删除。临时节点不能创建子节点。</p>
+<p><strong>临时顺序节点</strong>：有顺序的临时节点</p>
+<h4 id="事务id">事务ID</h4>
+<h4 id="znode的状态信息">ZNode的状态信息</h4>
+<h4 id="watcher-数据变更通知">Watcher--数据变更通知</h4>
+<h4 id="acl-保障数据安全">ACL--保障数据安全</h4>
+<h3 id="zookeeper命令行操作">Zookeeper命令行操作</h3>
+<h4 id="创建节点">创建节点</h4>
+<h4 id="读取节点">读取节点</h4>
+<h4 id="更新节点">更新节点</h4>
+<h4 id="删除节点">删除节点</h4>
+<h3 id="zookeeper的api使用">Zookeeper的api使用</h3>
+<h4 id="建立会话">建立会话</h4>
+<h4 id="创建节点-2">创建节点</h4>
+<h4 id="获取节点数据">获取节点数据</h4>
+<h4 id="修改节点数据">修改节点数据</h4>
+<h4 id="删除节点-2">删除节点</h4>
+<h3 id="zookeeper开源客户端">Zookeeper开源客户端</h3>
+<h4 id="zkclient">ZKClient</h4>
+<h4 id="curator">Curator</h4>
+<h2 id="zookeeper应用场景">Zookeeper应用场景</h2>
+<h3 id="数据发布订阅">数据发布/订阅</h3>
+<h3 id="命名服务">命名服务</h3>
+<h3 id="集群管理">集群管理</h3>
+<h3 id="master选举">Master选举</h3>
+<h3 id="分布式锁">分布式锁</h3>
+<h4 id="排他锁">排他锁</h4>
+<h4 id="共享锁">共享锁</h4>
+<h4 id="羊群效应">羊群效应</h4>
+<h3 id="分布式队列">分布式队列</h3>
+<h2 id="zookeeper深入进阶">Zookeeper深入进阶</h2>
+<h3 id="zab协议">ZAB协议</h3>
+<h3 id="服务器角色">服务器角色</h3>
+<h3 id="服务器启动">服务器启动</h3>
+<h3 id="leader选举">Leader选举</h3>
+<h2 id="zookeeper源码分析">Zookeeper源码分析</h2>
+<h3 id="源码环境搭建">源码环境搭建</h3>
+<h3 id="单机模式服务端启动">单机模式服务端启动</h3>
+<h3 id="leader选举-2">Leader选举</h3>
+<h3 id="fastleaderelection">FastLeaderElection</h3>
+<h3 id="集群模式服务端">集群模式服务端</h3>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Java基础知识]]></title>
         <id>https://xinrong2019.github.io/post/java-ji-chu-zhi-shi/</id>
@@ -773,7 +973,7 @@ server:
 <h4 id="微服务的特性">微服务的特性</h4>
 <ul>
 <li>每个微服务可独立运行在自己的进程里；（每个服务一个Tomcat）</li>
-<li>一些列独立运行的微服务共同构建起整个系统</li>
+<li>一系列独立运行的微服务共同构建起整个系统</li>
 <li>每个服务为独立的业务开发，一个微服务只关注某个特定的功能，例如订单管理、用户管理</li>
 <li>可以使用不同的语言与数据存储技术（契合项目情况和团队实力）</li>
 <li>微服务之间通过轻量的通信机制进行通信，例如通过Rest API进行调用；（通信协议轻量、跨平台）</li>
@@ -1791,6 +1991,7 @@ NamingService namingService = nacosDiscoveryProperties.namingServiceInstance();
             //从列表中选出一个实例
           Instance instance = ExtendBalancer.getHostByRandomWeight2(instancesToBeChosen);
 </code></pre>
+<p>具体实现参见<a href="https://www.imooc.com/article/288674">手记</a></p>
 <h3 id="深入理解namespace">深入理解Namespace</h3>
 <p>配置namespace</p>
 <figure data-type="image" tabindex="28"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412110517289.png" alt="image-20200412110517289" loading="lazy"></figure>
@@ -1826,6 +2027,305 @@ NamingService namingService = nacosDiscoveryProperties.namingServiceInstance();
 <li>编程体验不统一</li>
 </ol>
 <h2 id="声明式http客户端feign">声明式HTTP客户端Feign</h2>
+<ul>
+<li>Feign是Netflix开源的声明式HTTP客户端</li>
+<li>Github地址
+<ul>
+<li>https://github.com/openfeign/feign</li>
+</ul>
+</li>
+</ul>
+<h3 id="使用feign实现远程http调用">使用Feign实现远程HTTP调用</h3>
+<h4 id="引入依赖">引入依赖</h4>
+<pre><code class="language-xml">&lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<h4 id="写注解">写注解</h4>
+<p>启动类上加上<code>@EnableFeignClients</code>注解</p>
+<h4 id="写配置">写配置</h4>
+<p>暂时没有</p>
+<p>实现一个Feign接口</p>
+<pre><code class="language-java">@FeignClient(name = &quot;user-center&quot;)
+public interface UserCenterFeignClient {
+
+    /**
+     * http://user-center/users/{id}
+     * @param id
+     * @return
+     */
+    @GetMapping(&quot;/users/{id}&quot;)
+    UserDto findById(@PathVariable Integer id);
+}
+</code></pre>
+<pre><code class="language-java">@Slf4j
+@Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class ShareService {
+    private final ShareMapper shareMapper;
+
+    private final UserCenterFeignClient userCenterFeignClient;
+
+    public ShareDto findById(Integer id){
+        //获取分享详情
+        Share share = this.shareMapper.selectByPrimaryKey(id);
+        //发布人id
+        Integer userId = share.getUserId();
+
+        UserDto userDto = this.userCenterFeignClient.findById(userId);
+        ShareDto shareDto = new ShareDto();
+
+        //消息的装配
+        BeanUtils.copyProperties(share, shareDto);
+        shareDto.setWxNickName(userDto.getWxNickname());
+        return shareDto;
+    }
+}
+</code></pre>
+<p>所谓的声明式HTTP客户端，就是只需要声明一个Feign Client接口，Feign就会根据声明的接口，自动帮我们构造请求的目标地址，并帮助你请求。</p>
+<h3 id="feign的组成">Feign的组成</h3>
+<figure data-type="image" tabindex="29"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412165849453.png" alt="image-20200412165849453" loading="lazy"></figure>
+<h3 id="细粒度配置自定义-2">细粒度配置自定义</h3>
+<p>默认Feign不打印任何日志，可以自定义Feign日志级别，让其打印日志</p>
+<p>Feign日志级别</p>
+<figure data-type="image" tabindex="30"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412170429751.png" alt="image-20200412170429751" loading="lazy"></figure>
+<h4 id="java配置方式">Java配置方式</h4>
+<p>UserCenterFeignConfiguration</p>
+<pre><code class="language-java">/**
+ * feign的配置类，最佳实践不要加@Configuration注解，否则必须挪到@ComponentScan能扫描的包以外。
+ * 是因为重复扫描，父子上下文的问题
+ */
+public class UserCenterFeignConfiguration {
+
+    @Bean
+    public Logger.Level level(){
+        //打印所有请求的细节
+        return Logger.Level.FULL;
+    }
+}
+</code></pre>
+<p>UserCenterFeignClient</p>
+<pre><code class="language-java">@FeignClient(name = &quot;user-center&quot;, configuration = UserCenterFeignConfiguration.class)
+public interface UserCenterFeignClient {
+
+    /**
+     * http://user-center/users/{id}
+     * @param id
+     * @return
+     */
+    @GetMapping(&quot;/users/{id}&quot;)
+    UserDto findById(@PathVariable Integer id);
+}
+</code></pre>
+<pre><code class="language-yaml">logging:
+  level:
+    com.itmuch.usercenter.dao.content: debug
+    com.itmuch.contentcenter.feignclient.UserCenterFeignClient: debug
+</code></pre>
+<h4 id="属性方式配置">属性方式配置</h4>
+<pre><code class="language-yaml">feign:
+  client:
+    config:
+      # 想要调用的微服务的名称
+      user-center:
+        loggerLevel: full
+</code></pre>
+<h3 id="全局配置-2">全局配置</h3>
+<h4 id="代码方式">代码方式</h4>
+<p>将细粒度的配置方式都注释掉</p>
+<p>在启动类配置上全局配置</p>
+<pre><code class="language-java">@EnableFeignClients(defaultConfiguration = UserCenterFeignConfiguration.class)
+</code></pre>
+<h4 id="配置属性方式-2">配置属性方式</h4>
+<pre><code class="language-yaml">feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
+</code></pre>
+<h3 id="支持的配置项-2">支持的配置项</h3>
+<p>代码方式</p>
+<figure data-type="image" tabindex="31"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412173444979.png" alt="image-20200412173444979" loading="lazy"></figure>
+<p>属性配置方式</p>
+<figure data-type="image" tabindex="32"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412173508756.png" alt="image-20200412173508756" loading="lazy"></figure>
+<h3 id="配置最佳实践">配置最佳实践</h3>
+<h4 id="ribbon配置-vs-feign配置">Ribbon配置 vs Feign配置</h4>
+<p>Ribbon是一个负载均衡器，帮我们选择一个实例</p>
+<p>Feign是一个声明式HTTP客户端，帮助我们更优雅的请求</p>
+<figure data-type="image" tabindex="33"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412175511967.png" alt="image-20200412175511967" loading="lazy"></figure>
+<h4 id="feign代码方式vs属性方式">Feign代码方式vs属性方式</h4>
+<figure data-type="image" tabindex="34"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412175730431.png" alt="image-20200412175730431" loading="lazy"></figure>
+<p>优先级：全局代码&lt;全局属性&lt;细粒度代码&lt;细粒度属性</p>
+<h4 id="最佳实践-3">最佳实践</h4>
+<ul>
+<li>尽量使用属性配置，属性方式实现不了的情况再考虑用代码配置</li>
+<li>在同一个微服务内尽量保持单一性，比如统一使用属性配置，不要两种方式混用，增加定位代码的复杂性</li>
+</ul>
+<h3 id="feign的继承">Feign的继承</h3>
+<p>这个特性带来了紧耦合，因为在微服务间共享接口，官方不建议使用。</p>
+<p>现状：很多公司用，代码复用。</p>
+<p>新项目如何选择：权衡利弊，会得到什么好处，失去什么，是不是划算，划算就上。</p>
+<h3 id="多参数请求构造">多参数请求构造</h3>
+<p><a href="https://www.imooc.com/article/289000">如何使用Feign构造多参数的请求</a></p>
+<p>Get请求参数使用@SpringQueryMap注解</p>
+<pre><code class="language-java">@FeignClient(name = &quot;user-center&quot;)
+public interface TestUserCenterFeignClient {
+
+    @GetMapping(&quot;/q&quot;)
+    UserDto query(@SpringQueryMap UserDto userDto);
+}
+</code></pre>
+<p>Post请求多参数，也可以使用@RequestBody。</p>
+<h3 id="feign脱离ribbon使用">Feign脱离Ribbon使用</h3>
+<pre><code class="language-java">@FeignClient(name = &quot;baidu&quot;, url=&quot;http://www.baidu.com&quot;)
+public interface TestBaiduFeignClient {
+
+    @GetMapping(&quot;&quot;)
+    String index();
+}
+</code></pre>
+<pre><code class="language-java">@GetMapping(&quot;baidu&quot;)
+    public String baiduIndex(){
+        return this.testBaiduFeignClient.index();
+    }
+</code></pre>
+<h3 id="resttemplate-vs-feign">RestTemplate vs Feign</h3>
+<figure data-type="image" tabindex="35"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412205018818.png" alt="image-20200412205018818" loading="lazy"></figure>
+<p>如何选择？</p>
+<ul>
+<li>原则：尽量用Feign，杜绝使用RestTemplate</li>
+</ul>
+<p>尽量减少开发人员的选择，共存会带来风格的不统一，额外的学习成本和额外的代码理解成本</p>
+<ul>
+<li>事无绝对，合理选择</li>
+</ul>
+<p>Feign解决不了，才用RestTemplate</p>
+<h3 id="feign的性能优化">Feign的性能优化</h3>
+<ul>
+<li>连接池【提升15%左右】，默认使用URLConnection，可以修改</li>
+</ul>
+<p>可以选用httpclient或者okhttp</p>
+<p>添加依赖</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+            &lt;groupId&gt;io.github.openfeign&lt;/groupId&gt;
+            &lt;artifactId&gt;feign-httpclient&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.github.openfeign&lt;/groupId&gt;
+            &lt;artifactId&gt;feign-okhttp&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<pre><code class="language-yaml">feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
+  httpclient:
+    # 让feign使用apache httpclient做请求，而不是默认的urlclient
+    enabled: true
+    # feign的最大连接数
+    max-connections: 200
+    # feign单个路径的最大连接数
+    max-connections-per-route: 50
+  okhttp:
+    enabled: true
+    # feign的最大连接数
+    max-connections: 200
+    # feign单个路径的最大连接数
+    max-connections-per-route: 50
+</code></pre>
+<ul>
+<li>日志级别</li>
+</ul>
+<p>生产环境建议设置为basic</p>
+<h3 id="feign常见问题总结">Feign常见问题总结</h3>
+<p><a href="https://www.imooc.com/article/289005">常见问题总结</a></p>
+<h3 id="现有架构总结">现有架构总结</h3>
+<figure data-type="image" tabindex="36"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412210834103.png" alt="image-20200412210834103" loading="lazy"></figure>
+<h2 id="服务容错-sentinel">服务容错-Sentinel</h2>
+<p>雪崩效应：基础服务故障，导致导致上层服务故障，并且故障不断放大。又称为cascading failure，级联失效，级联故障。</p>
+<figure data-type="image" tabindex="37"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200412211328332.png" alt="image-20200412211328332" loading="lazy"></figure>
+<p>雪崩效应是因为服务没有做好容错。</p>
+<h3 id="常见的容错方案容错思想">常见的容错方案（容错思想）</h3>
+<ul>
+<li>超时</li>
+<li>限流</li>
+<li>仓壁模式（线程池隔离）</li>
+<li>断路器模式</li>
+</ul>
+<p>5秒内错误率、错误次数达到就跳闸。</p>
+<p>断路器三态：</p>
+<figure data-type="image" tabindex="38"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200418230211926.png" alt="image-20200418230211926" loading="lazy"></figure>
+<h3 id="使用sentinel实现容错">使用Sentinel实现容错</h3>
+<p>是什么：轻量级的流量控制、熔断降级Java库。</p>
+<h3 id="整合sentinel">整合Sentinel</h3>
+<pre><code class="language-xml">&lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>可以使用/actuator/sentinel断点查看sentinel相关信息。</p>
+<h3 id="整合actuator">整合Actuator</h3>
+<pre><code class="language-xml">&lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>需要加入配置才能暴露sentinel端点。</p>
+<pre><code class="language-yaml">management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+</code></pre>
+<h3 id="sentinel控制台">Sentinel控制台</h3>
+<h4 id="搭建sentinel控制台">搭建Sentinel控制台</h4>
+<p>https://github.com/alibaba/Sentinel/releases</p>
+<p>生产环境，控制台版本最好和整体版本一致。</p>
+<p>启动sentinel控制台</p>
+<p><code>java -jar /Users/kim/Downloads/sentinel-dashboard-1.7.2.jar</code></p>
+<p>默认在localhost:8080端口，用户名密码都是sentinel。</p>
+<p>为内容中心整合sentinel控制台</p>
+<pre><code class="language-yaml"># 指定sentinel 控制台地址
+spring.cloud.sentinel.transport.dashboard: localhost:8080
+</code></pre>
+<p>确保nacos、sentinel控制台、内容中心和用户中心都启动了。然后访问http://localhost:8010/shares/1多次，就可以在实时监控里看到效果。</p>
+<figure data-type="image" tabindex="39"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200418233034998.png" alt="image-20200418233034998" loading="lazy"></figure>
+<h3 id="流控规则">流控规则</h3>
+<p>点击簇点链路，点击/shares/1的流控按钮，就可以为这个访问路径设置流控规则。</p>
+<figure data-type="image" tabindex="40"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200419110648290.png" alt="image-20200419110648290" loading="lazy"></figure>
+<figure data-type="image" tabindex="41"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200419110733958.png" alt="image-20200419110733958" loading="lazy"></figure>
+<h4 id="资源名">资源名</h4>
+<p>默认是请求路径。</p>
+<h4 id="针对来源">针对来源</h4>
+<p>针对调用者限流。针对来源是调用者微服务名称。</p>
+<h4 id="阈值类型">阈值类型</h4>
+<p>QPS、线程数。比如选择QPS，表示：当调用当前资源的QPS达到阈值时，就去限流。</p>
+<h4 id="是否集群">是否集群</h4>
+<h4 id="流控模式">流控模式</h4>
+<h5 id="直接">直接</h5>
+<h5 id="关联">关联</h5>
+<p><code>&lt;1&gt;</code>当关联的资源达到阈值，就限流自己</p>
+<p>比如我们设置关联资源为<code>/actuator/sentinel</code>，当关联资源的qps达到1时，就限流<code>/shares/1</code></p>
+<figure data-type="image" tabindex="42"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200419120020951.png" alt="image-20200419120020951" loading="lazy"></figure>
+<p>写一个测试类，调用<code>/actuator/sentinel</code></p>
+<pre><code class="language-java">public class SentinelTest {
+    public static void main(String[] args) throws InterruptedException {
+        RestTemplate restTemplate = new RestTemplate();
+        for (int i = 0; i &lt; 10000; i++) {
+            String forObject = restTemplate.getForObject(&quot;http://localhost:8010/actuator/sentinel&quot;, String.class);
+            Thread.sleep(500);
+        }
+    }
+}
+</code></pre>
+<p>运行这个测试类，再去调用<code>/shares/1</code>,发信啊已经被限流了。</p>
+<figure data-type="image" tabindex="43"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200419121201930.png" alt="image-20200419121201930" loading="lazy"></figure>
+<p>实际应用，如果希望修改优先，可以配置关联API为修改的API，资源名设置为查询的API。当修改的测试过多，就限流查询，保证性能。</p>
+<h5 id="链路">链路</h5>
+<p>只记录指定链路上的流量</p>
+<h4 id="流控效果">流控效果</h4>
 ]]></content>
     </entry>
     <entry>
@@ -2536,38 +3036,6 @@ dependencies {
 <h3 id="621-是否向服务器请求了不需要的数据">6.2.1 是否向服务器请求了不需要的数据</h3>
 <h3 id="622-mysql是否在扫描额外的记录">6.2.2 MySQL是否在扫描额外的记录</h3>
 <h2 id="63-重构查询的方式">6.3 重构查询的方式</h2>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[创建高性能的索引]]></title>
-        <id>https://xinrong2019.github.io/post/chuang-jian-gao-xing-neng-de-suo-yin/</id>
-        <link href="https://xinrong2019.github.io/post/chuang-jian-gao-xing-neng-de-suo-yin/">
-        </link>
-        <updated>2020-01-31T11:06:33.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="51-索引的基础">5.1 索引的基础</h2>
-<h3 id="511-索引的类型">5.1.1 索引的类型</h3>
-<h2 id="52-索引的优点">5.2 索引的优点</h2>
-<h2 id="53-高性能的索引策略">5.3 高性能的索引策略</h2>
-<h3 id="531-独立的列">5.3.1 独立的列</h3>
-<h3 id="532-前缀索引和索引选择性">5.3.2 前缀索引和索引选择性</h3>
-<h3 id="533-多列索引">5.3.3 多列索引</h3>
-<h3 id="534-选择合适的索引列顺序">5.3.4 选择合适的索引列顺序</h3>
-<h3 id="535-聚簇索引">5.3.5 聚簇索引</h3>
-<h3 id="536-覆盖索引">5.3.6 覆盖索引</h3>
-<h3 id="537-使用索引扫描来做排序">5.3.7 使用索引扫描来做排序</h3>
-<h3 id="538-压缩前缀压缩索引">5.3.8 压缩（前缀压缩）索引</h3>
-<h3 id="539-冗余和重复索引">5.3.9 冗余和重复索引</h3>
-<h3 id="5310-未使用的索引">5.3.10 未使用的索引</h3>
-<h3 id="5311-索引和锁">5.3.11 索引和锁</h3>
-<h2 id="54-索引案例学习">5.4 索引案例学习</h2>
-<h3 id="541-支持多种过滤条件">5.4.1 支持多种过滤条件</h3>
-<h3 id="542-避免多个范围条件">5.4.2 避免多个范围条件</h3>
-<h3 id="543-优化排序">5.4.3 优化排序</h3>
-<h2 id="55-维护索引和表">5.5 维护索引和表</h2>
-<h3 id="551-找到并修复锁坏的表">5.5.1 找到并修复锁坏的表</h3>
-<h3 id="552-更新索引统计信息">5.5.2 更新索引统计信息</h3>
-<h3 id="553-减少索引和数据的碎片">5.5.3 减少索引和数据的碎片</h3>
-<h2 id="56-总结">5.6 总结</h2>
 ]]></content>
     </entry>
 </feed>
