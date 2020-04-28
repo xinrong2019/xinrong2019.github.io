@@ -165,7 +165,7 @@ window.onload=getCSS();
 				
 				
 			</div>
-			<form id="gridea-search-form" data-update="1588033103357" action="/search/index.html">
+			<form id="gridea-search-form" data-update="1588033196802" action="/search/index.html">
 				<div class="search-box">
 					<input class="search-txt" name="q" placeholder="Type to search" />
 					<a class="search-btn">
@@ -186,12 +186,15 @@ window.onload=getCSS();
 										2020-04-04
 									</time>
 									<span>
-										8 min read
+										16 min read
 									</span>
 								</div>
 							</div>
 							<div class="wow slideInLeft entry-summary song">
-								<h2 id="目标">目标</h2>
+								<h1 id="java基础知识">Java基础知识</h1>
+<h2 id="toc">TOC</h2>
+<p>[TOC]</p>
+<h2 id="目标">目标</h2>
 <p>以面试为导向，知识点要全面，查漏补缺。突出重点。</p>
 <p>学完后有一个基本的认知是什么，对于重点内容要知道为什么，了解实现原理。</p>
 <h2 id="基础">基础</h2>
@@ -283,6 +286,300 @@ window.onload=getCSS();
 <h3 id="关于精度损失问题int-long-超过最大值">关于精度损失问题：int、long 超过最大值</h3>
 <h3 id="关于注解元注解的种类-继承javalangannotation-注解的基础类型-注解的常用方法">关于注解：元注解的种类、继承java.lang.Annotation、注解的基础类型、注解的常用方法</h3>
 <h3 id="关于classloader类加载器双亲委派模型">关于ClassLoader，类加载器，双亲委派模型</h3>
+<h1 id="spring-boot">Spring Boot</h1>
+<h2 id="如何自定义starter">如何自定义starter</h2>
+<ol>
+<li><code>引入spring-boot-autoconfigure依赖</code></li>
+</ol>
+<pre><code class="language-java">&lt;dependency&gt;
+	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-boot-autoconfigure&lt;/artifactId&gt;
+	&lt;version&gt;2.2.2.RELEASE&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<ol start="2">
+<li>编写JavaBean</li>
+</ol>
+<pre><code class="language-java">@EnableConfigurationProperties(SimpleBean.class)
+@ConfigurationProperties(prefix = &quot;simplebean&quot;)
+public class SimpleBean {
+
+    private int id;
+    private String name;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return &quot;SimpleBean{&quot; +
+                &quot;id=&quot; + id +
+                &quot;, name='&quot; + name + '\'' +
+                '}';
+    }
+}
+</code></pre>
+<ol start="3">
+<li>编写配置类</li>
+</ol>
+<pre><code class="language-java">@Configuration
+@ConditionalOnClass//当类路径下有指定当类自动配置
+public class MyAutoConfiguration {
+
+    static {
+        System.out.println(&quot;MyAutoConfiguration init....&quot;);
+    }
+
+    @Bean
+    public SimpleBean simpleBean() {
+        return new SimpleBean();
+    }
+}
+</code></pre>
+<ol start="4">
+<li>在resources下创建/META-INF/spring.fatories文件</li>
+</ol>
+<p>在该文件中配置自己的自动配置类，多个配置用逗号隔开</p>
+<pre><code>org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.lagou.config.MyAutoConfiguration
+</code></pre>
+<h2 id="spring-boot启动流程">Spring Boot启动流程</h2>
+<h3 id="springbootapplication"><code>@SpringBootApplication</code></h3>
+<p><code>@SpringBootApplication</code>注解里定义了3个事情：</p>
+<p><code>@SpringBootConfiguration</code>声明使用该注解的类是配置类，由Spring IOC容器托管。</p>
+<p><code>@EnableAutoConfiguration</code>声明开启自动配置。</p>
+<p><code>@ComponentScan</code>声明包扫描的范围。</p>
+<pre><code class="language-java">@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+public @interface SpringBootApplication {
+</code></pre>
+<h3 id="springbootconfiguration"><code>@SpringBootConfiguration</code></h3>
+<p><code>@SpringBootConfiguration</code>注解内部有一个核心注解@Configuration，表示当前类是一个配置类，并可以被组建扫描器扫描。</p>
+<h3 id="enableautoconfiguration"><code>@EnableAutoConfiguration</code></h3>
+<p><code>@EnableAutoConfiguration</code>主要干了两件事：</p>
+<pre><code class="language-java">@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@AutoConfigurationPackage
+@Import(AutoConfigurationImportSelector.class)
+public @interface EnableAutoConfiguration {
+</code></pre>
+<p><code>@AutoConfigurationPackage</code>自动配置包</p>
+<p><code>@Import(AutoConfigurationImportSelector.class)</code>自动配置类扫描导入</p>
+<h4 id="源码剖析">源码剖析</h4>
+<p>自动配置入口<code>AbstractApplicationContext.invokeBeanFactoryPostProcessors</code></p>
+<p>自动配置关键类方法<code>AutoConfigurationImportSelector.getAutoConfigurationEntry</code></p>
+<p>具体细节：</p>
+<p>在<code>getCandidateConfigurations</code>方法中调用<code>SpringFactoriesLoader.loadFactoryNames</code>，</p>
+<p>从类路径下的<code>META-INF/spring.factories</code>文件中加载自动配置类</p>
+<h4 id="小结-2">小结</h4>
+<p><code>@EnableAutoConfiguration</code>就是从classpath中搜寻<code>META-INF/spring.factories</code>配置文件，并将其中的<code>org.springframework.boot.autoconfigure.EnableAutoConfiguration</code>对应的配置项通过反射实例化对应的标注了@Configuration的JavaConfig形式的配置类，并加载到IOC容器中。</p>
+<h3 id="componentscan注解"><code>@ComponentScan注解</code></h3>
+<p>扫描启动类所在包及其子包下的类，扫描过程中由@AutoConfigurationPackage注解进行解析，从而得到启动类所在包的具体位置。</p>
+<h3 id="总结-3">总结：</h3>
+<p>@SpringBootApplication注解主要是3个注解的组合注解。</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200423142226336_2020_04_23_14_22_26.png" alt="image-20200423142226336" loading="lazy"></figure>
+<h2 id="执行原理">执行原理</h2>
+<h3 id="springapplication实例的初始化创建">SpringApplication实例的初始化创建</h3>
+<pre><code class="language-java">public SpringApplication(ResourceLoader resourceLoader, Class&lt;?&gt;... primarySources) {
+		this.resourceLoader = resourceLoader;
+		Assert.notNull(primarySources, &quot;PrimarySources must not be null&quot;);
+		this.primarySources = new LinkedHashSet&lt;&gt;(Arrays.asList(primarySources));
+		this.webApplicationType = WebApplicationType.deduceFromClasspath();
+		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+		this.mainApplicationClass = deduceMainApplicationClass();
+	}
+</code></pre>
+<h3 id="项目的初始化启动">项目的初始化启动</h3>
+<pre><code class="language-java">public ConfigurableApplicationContext run(String... args) {
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		ConfigurableApplicationContext context = null;
+		Collection&lt;SpringBootExceptionReporter&gt; exceptionReporters = new ArrayList&lt;&gt;();
+		configureHeadlessProperty();
+  //1 获取并启动监听器
+		SpringApplicationRunListeners listeners = getRunListeners(args);
+		listeners.starting();
+		try {
+			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+      //2 准备环境
+			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+			configureIgnoreBeanInfo(environment);
+			Banner printedBanner = printBanner(environment);
+      //3 创建Spring容器
+			context = createApplicationContext();
+			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
+					new Class[] { ConfigurableApplicationContext.class }, context);
+      //4 Spring容器前置处理
+			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
+      // 5 刷新容器
+			refreshContext(context);
+      //6 容器后置处理
+			afterRefresh(context, applicationArguments);
+			stopWatch.stop();
+			if (this.logStartupInfo) {
+				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
+			}
+      //7 发出结束执行的事件
+			listeners.started(context);
+      //返回容器
+			callRunners(context, applicationArguments);
+		}
+		catch (Throwable ex) {
+			handleRunFailure(context, ex, exceptionReporters, listeners);
+			throw new IllegalStateException(ex);
+		}
+
+		try {
+			listeners.running(context);
+		}
+		catch (Throwable ex) {
+			handleRunFailure(context, ex, exceptionReporters, null);
+			throw new IllegalStateException(ex);
+		}
+		return context;
+	}
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200423143258403_2020_04_23_14_32_58.png" alt="image-20200423143258403" loading="lazy"></figure>
+<h2 id="spring">Spring</h2>
+<h3 id="ioc">IOC</h3>
+<h4 id="什么是ioc">什么是IOC</h4>
+<p>控制反转，管理对象的生命周期及对象之间的依赖关系</p>
+<p>对象的创建，new的方式，改为从容器中拿。</p>
+<p>构造器注入和set方法注入。</p>
+<h4 id="什么是对象的生命周期">什么是对象的生命周期</h4>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200423153452549_2020_04_23_15_34_53.png" alt="image-20200423153452549" loading="lazy"></figure>
+<p>实例化bean，设置属性值，调用BeanPostProcessor的初始化前方法，调用初始化方法，调用BeanPostProcessor的初始化后方法。</p>
+<h4 id="延迟加载">延迟加载</h4>
+<p>被修饰为lazy-init的bean ，Spring容器初始化阶段不会进行初始化，第一次进行getBean调用时，才初始化调用</p>
+<h4 id="如何处理循环依赖">如何处理循环依赖</h4>
+<p>用了三级缓存。</p>
+<ul>
+<li>
+<p>单例bean构造器参数循环依赖（无法解决）</p>
+</li>
+<li>
+<p>prototype原型bean循环依赖（无法解决）</p>
+</li>
+<li>
+<p>单例bean通过set注入或@Autowired循环依赖（可以解决）</p>
+</li>
+</ul>
+<p>原理：基于Java引用传递，当获得对象的引用时，对象的属性是可以延迟后设置的，但是构造器必须在获取引用之前。</p>
+<p>通过提前暴露一个ObjectFactory对象来完成，简单来说，ClassA在调用构造器完成对象初始化之后，在调用ClassA的serClassB方法之前，就把ClassA实例化的对象通过ObjectFactory提前暴露到Spring容器中。</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E9%97%AE%E9%A2%98_2020_04_23_15_10_42.png" alt="循环依赖问题" loading="lazy"></figure>
+<h3 id="aop">AOP</h3>
+<p>面向切面编程</p>
+<p>在不改变原有业务逻辑的基础上，增强横切逻辑，根本上解耦合，避免横切逻辑代码重复。</p>
+<h4 id="事务">事务</h4>
+<p>本质，是对Connection的管理。将连接绑定到当前线程，从当前线程获取连接，运用ThreadLocal。</p>
+<p>DataSourceTransactionManager</p>
+<pre><code class="language-java">@Override
+	protected Object doGetTransaction() {
+		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
+		txObject.setSavepointAllowed(isNestedTransactionAllowed());
+    //从ThreadLoacal拿连接
+		ConnectionHolder conHolder =
+				(ConnectionHolder) TransactionSynchronizationManager.getResource(obtainDataSource());
+		txObject.setConnectionHolder(conHolder, false);
+		return txObject;
+	}
+</code></pre>
+<pre><code class="language-java">@Nullable
+	private static Object doGetResource(Object actualKey) {
+		Map&lt;Object, Object&gt; map = resources.get();//看resources这个变量
+		if (map == null) {
+			return null;
+		}
+		Object value = map.get(actualKey);
+		// Transparently remove ResourceHolder that was marked as void...
+		if (value instanceof ResourceHolder &amp;&amp; ((ResourceHolder) value).isVoid()) {
+			map.remove(actualKey);
+			// Remove entire ThreadLocal if empty...
+			if (map.isEmpty()) {
+				resources.remove();
+			}
+			value = null;
+		}
+		return value;
+	}
+</code></pre>
+<p>看一下<code>resources</code>变量在<code>TransactionSynchronizationManager</code>中的定义</p>
+<pre><code class="language-java">private static final ThreadLocal&lt;Map&lt;Object, Object&gt;&gt; resources =
+      new NamedThreadLocal&lt;&gt;(&quot;Transactional resources&quot;);
+</code></pre>
+<p>Spring事务管理基于AOP，如果需要增强Bean。使用AOP添加事务支持。</p>
+<p>AOP是基于Spring扩展点BeanPostProcessor.postProcessAfterInitailization</p>
+<h4 id="同一个类中非事务方法调用transaction注解的事务方法事务失效问题">同一个类中非事务方法调用@Transaction注解的事务方法事务失效问题</h4>
+<pre><code class="language-java">@Service
+class A{
+    @Transactinal
+    method b(){...}
+    
+    method a(){    //标记1
+        b();
+    }
+}
+ 
+//Spring扫描注解后，创建了另外一个代理类，并为有注解的方法插入一个startTransaction()方法：
+class proxy$A{
+    A objectA = new A();
+    method b(){    //标记2
+        startTransaction();
+        objectA.b();
+    }
+ 
+    method a(){    //标记3
+        objectA.a();    //由于a()没有注解，所以不会启动transaction，而是直接调用A的实例的a()方法
+    }
+}
+</code></pre>
+<p>当我们调用A的bean的a()方法的时候，也是被proxy<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mi mathvariant="normal">拦</mi><mi mathvariant="normal">截</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">执</mi><mi mathvariant="normal">行</mi><mi>p</mi><mi>r</mi><mi>o</mi><mi>x</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">A拦截，执行proxy</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">A</span><span class="mord cjk_fallback">拦</span><span class="mord cjk_fallback">截</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">执</span><span class="mord cjk_fallback">行</span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">o</span><span class="mord mathdefault">x</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span></span>A.a()（标记3），然而，由以上代码可知，这时候它调用的是objectA.a()，也就是由原来的bean来调用a()方法了，所以代码跑到了“标记1”。由此可见，“标记2”并没有被执行到，所以startTransaction()方法也没有运行。</p>
+<p>https://zhuanlan.zhihu.com/p/101396825</p>
+<p>https://mp.weixin.qq.com/s/1TEBnmWynN4nwc6Q-oZfvw</p>
+<p>https://juejin.im/post/5dc21bdff265da4d4e300413</p>
+<p>https://blog.csdn.net/levae1024/article/details/82998386</p>
+<p>https://blog.csdn.net/m0_38027656/article/details/84190949?depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2&amp;utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2</p>
+<p>解决方法：</p>
+<p>springboot启动类加上注解:<code>@EnableAspectJAutoProxy(exposeProxy = true)</code>。</p>
+<p>使用<code>AopContext.currentProxy()</code>获取代理对象</p>
+<h2 id="redis">Redis</h2>
+<h3 id="持久化方式">持久化方式</h3>
+<p>AOF，RDB</p>
+<p>优缺点</p>
+<h3 id="健过期策略">健过期策略</h3>
+<h3 id="集群方案">集群方案</h3>
+<h4 id="codis">Codis</h4>
+<h2 id="分布式事务">分布式事务</h2>
+<h3 id="2pc">2PC</h3>
+<p>结合案例，应用存储数据，然后投递到MQ，如何保障事务。</p>
+<p>开启事务，协调者向所有的事务参与者发送事务内容</p>
+<p>1.数据存储失败，应用服务自己回滚。</p>
+<p>2.数据存储成功，消息投递失败，消息没有发送成功，抛出了异常，定时重新发。</p>
+<p>3.数据存储成功，消息投递失败，消息发送成功，消费端自己挂了，没有接收到。</p>
+<p>这种情况，如果需要保证客户端收到，mq需要支持收到确认，只有消费者收到并发送确认到ack给mq,mq才知道消费者收到，否则，mq自己重发。</p>
+<p>如果消息是可丢失的，不重要，那么就不需要客户端确认，不用管消费端挂了，在不在线。</p>
 
 							</div>
 							<div class="wow bounceInDown vt-post-tags">
