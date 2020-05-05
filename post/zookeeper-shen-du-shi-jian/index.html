@@ -165,7 +165,7 @@ window.onload=getCSS();
 				
 				
 			</div>
-			<form id="gridea-search-form" data-update="1588662856360" action="/search/index.html">
+			<form id="gridea-search-form" data-update="1588681268021" action="/search/index.html">
 				<div class="search-box">
 					<input class="search-txt" name="q" placeholder="Type to search" />
 					<a class="search-btn">
@@ -186,7 +186,7 @@ window.onload=getCSS();
 										2020-04-28
 									</time>
 									<span>
-										14 min read
+										28 min read
 									</span>
 								</div>
 							</div>
@@ -377,6 +377,8 @@ server.3=192.168.101.25:2183:3882
 <h3 id="zookeeper开源客户端">Zookeeper开源客户端</h3>
 <h4 id="zkclient">ZKClient</h4>
 <h4 id="curator">Curator</h4>
+<p>作业题：</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200504121253816.png" alt="image-20200504121253816" loading="lazy"></figure>
 <h2 id="zookeeper应用场景">Zookeeper应用场景</h2>
 <h3 id="数据发布订阅">数据发布/订阅</h3>
 <p>可以实现配置信息的集中式管理和数据的动态更新。</p>
@@ -396,7 +398,7 @@ server.3=192.168.101.25:2183:3882
 </ol>
 <p>如何使用Zookeeper实现一套分布式全局唯一ID的分配机制。</p>
 <p>使用到的Zookeeper特性是：顺序节点，每一个数据节点都能够维护一份子节点的顺序序列，当客户端对其创建一个顺序子节点的时候，Zookeeper会自动以后缀的形式在其子节点上添加一个序号。</p>
-<figure data-type="image" tabindex="4"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200430150912398_2020_04_30_22_29_32.png" alt="image-20200430150912398" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/image-20200430150912398_2020_04_30_22_29_32.png" alt="image-20200430150912398" loading="lazy"></figure>
 <p>全局唯一ID生成的Zookeeper节点示意图。</p>
 <p>对于一个任务列表的主键，使用Zookeeper生成唯一ID的基本步骤：</p>
 <ol>
@@ -478,21 +480,276 @@ server.3=192.168.101.25:2183:3882
 </ol>
 <p>若采用Watcher机制，那么通知的消息量的网络开销非常大，需要采用日志系统主动轮询收集器节点的策略，这样可以节省网络流量，但是存在一定的延时。</p>
 <h3 id="master选举">Master选举</h3>
+<p>利用Zookeeper的强一致性，能够很好保证在分布式高并发情况下，节点的创建一定能够保证全局唯一性，即Zookeeper将会保证客户端无法重复创建一个已经存在的节点。</p>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200504100633330.png" alt="image-20200504100633330" loading="lazy"></figure>
+<p>客户端集群每天定时往Zookeeper上创建一个临时节点，例如/master_election/2020-11-11/binding。在这个过程中，只有一个客户端能够成功创建这个节点，那么这个客户端所在机器就成了Master。</p>
+<p>其他没有创建成功的客户端，会在节点/master_election/2020-11-11上注册一个子节点变更的Watcher，用于监控当前Master机器是否存活，一旦发现Master挂了，那么其余客户端将会重新进行Master选举。</p>
+<ul>
+<li>保证数据唯一性</li>
+<li>保证Master故障后能够通知其他节点可以重新选举</li>
+</ul>
 <h3 id="分布式锁">分布式锁</h3>
 <h4 id="排他锁">排他锁</h4>
+<p>又称写锁或独占锁。如果当前事务获取了排他锁，只有当前事务可以对共享资源读取和更新，其他事务只能等待当前事务释放锁才能操作。</p>
+<ol>
+<li>定义锁</li>
+</ol>
+<p>在/exclusive-lock节点下创建临时子节点/exclusive-lock/lock。</p>
+<ol start="2">
+<li>获取锁</li>
+</ol>
+<p>创建临时子节点/exclusive-lock/lock的过程就是获取锁的过程，Zookeeper可以保证多个客户端只有一个可以创建同一个节点成功。其他没有获取到锁的客户端需要到/exclusive-lock节点上注册一个子节点变更的Watcher监听，以便实时监听lock节点的变更情况</p>
+<ol start="3">
+<li>释放锁</li>
+</ol>
+<p>/exclusive-lock/lock是一个临时节点，两种情况会释放锁</p>
+<ul>
+<li>获取锁的客户端宕机，临时节点会自动移除</li>
+<li>获取锁的客户端正常执行完业务，客户端主动删除临时节点。</li>
+</ul>
+<p>释放锁后，其他没有获取锁的客户端会收到通知，再次发起分布式锁的获取。</p>
+<figure data-type="image" tabindex="7"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200504120734250.png" alt="image-20200504120734250" loading="lazy"></figure>
 <h4 id="共享锁">共享锁</h4>
+<p>如果事务T1对数据对象O1加上了共享锁，那么当前事务只能对O1进行读取操作，其他事务也只能对这个数据对象加共享锁——直到该数据对象上的所有共享锁都被释放。</p>
+<p>共享锁和排他锁最根本的区别在于，加上排他锁后，数据对象只对一个事务可见，而加上共享锁后，<strong>数据对所有事务都可见</strong>。</p>
+<p>下面看看如何借助<code>Zookeeper</code>实现共享锁。</p>
+<ol>
+<li>定义锁</li>
+</ol>
+<p>通过<code>Zookeeper</code>上的数据节点表示锁，通过<code>/shared_lock/[Hostname]-请求类型-序号</code>的临时顺序节点，例如<code>/shared_lock/host1-R-0000001</code>，这个节点就代表一个共享锁。</p>
+<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200504155508006.png" alt="image-20200504155508006" style="zoom:50%;" />
+<ol start="2">
+<li>获取锁</li>
+</ol>
+<p>获取锁的时候，所有客户端都会到<code>shared_lock</code>节点下创建临时顺序节点，如果当前是读请求，就创建如<code>/shared_lock/host1-R-0000001</code>节点；如果是写请求，就创建例如<code>/shared_lock/host1-W-0000002</code>的节点。</p>
+<p>判断读写顺序</p>
+<p>通过Zookeeper来确定分布式读写顺序，大致分为四步</p>
+<pre><code>1. 创建完节点后，获取/shared_lock节点下所有子节点，并对该节点变更注册监听
+2. 确定自己的节点序号在所有子节点中的顺序
+3. 对于读请求：若没有比自己序号小的子节点或所有比自己序号小的子节点都是读请求，那么表明自己已经成功获取到共享锁，同时开始执行读取逻辑，若有写请求，则需要等待。对于写请求：若自己不是序号最小的子节点，那么需要等待。
+4. 接收到Watcher通知后，重复步骤1.
+</code></pre>
+<ol start="3">
+<li>释放锁，与与独占锁一致</li>
+</ol>
 <h4 id="羊群效应">羊群效应</h4>
+<p>当锁下面的竞争机器数超过10，很大时，由于是在/shared_lock上注册的监听，如果同一时间有多个节点对应的客户端完成事务或者事务中断引起节点消失，Zookeeper服务器就会在短时间内向其余客户端发送大量的事件通知。这就是羊群效应。</p>
+<p>没有找准客户端真正的关注点。判断自己是否是所有子节点中序号最小的。每个节点对应的客户端只需要关注比自己序号小的那个相关节点的变更情况就可以了，而不是关注全局的子列表变更情况。</p>
+<ol>
+<li>
+<p>客户端调用create接口创建类似于<code>/shared_lock/[Hostname]-请求类型-序号</code>的临时顺序节点</p>
+</li>
+<li>
+<p>客户端调用getChildren接口获取所有已经创建的子节点列表（不注册任何Watcher）</p>
+</li>
+<li>
+<p>如果无法获取共享锁，就调用exsit接口来对比自己小的节点注册Watcher。对于读请求：向比自己序号小的最后一个写请求节点注册Watcher监听。对于写请求：向比自己序号小的最后一个节点注册Watcher监听。</p>
+</li>
+<li>
+<p>等待Watcher通知，继续进入步骤2</p>
+</li>
+</ol>
+<figure data-type="image" tabindex="8"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200504172259727.png" alt="image-20200504172259727" loading="lazy"></figure>
+<p>如何选择：根据项目的实际情况选择两种方式的一种。</p>
 <h3 id="分布式队列">分布式队列</h3>
+<ul>
+<li>
+<p>FIFO先进先出队列模型</p>
+</li>
+<li>
+<p>等待队列元素聚集后统一安排处理执行的Barrier模型</p>
+</li>
+</ul>
+<p><strong>FIFO队列</strong>类似于一个全写的共享锁模型，思路：所有客户端都会到<code>/queue_fifo</code>这个节点下创建一个临时顺序节点，例如<code>/queue_fifo/host1-0000001</code>。</p>
+<figure data-type="image" tabindex="9"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200504172927445.png" alt="image-20200504172927445" loading="lazy"></figure>
+<p>创建完节点后，根据如下4个步骤来确定执行顺序</p>
+<ol>
+<li>通过调用getChildren接口来获取/queue_fifo节点的所有子节点，即获取队列中所有的元素</li>
+<li>确定自己的节点序号在所有子节点中的顺序</li>
+<li>如果自己的序号不是最小，那么需要等待，同时向比自己序号小的最后一个节点注册Watcher监听</li>
+<li>接收到Watcher通知后，重复步骤1.</li>
+</ol>
+<figure data-type="image" tabindex="10"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200504173154258.png" alt="image-20200504173154258" loading="lazy"></figure>
+<p><strong>Barrier：分布式屏障</strong></p>
+<p>场景：大规模并行计算的应用，最终的合并计算需要基于很多并行计算的子结果来进行。</p>
+<p>思路：开始时，/queue_fifo节点是一个已经存在的默认节点，并且将其节点的数据内容赋值一个数字n来代表Barrier值，例如n=10表示只有当/queue_fifo节点下的子节点个数达到10后，才会打开Barrier。所有的客户端都会到/queue_fifo节点下创建一个临时节点，例如/queue_fifo/host1，如图所示</p>
+<figure data-type="image" tabindex="11"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505091725135.png" alt="image-20200505091725135" loading="lazy"></figure>
+<p>创建完节点后，按照如下步骤执行</p>
+<ol>
+<li>通过调用getData接口获取/queue_barrier节点的数据内容：10</li>
+<li>通过调用getChildren接口获取/queue_barrier节点下的所有子节点，同时注册对子节点变更的Watcher监听</li>
+<li>统计子节点的个数</li>
+<li>如果子节点个数还不足10个，那么需要等待</li>
+<li>接收到Watcher通知后，重复步骤2</li>
+</ol>
+<figure data-type="image" tabindex="12"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505100106500.png" alt="image-20200505100106500" loading="lazy"></figure>
 <h2 id="zookeeper深入进阶">Zookeeper深入进阶</h2>
 <h3 id="zab协议">ZAB协议</h3>
+<p>Zookeeper原子广播协议</p>
+<p>一种支持崩溃恢复到原子广播协议</p>
+<p>主备模式的系统架构，保证集群中各副本之间的数据一致性。使用一个单一的主进程来接收并处理客户端的所有事务请求，并采用ZAB原子广播协议，将服务器数据的状态变更以事务Proposal的形式广播到所有的副本进程中。</p>
+<h4 id="基于zab协议如何处理请求">基于ZAB协议如何处理请求</h4>
+<p>请求由Leader处理，Leader服务器负责将一个客户端事务转化成一个事务Proposal，并将Proposal分发给集群中所有的Follower服务器，之后需要等待所有的Follower服务器反馈，只要收到超过半数的正确反馈后，Leader就会再次向所有的Follower分发commit消息，要求其将前一个Proposal提交。</p>
+<figure data-type="image" tabindex="13"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505124828302.png" alt="image-20200505124828302" loading="lazy"></figure>
+<h4 id="zab协议介绍">ZAB协议介绍</h4>
+<p>两个基本的模式：崩溃恢复和消息广播</p>
+<ol>
+<li>进入崩溃恢复模式</li>
+</ol>
+<p><strong>什么时候进入？</strong></p>
+<p>启动过程，网络中断、崩溃推出或重启</p>
+<p>进入崩溃恢复模式会进行Leader选举</p>
+<p><strong>什么时候退出崩溃恢复模式</strong>？</p>
+<p>集群中有半数以上机器与Leader同步完状态后，就退出崩溃恢复模式</p>
+<p><strong>状态同步</strong>：就是数据同步</p>
+<ol start="2">
+<li>进入消息广播模式</li>
+</ol>
+<p>当集群中已经有过半数Follower服务器完成了与Leader服务器的状态同步，就进入<strong>消息广播模式</strong>。</p>
+<p>当新加入一台同样遵守ZAB协议的服务器到集群中，且集群中已经有一个Leader在负责消息广播，那么加入到服务器就自觉进入<strong>数据恢复模式</strong>：找到Leader所在的服务器，并于其进行数据同步，然后一起参与到消息广播流程中去。</p>
+<p><strong>只有Leader服务器可以进行事务请求的处理，如果其他机器收到客户端请求后，非Leader服务器会首先将这个事务请求转发到Leader服务器。</strong></p>
+<h4 id="消息广播过程和崩溃恢复过程">消息广播过程和崩溃恢复过程</h4>
+<ol>
+<li>消息广播</li>
+</ol>
+<p>Leader服务器会为每一个Follower服务器都各自分配一个单独的队列，然后将需要广播的事务Proposal依次放入这些队列中去，并且根据FIFO策略进行消息发送。</p>
+<p>每一个Follower服务器在接收到这个事务Proposal之后，都会首先将其以事务日志的形式写入到本地磁盘中，并且在写入成功后反馈给Leader服务器一个Ack响应。</p>
+<p>当Leader服务器接收到过半数Follower的Ack响应后，就会广播一个Commit消息给所有Follower服务器以通知其进行事务提交，同时Leader自身也会完成对事务的提交。</p>
+<p>而每一个Follower服务器在接收到Commit消息后，也会完成事务的提交。</p>
+<ol start="2">
+<li>崩溃恢复</li>
+</ol>
+<p>崩溃恢复需要考虑什么？</p>
+<p>恢复过程会选出一个新的Leader，需要一个高效可靠的选举算法，不仅仅Leader自身知道已经被选举为Leader，还需要集群中其他机器也能够快速的感知到选举产生出来的新Leader机器。</p>
+<ul>
+<li>需要确保那些已经在Leader服务器上提交的事务最终被所有服务器都提交</li>
+<li>需要确保丢弃那些只在Leader服务器上被提出的事务</li>
+</ul>
+<p>小结：Leader选举算法需要确保提交已经被Leader提交的事务，同时丢弃已经被跳过的事务。</p>
+<p>让具有最高事务编号的Proposal的机器成为Leader（行文到这里，依然不是很清楚怎么做到的崩溃恢复，只知道一个结论）</p>
+<h4 id="数据同步过程">数据同步过程</h4>
+<p>Leader确认事务日志中的所有Proposal是否都已经被集群中过半数的机器提交了，即是否完成数据同步。</p>
+<p>具体的过程：Leader服务器为每一个Follower服务器准备一个队列，并将那些没有被各Follower服务器同步的事务以Propoal的形式逐个发送给Follower服务器，并在每一个Proposal消息后面，紧接着发送一个Commit消息，以表示该事务已经被提交。</p>
+<p>等到Follower服务器将所有尚未同步的事务都从Leader服务器同步过来，并成功应用到本地数据库后，Leader服务器就会将该Follower服务器加入到真正可用的Follower列表中，并开始之后的其他流程。</p>
+<p><strong>运行状态分析</strong></p>
+<p>在ZAB协议的设计中，每个进程都有可能处于如下三种状态之一</p>
+<ul>
+<li>LOOKING：进程初始状态是LOOKING，Leader选举阶段其余Follower进程也是LOOKING状态</li>
+<li>FOLLOWING：Follower服务器和Leader服务器保持同步状态</li>
+<li>LEADING：Leader服务器作为主进程领导状态</li>
+</ul>
+<p>Leader能够在超时时间内正常收到过半心跳检测，或者TCP连接断开，那么Leader会放弃当前周期的领导，并转换为LOOKING状态，其他Follower会选择放弃这个Leader，同时转换到LOOING状态，之后会进行新一轮的Leader选举。</p>
+<p><strong>ZAB与Paxos的联系和区别</strong></p>
+<p><strong>联系</strong></p>
+<ul>
+<li>
+<p>都有Leader和Follower的角色</p>
+</li>
+<li>
+<p>Leader进程都会等待过半数Follower作出正确的反馈后，才会将一个提议进行提交</p>
+</li>
+<li>
+<p>都有一个表示当前Leader周期的值，ZAB叫epoch，Paxos叫Ballot</p>
+</li>
+</ul>
+<p><strong>区别</strong></p>
+<p>Paxos中，新选举产生的Leader会进行两阶段的工作，读阶段，新的主进程和其他进程通信来收集主进程提出的提议，并将他们提交，第二阶段写，当前主进程开始提出自己的提议。</p>
+<p>ZAB协议在Paxos基础上添加了同步阶段，此时，新的Leader会确保存在过半数的Follower已经提交了之前的Leader周期中的所有事务Proposal。</p>
+<p>主要区别是因为他们的设计目标不同，ZAB主要用于构建一个<strong>高可用的分布式数据主备系统</strong>，Paxos用于构建一个<strong>分布式的一致性状态机系统</strong>。</p>
 <h3 id="服务器角色">服务器角色</h3>
+<h4 id="leader主要工作">Leader主要工作</h4>
+<ul>
+<li>事务请求的唯一调度者和处理者，保证集群事务处理的顺序性</li>
+<li>集群内部各服务器的调度者</li>
+</ul>
+<h4 id="leader请求处理链">Leader请求处理链</h4>
+<figure data-type="image" tabindex="14"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505171038581.png" alt="image-20200505171038581" loading="lazy"></figure>
+<h4 id="follower主要工作">Follower主要工作</h4>
+<ul>
+<li>处理客户端非事务请求（读取请求），转发事务请求给leader服务器</li>
+<li>参与事务请求Proposal的投票</li>
+<li>参与Leader选举的投票</li>
+</ul>
+<h4 id="follower请求的处理链">Follower请求的处理链</h4>
+<figure data-type="image" tabindex="15"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505172303940.png" alt="image-20200505172303940" loading="lazy"></figure>
+<h4 id="observer">Observer</h4>
+<p>观察Zookeeper集群的最新状态变化，并将这些状态变更同步过来。</p>
+<p>对于非事务请求（读取），可以处理，对于事务请求，转发给Leader处理。</p>
+<p>不参与任何形式的投票，包括事务请求的Proposal投票和Leader选举投票。</p>
+<p>通常用于在不影响集群事务处理能力的前提下提升集群的非事务处理能力。</p>
+<h4 id="observer处理请求链">Observer处理请求链</h4>
+<figure data-type="image" tabindex="16"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505173753110.png" alt="image-20200505173753110" loading="lazy"></figure>
 <h3 id="服务器启动">服务器启动</h3>
+<h4 id="服务器整体架构">服务器整体架构</h4>
+<figure data-type="image" tabindex="17"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505173831506.png" alt="image-20200505173831506" loading="lazy"></figure>
+<h4 id="zookeeper服务器启动步骤">Zookeeper服务器启动步骤</h4>
+<ol>
+<li>配置文件解析</li>
+<li>初始化数据管理器</li>
+<li>初始化网络IO管理器</li>
+<li>数据恢复</li>
+<li>对外服务</li>
+</ol>
+<h4 id="单机版服务器启动">单机版服务器启动</h4>
+<figure data-type="image" tabindex="18"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505174058529.png" alt="image-20200505174058529" loading="lazy"></figure>
+<h4 id="集群服务器启动">集群服务器启动</h4>
+<figure data-type="image" tabindex="19"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505174126533.png" alt="image-20200505174126533" loading="lazy"></figure>
 <h3 id="leader选举">Leader选举</h3>
+<p>当Zookeeper集群中的一台服务器出现以下两种情况之一时，需要进入Leader选举：</p>
+<ol>
+<li>服务器初始化启动</li>
+<li>服务器运行期间无法和Leader保持连接</li>
+</ol>
+<h4 id="启动时的选举">启动时的选举</h4>
+<ol>
+<li>每个server发出一个投票，投票用(myid,ZXID)表示</li>
+<li>接受来自各个服务器的投票</li>
+<li>处理投票：先比较ZXID，大的作为Leader，否则再比较myid。</li>
+<li>统计投票</li>
+<li>改变服务器状态</li>
+</ol>
+<h4 id="运行时的选举">运行时的选举</h4>
+<ol>
+<li>变更状态</li>
+<li>每个server会发出一个投票</li>
+<li>接收来自各个服务器的投票，与启动时过程相同</li>
+<li>处理投票</li>
+<li>统计投票</li>
+<li>改变服务器状态</li>
+</ol>
 <h2 id="zookeeper源码分析">Zookeeper源码分析</h2>
 <h3 id="源码环境搭建">源码环境搭建</h3>
+<p>将准备好的zookeeper-release-3.5.4导入idea中</p>
+<h4 id="启动服务器端">启动服务器端</h4>
+<p>运行主类<code>org.apache.zookeeper.server.ZookeeperServerMain</code>，将zoo.cfg的完整路径配置在Program arguments。</p>
+<figure data-type="image" tabindex="20"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505193904354.png" alt="image-20200505193904354" loading="lazy"></figure>
+<p>在VM options配置，即指定到conf目录下的log4j.properties：</p>
+<pre><code class="language-properties">-Dlog4j.configuration=file:/path-to-zk/conf/log4j.properties
+</code></pre>
+<p>运行输出日志如下</p>
+<figure data-type="image" tabindex="21"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505194110174.png" alt="image-20200505194110174" loading="lazy"></figure>
+<p>可以得知单机版启动成功，单机版服务端地址为127.0.0.1:2182</p>
+<h4 id="运行客户端">运行客户端</h4>
+<figure data-type="image" tabindex="22"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505194321204.png" alt="image-20200505194321204" loading="lazy"></figure>
+<p>客户端启动类为<code>org.apache.zookeeper.ZooKeeperMain</code>，进行如下配置：</p>
+<p>即客户端连接127.0.0.1:2182，获取节点/lg的信息。</p>
 <h3 id="单机模式服务端启动">单机模式服务端启动</h3>
 <h3 id="leader选举-2">Leader选举</h3>
+<p>Election接口</p>
 <h3 id="fastleaderelection">FastLeaderElection</h3>
+<p>默认选举策略</p>
+<p>重要的内部类：</p>
+<p>Notification</p>
+<p>ToSend</p>
+<p>Messenger</p>
+<p>Messenger的内部类：</p>
+<p>WorkerReceiver：选票接收器，不断地从QuorumCnxManager获取其他服务器发来的选举消息，并将其转成一个选票，然后保存到recvqueue中，如果接收过程中，发现该外部选票轮次小于当前服务器的，忽略该外部投票，同时立即发送自己的内部投票。将QuorumCnxManager的Message转化为FastLeaderElection的Notification。</p>
+<p>WorkerSender：选票发送器，不断的从sendQueue中获取待发送的选票，并将其传递到底层的QuorumCnxManager中，过程是将FastLeaderElection的ToSend转化为QuorumCnxManager的Message。</p>
+<p><strong>类的属性</strong></p>
+<figure data-type="image" tabindex="23"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505201224910.png" alt="image-20200505201224910" loading="lazy"></figure>
+<p><strong>类的构造函数</strong></p>
+<figure data-type="image" tabindex="24"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/image-20200505201254631.png" alt="image-20200505201254631" loading="lazy"></figure>
+<p>会启动WorkerSender和WorkerReceiver，并设置为守护线程。</p>
 <h3 id="集群模式服务端">集群模式服务端</h3>
 
 							</div>
