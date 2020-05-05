@@ -6,7 +6,7 @@
 <meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
 <meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
 <meta HTTP-EQUIV="expires" CONTENT="0"> 
-<title>使用IDEA导入Gradle项目构建时遇到的问题 | Eucaly</title>
+<title>“WHY-HOW-WHAT”黄金圈思维模式 | Eucaly</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css">
 
@@ -55,13 +55,11 @@ window.onload=getCSS();
 
 <body class="post-template-default single single-post postid-70 single-format-standard">
 	<div id="wrapper">
-				<header id="header" class="site-header" 
-			style="background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),url(https://media.jfrog.com/wp-content/uploads/2017/07/18110510/gradle-dark-green-primary-768x268.png)"
-			>
+				<header id="header" class="site-header" >
 			<div class="site-branding">
 				<h1 class="site-title">
 					<div class="post-title-name">
-						<a href="https://xinrong2019.github.io/" rel="home">使用IDEA导入Gradle项目构建时遇到的问题</a>
+						<a href="https://xinrong2019.github.io/" rel="home">“WHY-HOW-WHAT”黄金圈思维模式</a>
 					</div>
 				</h1>
 				<h2 class="site-description">Time waits for no one.</h2>
@@ -185,64 +183,45 @@ window.onload=getCSS();
 							<div class="entry-meta">
 								<div class="entry-info">
 									<time>
-										2020-01-13
+										2020-05-05
 									</time>
 									<span>
-										1 min read
+										2 min read
 									</span>
 								</div>
 							</div>
 							<div class="wow slideInLeft entry-summary song">
-								<h1 id="问题1">问题1</h1>
-<h2 id="1270018888问题">127.0.0.1:8888问题</h2>
-<h2 id="could-not-resolve-all-artifacts-for-configuration-classpath">Could not resolve all artifacts for configuration ':classpath'</h2>
-<h3 id="解决步骤">解决步骤</h3>
-<ol>
-<li>删除.m2,.gradle目录下的所有文件。</li>
-<li>删除原来的项目，重新克隆</li>
-<li>使用idea导入项目</li>
-<li>在项目的build.gradle文件中，添加阿里源</li>
-</ol>
-<pre><code>repositories {
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-                maven{ url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
-    }
-</code></pre>
-<ol start="5">
-<li>reimport</li>
-<li>打开Project Settings -&gt; Modules</li>
-<li>检查main和test模块下content root的位置有无报红，有删掉，没有跳过。<br>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/JPVQiR_2020_1_13_16_49_42.png" alt="" loading="lazy"></li>
-</ol>
-<h1 id="问题2">问题2</h1>
-<h2 id="idea导入gradle项目后处处报红">IDEA导入gradle项目后处处报红</h2>
-<p>IDEA版本：2019.2.1</p>
-<h3 id="解决步骤-2">解决步骤</h3>
-<ol>
-<li>重新导入项目，打开Project Structure<br>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/JuROC7_2020_1_13_19_5_12.png" alt="" loading="lazy"></li>
-<li>设置srouces<br>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/JzRFs0_2020_1_13_19_7_3.png" alt="" loading="lazy"></li>
-<li>设置后的<br>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/VaH4lz_2020_1_13_19_8_30.png" alt="" loading="lazy"></li>
-</ol>
+								<p><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/uEkFDl.png" alt="" loading="lazy"><br>
+这是一个教你如何做好事情的思维模式。</p>
+<p>举个例子：你想要赚钱谋生</p>
+<p>目的：赚钱<br>
+具体的方法和措施：通过学习编程，掌握技能，满足企业招聘要求，满足工作岗位的技能要求<br>
+现象和成果：掌握了或者没掌握，没有找到工作或者找到一份工作，或者找到的工作不满意</p>
+<p>上面的方法（HOW）可以再进行分解：</p>
+<p>目的：赚钱<br>
+具体的方法和措施：学习Java、中间件、SQL、调优，做笔记进行知识积累，做企业级分布式项目巩固所学，为我所用。<br>
+成果：获得经验，升职加薪</p>
+<p>这其中，目的，也就是&quot;WHY&quot;尤为重要，必须要有一个让自己信服的理由去做一件事，这个理由必须要深刻，达到一定的影响力，比如影响你的作息、习惯。为了赚钱养家糊口，你必须放弃一些个人娱乐时间，投入到给自己提升技能的工作中去。</p>
+<p>再说方法和措施，这是一个需要不断细化，不断迭代的过程，是行动的主体，占用你大部分的时间。可以拆分成很多个&quot;WHY-HOW-WHAT&quot;。执行的时候，经常会被各种事情打断，不要完美主义，要有容错的空间，允许计划没有100%完成。关键是得坚持，把事情做完。<br>
+比如，你想要刷MySQL知识点，吃饭的时候玩手机，刷到一个不错的Flink教程，这个时候别去管Flink，坚持把MySQL刷完。</p>
+<p>最后说说成果。俗话说做事情要有始有终，不能做一半，半途而废。成果一般是提高了对某一个方面的认知。认知差异是这个社会不平等的原因之一，认知差异也是影响贫富差距的一个重要原因。<br>
+成果需要被展示，你对某一领域的某一方面的认知，需要被记录下来，比如通过博客或者自媒体都行。</p>
+<p>文章参考：<br>
+<a href="http://blog.sina.com.cn/s/blog_5f34b1e60102vaoi.html">Why-How-What黄金圈法则 的理解和运用</a></p>
 
 							</div>
 							<div class="wow bounceInDown vt-post-tags">
 								
-								<a href="https://xinrong2019.github.io/tag/NQUK_6zNO/" rel="tag">gradle</a>
+								<a href="https://xinrong2019.github.io/tag/4OsxwNQBa/" rel="tag">方法论</a>
 								
 							</div>
 							<nav class="navigation3 post-navigation3" role="navigation">
 
 								<div class="nav-links3">
 									
-									<div class="wow bounceInLeft nav-previous3"><a href="https://xinrong2019.github.io/post/ge-ren-guan-li/"
-											rel="prev"> 个人管理</a></div>
 									
-									
-									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/si-ke-spring-ioc-zhi-spring-tong-yi-zi-yuan-jia-zai-ce-lue/"
-											rel="next"> [死磕Spring]--IoC之Spring 统一资源加载策略</a></div>
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/fen-bu-shi-ji-chu-li-lun-ren-zhi/"
+											rel="next"> 分布式基础理论认知</a></div>
 									
 								</div>
 							</nav>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://xinrong2019.github.io/</id>
     <title>Eucaly</title>
-    <updated>2020-05-03T02:17:20.475Z</updated>
+    <updated>2020-05-05T07:07:43.161Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://xinrong2019.github.io/"/>
     <link rel="self" href="https://xinrong2019.github.io/atom.xml"/>
@@ -10,6 +10,31 @@
     <logo>https://xinrong2019.github.io/images/avatar.png</logo>
     <icon>https://xinrong2019.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Eucaly</rights>
+    <entry>
+        <title type="html"><![CDATA[“WHY-HOW-WHAT”黄金圈思维模式]]></title>
+        <id>https://xinrong2019.github.io/post/why-how-whathuang-jin-quan-si-wei-mo-shi/</id>
+        <link href="https://xinrong2019.github.io/post/why-how-whathuang-jin-quan-si-wei-mo-shi/">
+        </link>
+        <updated>2020-05-05T05:53:23.000Z</updated>
+        <content type="html"><![CDATA[<p><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/uEkFDl.png" alt="" loading="lazy"><br>
+这是一个教你如何做好事情的思维模式。</p>
+<p>举个例子：你想要赚钱谋生</p>
+<p>目的：赚钱<br>
+具体的方法和措施：通过学习编程，掌握技能，满足企业招聘要求，满足工作岗位的技能要求<br>
+现象和成果：掌握了或者没掌握，没有找到工作或者找到一份工作，或者找到的工作不满意</p>
+<p>上面的方法（HOW）可以再进行分解：</p>
+<p>目的：赚钱<br>
+具体的方法和措施：学习Java、中间件、SQL、调优，做笔记进行知识积累，做企业级分布式项目巩固所学，为我所用。<br>
+成果：获得经验，升职加薪</p>
+<p>这其中，目的，也就是&quot;WHY&quot;尤为重要，必须要有一个让自己信服的理由去做一件事，这个理由必须要深刻，达到一定的影响力，比如影响你的作息、习惯。为了赚钱养家糊口，你必须放弃一些个人娱乐时间，投入到给自己提升技能的工作中去。</p>
+<p>再说方法和措施，这是一个需要不断细化，不断迭代的过程，是行动的主体，占用你大部分的时间。可以拆分成很多个&quot;WHY-HOW-WHAT&quot;。执行的时候，经常会被各种事情打断，不要完美主义，要有容错的空间，允许计划没有100%完成。关键是得坚持，把事情做完。<br>
+比如，你想要刷MySQL知识点，吃饭的时候玩手机，刷到一个不错的Flink教程，这个时候别去管Flink，坚持把MySQL刷完。</p>
+<p>最后说说成果。俗话说做事情要有始有终，不能做一半，半途而废。成果一般是提高了对某一个方面的认知。认知差异是这个社会不平等的原因之一，认知差异也是影响贫富差距的一个重要原因。<br>
+成果需要被展示，你对某一领域的某一方面的认知，需要被记录下来，比如通过博客或者自媒体都行。</p>
+<p>文章参考：<br>
+<a href="http://blog.sina.com.cn/s/blog_5f34b1e60102vaoi.html">Why-How-What黄金圈法则 的理解和运用</a></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[分布式基础理论认知]]></title>
         <id>https://xinrong2019.github.io/post/fen-bu-shi-ji-chu-li-lun-ren-zhi/</id>
@@ -3839,113 +3864,6 @@ version=1.0-SNAPSHOT
 <h3 id="发布到公司私服">发布到公司私服</h3>
 <p>在发布插件配置中配置公司私服的url，然后执行publish这个任务</p>
 <p><a href="https://github.com/SixGodFlowerDewWater1029/gradle">项目源码</a></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[第一个Gradle项目]]></title>
-        <id>https://xinrong2019.github.io/post/di-yi-ge-gradle-xiang-mu/</id>
-        <link href="https://xinrong2019.github.io/post/di-yi-ge-gradle-xiang-mu/">
-        </link>
-        <updated>2020-02-01T12:49:33.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="示例介绍">示例介绍</h3>
-<ul>
-<li>TODO应用程序，只实现添加待办事项</li>
-<li>Java应用程序版</li>
-<li>Web版</li>
-</ul>
-<h2 id="java应用程序版">Java应用程序版</h2>
-<h3 id="启动类">启动类</h3>
-<pre><code class="language-java">package com.kim.gradle.todo;
-
-import java.util.Scanner;
-
-public class App {
-    public static void main(String[] args) {
-        int i = 0;
-        Scanner scanner = new Scanner(System.in);
-        while (++i &gt; 0){
-            System.out.println(i + &quot;. please input todo item name&quot;);
-            ToDoItem item = new ToDoItem(scanner.nextLine());
-            System.out.println(item);
-        }
-    }
-}
-
-</code></pre>
-<h3 id="todoitem">ToDoItem</h3>
-<pre><code class="language-java">package com.kim.gradle.todo;
-
-public class ToDoItem {
-    private String name;
-    private boolean hasDone;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isHasDone() {
-        return hasDone;
-    }
-
-    public void setHasDone(boolean hasDone) {
-        this.hasDone = hasDone;
-    }
-
-    public ToDoItem(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return &quot;ToDoItem{&quot; +
-                &quot;name='&quot; + name + '\'' +
-                &quot;, hasDone=&quot; + hasDone +
-                '}';
-    }
-}
-
-</code></pre>
-<h3 id="打jar包">打jar包</h3>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/eTOKvN_2020_1_31_20_37_44.png" style="zoom:50%;" />
-<h3 id="控制台中运行程序">控制台中运行程序</h3>
-<p><code>java -classpath build/libs/todo-1.0-SNAPSHOT.jar com.kim.gradle.todo.App</code></p>
-<pre><code>1. please input todo item name
-kim
-ToDoItem{name='kim', hasDone=false}
-2. please input todo item name
-</code></pre>
-<h2 id="web版">Web版</h2>
-<h3 id="添加war插件">添加war插件</h3>
-<p>在build.gradle文件中添加war插件</p>
-<pre><code class="language-groovy">plugins {
-    id 'java'
-    id 'war'//添加的内容
-}
-
-//apply plugin:'java'
-//apply plugin:'war'
-
-group 'com.kim.gradle'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-</code></pre>
-<p>plugins方法也可以由apply方法替换</p>
-<h3 id="打war包">打war包</h3>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/8VqsEx_2020_1_31_20_58_8.png" style="zoom:50%;" />
-<p>打包后，在项目根目录/build/libs下会生成war包，将war复制到一个servlet容器中，比如tomcat的webapp目录下，运行即可。</p>
 ]]></content>
     </entry>
 </feed>
