@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+<meta HTTP-EQUIV="expires" CONTENT="0"> 
+<title>IDEA中自定义数据库逆向代码生成脚本 | Eucaly</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css">
+
+<link rel="stylesheet" href="https://xinrong2019.github.io//styles/main.css">
+<script type="text/javascript">
+function getCSS()
+{
+        datetoday = new Date();
+        timenow=datetoday.getTime();
+        datetoday.setTime(timenow);
+        thehour = datetoday.getHours();
+
+            display = "https://xinrong2019.github.io//media/css/night.css";
+
+            display = "https://xinrong2019.github.io//media/css/night.css";   
+      
+            display = "https://xinrong2019.github.io//media/css/day.css";
+
+            display = "https://xinrong2019.github.io//media/css/day.css";
+      
+
+var css = '<';
+        css+='link rel="stylesheet" href='+display+' \/';
+        css+='>';
+        document.write(css);
+}
+</script>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Noto+Sans+SC:300|Montserrat&display=swap" rel="stylesheet">
+<link href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css" rel="stylesheet" />
+<link href="https://at.alicdn.com/t/font_1651848_tf0hnpbyjfj.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/script.js'></script>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet" />
+  <script src="https://cdn.bootcss.com/wow/1.1.2/wow.min.js"></script>
+  <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>wow=new WOW({boxClass:'wow',animateClass:'animated',offset:0,mobile:true,live:true});wow.init();</script>
+
+<script type="text/javascript">
+window.onload=getCSS();
+</script>
+
+
+</head>
+
+<body class="post-template-default single single-post postid-70 single-format-standard">
+	<div id="wrapper">
+				<header id="header" class="site-header" >
+			<div class="site-branding">
+				<h1 class="site-title">
+					<div class="post-title-name">
+						<a href="https://xinrong2019.github.io/" rel="home">IDEA中自定义数据库逆向代码生成脚本</a>
+					</div>
+				</h1>
+				<h2 class="site-description">Time waits for no one.</h2>
+			</div>
+			<nav id="nav-wrapper">
+				<div class="container">
+					<div class="nav-toggle">
+						<div class="bars">
+							<div class="bar"></div>
+							<div class="bar"></div>
+							<div class="bar"></div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<ul id="" class="dove">
+						
+
+						<li>
+
+							<a href="/"> 首页</a></li>
+
+						
+
+						<li>
+
+							<a href="/archives"> 归档</a></li>
+
+						
+
+						<li>
+
+							<a href="/tags"> 标签</a></li>
+
+						
+
+						<li>
+
+							<a href="/friends"> 友链</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mysql"> MySQL</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/dubbo"> Dubbo</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/mq"> MQ</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/spring"> Spring</a></li>
+
+						
+
+						<li>
+
+							<a href="/post/about"> 关于</a></li>
+
+						
+
+					</ul>
+					</li>
+
+					</ul>
+				</div>
+			</nav>
+
+			<div class="jingge">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			<form id="gridea-search-form" data-update="1588771687291" action="/search/index.html">
+				<div class="search-box">
+					<input class="search-txt" name="q" placeholder="Type to search" />
+					<a class="search-btn">
+						<i class="iconfont icon-search1" action="/search/index.html"></i>
+					</a>
+				</div>
+			</form>
+		</header>
+		<div id="content" class="container">
+			<div class="row">
+				<div class="col-md-8 site-main">
+					<article id="post-70"
+						class="post-70 post type-post status-publish format-standard hentry category-5 tag-10 tag-9 tag-11">
+						<div class="entry-content">
+							<div class="entry-meta">
+								<div class="entry-info">
+									<time>
+										2020-05-06
+									</time>
+									<span>
+										13 min read
+									</span>
+								</div>
+							</div>
+							<div class="wow slideInLeft entry-summary song">
+								<h2 id="toc">TOC</h2>
+<p>[TOC]</p>
+<h2 id="逆向生成脚本在哪">逆向生成脚本在哪</h2>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/bN9CU0_2020_05_06_19_02_34.png" alt="" loading="lazy"></figure>
+<p>说明：</p>
+<p>图中2，选择表的时候支持多选，Very Good!</p>
+<p>3就是执行脚步，会弹窗提示你保存到哪</p>
+<p>4是定位到脚本路径，自定义的脚本就放这个目录下</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/ArbaGv_2020_05_06_19_06_17.png" alt="" loading="lazy"></figure>
+<h2 id="测试groovy脚步">测试Groovy脚步</h2>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/obhC46_2020_05_06_19_08_55.png" alt="" loading="lazy"></figure>
+<p>建一个groovy console就可以测试脚本了，比如，我要测试字符串方法</p>
+<pre><code class="language-groovy">str = &quot;T_D_12&quot;
+str.startsWith(&quot;T_D_&quot;)
+
+str.substring(4)
+</code></pre>
+<p>点击左上角运行按钮</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/HYq7tK_2020_05_06_19_11_15.png" alt="" loading="lazy"></figure>
+<p>输出结果</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/sBle3d_2020_05_06_19_11_58.png" alt="" loading="lazy"></figure>
+<h2 id="generatepojoswithlombokgroovy">GeneratePojosWithLombok.groovy</h2>
+<pre><code class="language-groovy">import com.intellij.database.model.DasTable
+import com.intellij.database.util.Case
+import com.intellij.database.util.DasUtil
+
+import java.time.LocalDate
+
+/*
+ * Available context bindings:
+ *   SELECTION   Iterable&lt;DasObject&gt;
+ *   PROJECT     project
+ *   FILES       files helper
+ */
+
+// 此处指定包路径，路径需要自行维护;
+packageName = &quot;com.xxx.xxx.entity;&quot;
+// 此处指定对应的类型映射，可按需修改，目前tinyint如果要映射到自定义枚举类型，只能手动修改
+typeMapping = [
+        (~/(?i)number/)                   : &quot;Long&quot;,
+        (~/(?i)int/)                      : &quot;Integer&quot;,
+        (~/(?i)tinyint/)                  : &quot;Boolean&quot;,
+        (~/(?i)float|double|decimal|real/): &quot;BigDecimal&quot;,
+        (~/(?i)time|datetime|timestamp/)  : &quot;DateTime&quot;,
+        (~/(?i)date/)                     : &quot;Date&quot;,
+        (~/(?i)/)                         : &quot;String&quot;
+]
+
+// 上面用到类和它的导入路径的之间的映射
+importMap = [
+        &quot;BigDecimal&quot; : &quot;java.math.BigDecimal&quot;,
+        &quot;LocalDate&quot; : &quot;java.time.LocalDate&quot;,
+        &quot;LocalDateTime&quot; : &quot;java.time.LocalDateTime&quot;,
+]
+
+// 导入路径列表，下面引用的时候会去重，也可以直接声明成一个 HashSet
+importList = []
+
+// 弹出选择文件的对话框
+FILES.chooseDirectoryAndSave(&quot;Choose directory&quot;, &quot;Choose where to store generated files&quot;) { dir -&gt;
+    SELECTION.filter { it instanceof DasTable }.each { generate(it, dir) }
+}
+
+def generate(table, dir) {
+    def className = javaName(table.getName(), true)
+    def fields = calcFields(table)
+    new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(dir, className + &quot;.java&quot;)), &quot;utf-8&quot;)).withPrintWriter { out -&gt; generate(out, className, fields, table) }
+}
+
+// 从这里开始，拼实体类的具体逻辑代码
+def generate(out, className, fields, table) {
+    out.println &quot;package $packageName&quot;
+    out.println &quot;&quot;
+    out.println &quot;&quot;
+    // 引入所需的包
+    out.println &quot;import lombok.Data;&quot;
+    out.println &quot;import javax.persistence.Id;&quot;
+    out.println &quot;import javax.persistence.Table;&quot;
+    out.println &quot;import javax.persistence.GeneratedValue;&quot;
+    out.println &quot;import tk.mybatis.mapper.annotation.KeySql;&quot;
+    out.println &quot;import cc.ewell.holisticnursing.product.enr.utils.CustomIdentityGenerator;&quot;
+    // 去重后导入列表
+    importList.unique().each() { pkg -&gt;
+        out.println &quot;import &quot; + pkg + &quot;;&quot;
+    }
+    out.println &quot;&quot;
+    // 添加类注释
+    out.println &quot;/**&quot;
+    // 如果添加了表注释，会加到类注释上
+    if (isNotEmpty(table.getComment())) {
+        out.println &quot; * &quot; + table.getComment()
+    }
+    out.println &quot; *&quot;
+    out.println &quot; * @author xxx&quot;
+    out.println &quot; * @date &quot; + LocalDate.now()
+    out.println &quot; */&quot;
+    // 添加类注解
+    out.println &quot;@Data&quot;
+    out.println &quot;@Table(name = \&quot;${table.getName()}\&quot;)&quot;
+    out.println &quot;public class $className {&quot;
+    out.println &quot;&quot;
+    boolean isId = true
+    // 遍历字段，按下面的规则生成
+    fields.each() {
+        // 输出注释
+        if (isNotEmpty(it.comment)) {
+            out.println &quot;\t/**&quot;
+            out.println &quot;\t * ${it.comment}&quot;
+            out.println &quot;\t */&quot;
+        }
+        // 这边默认第一个字段为主键，实际情况大多数如此，遇到特殊情况可能需要手动修改
+        if (isId) {
+            out.println &quot;\t@Id&quot;
+            out.println &quot;\t@KeySql(genId = CustomIdentityGenerator.class)&quot;
+            isId = false
+        }
+        out.println &quot;\tprivate ${it.type} ${it.name};&quot;
+        out.println &quot;&quot;
+    }
+    out.println &quot;&quot;
+    out.println &quot;}&quot;
+}
+
+def calcFields(table) {
+    DasUtil.getColumns(table).reduce([]) { fields, col -&gt;
+        def spec = Case.LOWER.apply(col.getDataType().getSpecification())
+        def typeStr = typeMapping.find { p, t -&gt; p.matcher(spec).find() }.value
+        if (importMap.containsKey(typeStr)) {
+            importList.add(importMap.get(typeStr))
+        }
+        fields += [[
+                           name   : javaName(col.getName(), false),
+                           type   : typeStr,
+                           comment: col.getComment()
+                   ]]
+    }
+}
+
+def isNotEmpty(content) {
+    return content != null &amp;&amp; content.toString().trim().length() &gt; 0
+}
+
+def javaName(str, capitalize) {
+    if(str.startsWith(&quot;T_D_&quot;) || str.startsWith(&quot;T_C_&quot;)){
+        str = str.substring(4);//特殊表名前缀截取
+    }
+    def s = com.intellij.psi.codeStyle.NameUtil.splitNameIntoWords(str)
+            .collect { Case.LOWER.apply(it).capitalize() }
+            .join(&quot;&quot;)
+            .replaceAll(/[^\p{javaJavaIdentifierPart}[_]]/, &quot;_&quot;)
+    capitalize || s.length() == 1 ? s : Case.LOWER.apply(s[0]) + s[1..-1]
+}
+</code></pre>
+<h2 id="generatedaoxmlgroovy">GenerateDaoXml.groovy</h2>
+<pre><code class="language-groovy">package src
+
+import com.intellij.database.model.DasTable
+import com.intellij.database.util.Case
+import com.intellij.database.util.DasUtil
+
+/*
+ * Available context bindings:
+ *   SELECTION   Iterable&lt;DasObject&gt;
+ *   PROJECT     project
+ *   FILES       files helper
+ */
+
+// entity(dto)、mapper(dao) 与数据库表的对应关系在这里手动指明,idea Database 窗口里只能选下列配置了的 mapper
+// tableName(key) : [mapper(dao),entity(dto)]
+typeMapping = [
+        (~/(?i)int/)                      : &quot;INTEGER&quot;,
+        (~/(?i)float|double|decimal|real/): &quot;DOUBLE&quot;,
+        (~/(?i)datetime|timestamp/)       : &quot;TIMESTAMP&quot;,
+        (~/(?i)date/)                     : &quot;TIMESTAMP&quot;,
+        (~/(?i)time/)                     : &quot;TIMESTAMP&quot;,
+        (~/(?i)/)                         : &quot;VARCHAR&quot;
+]
+
+basePackage = &quot;com.chitic.bank.mapping&quot; // 包名需手动填写
+
+FILES.chooseDirectoryAndSave(&quot;Choose directory&quot;, &quot;Choose where to store generated files&quot;) { dir -&gt;
+    SELECTION.filter { it instanceof DasTable }.each { generate(it, dir) }
+}
+
+def generate(table, dir) {
+    def baseName = mapperName(table.getName(), true)
+    def fields = calcFields(table)
+    new File(dir, baseName + &quot;Mapper.xml&quot;).withPrintWriter { out -&gt; generate(table, out, baseName, fields) }
+}
+
+def generate(table, out, baseName, fields) {
+    def baseResultMap = 'BaseResultMap'
+    def base_Column_List = 'Base_Column_List'
+    def date = new Date().format(&quot;yyyy/MM/dd&quot;)
+    def tableName = table.getName()
+
+    def dao = basePackage + &quot;.dao.${baseName}Mapper&quot;
+    def to = basePackage + &quot;.to.${baseName}TO&quot;
+
+    out.println mappingsStart(dao)
+    out.println resultMap(baseResultMap, to, fields)
+    out.println sql(fields, base_Column_List)
+    out.println selectById(tableName, fields, baseResultMap, base_Column_List)
+    out.println deleteById(tableName, fields)
+    out.println delete(tableName, fields, to)
+    out.println insert(tableName, fields, to)
+    out.println update(tableName, fields, to)
+    out.println selectList(tableName, fields, to, base_Column_List, baseResultMap)
+    out.println mappingsEnd()
+
+}
+
+static def resultMap(baseResultMap, to, fields) {
+
+    def inner = ''
+    fields.each() {
+        inner += '\t\t&lt;result column=&quot;' + it.sqlFieldName + '&quot; jdbcType=&quot;' + it.type + '&quot; property=&quot;' + it.name + '&quot;/&gt;\n'
+    }
+
+    return '''\t&lt;resultMap id=&quot;''' + baseResultMap + '''&quot; type=&quot;''' + to + '''&quot;&gt;
+        &lt;id column=&quot;id&quot; jdbcType=&quot;INTEGER&quot; property=&quot;id&quot;/&gt;
+''' + inner + '''\t&lt;/resultMap&gt;
+'''
+}
+
+def calcFields(table) {
+    DasUtil.getColumns(table).reduce([]) { fields, col -&gt;
+        def spec = Case.LOWER.apply(col.getDataType().getSpecification())
+        def typeStr = typeMapping.find { p, t -&gt; p.matcher(spec).find() }.value
+        fields += [[
+                           comment     : col.getComment(),
+                           name        : mapperName(col.getName(), false),
+                           sqlFieldName: col.getName(),
+                           type        : typeStr,
+                           annos       : &quot;&quot;]]
+    }
+
+}
+
+def mapperName(str, capitalize) {
+    def s = com.intellij.psi.codeStyle.NameUtil.splitNameIntoWords(str)
+            .collect { Case.LOWER.apply(it).capitalize() }
+            .join(&quot;&quot;)
+            .replaceAll(/[^\p{javaJavaIdentifierPart}[_]]/, &quot;_&quot;)
+    name = capitalize || s.length() == 1 ? s : Case.LOWER.apply(s[0]) + s[1..-1]
+}
+
+// ------------------------------------------------------------------------ mappings
+static def mappingsStart(mapper) {
+    return '''&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot; &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;''' + mapper + '''&quot;&gt;
+'''
+}
+
+// ------------------------------------------------------------------------ mappings
+static def mappingsEnd() {
+    return '''&lt;/mapper&gt;'''
+}
+
+// ------------------------------------------------------------------------ selectById
+static def selectById(tableName, fields, baseResultMap, base_Column_List) {
+    return '''
+    &lt;select id=&quot;selectById&quot; parameterType=&quot;java.lang.Integer&quot; resultMap=&quot;''' + baseResultMap + '''&quot;&gt;
+        select
+        &lt;include refid=&quot;''' + base_Column_List + '''&quot;/&gt;
+        from ''' + tableName + '''
+        where id = #{id}
+    &lt;/select&gt;'''
+}
+
+// ------------------------------------------------------------------------ insert
+static def insert(tableName, fields, parameterType) {
+
+    return '''
+    &lt;insert id=&quot;insert&quot; parameterType=&quot;''' + parameterType + '''&quot;&gt;
+        insert into ''' + tableName + '''
+        &lt;trim prefix=&quot;(&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
+            ''' + testNotNullStr(fields) + '''
+        &lt;/trim&gt;
+        &lt;trim prefix=&quot;values (&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
+            ''' + testNotNullStrSet(fields) + '''
+        &lt;/trim&gt;
+    &lt;/insert&gt;
+'''
+
+}
+// ------------------------------------------------------------------------ update
+static def update(tableName, fields, parameterType) {
+
+    return '''
+    &lt;update id=&quot;update&quot; parameterType=&quot;''' + parameterType + '''&quot;&gt;
+        update ''' + tableName + '''
+        &lt;set&gt;
+            ''' + testNotNullStrWhere(fields) + '''
+        &lt;/set&gt;
+        where id = #{id}
+    &lt;/update&gt;'''
+}
+
+// ------------------------------------------------------------------------ deleteById
+static def deleteById(tableName, fields) {
+
+    return '''
+    &lt;delete id=&quot;deleteById&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
+        delete
+        from ''' + tableName + '''
+        where id = #{id}
+    &lt;/delete&gt;'''
+}
+
+// ------------------------------------------------------------------------ delete
+static def delete(tableName, fields, parameterType) {
+
+    return '''
+    &lt;delete id=&quot;delete&quot; parameterType=&quot;''' + parameterType + '''&quot;&gt;
+        delete from ''' + tableName + '''
+        where 1 = 1
+        ''' + testNotNullStrWhere(fields) + '''
+    &lt;/delete&gt;'''
+}
+
+// ------------------------------------------------------------------------ selectList
+static def selectList(tableName, fields, parameterType, base_Column_List, baseResultMap) {
+
+    return '''
+    &lt;select id=&quot;selectList&quot; parameterType=&quot;''' + parameterType + '''&quot; resultMap=&quot;''' + baseResultMap + '''&quot;&gt;
+        select
+        &lt;include refid=&quot;''' + base_Column_List + '''&quot;/&gt;
+                from ''' + tableName + '''
+        where 1 = 1
+        ''' + testNotNullStrWhere(fields) + '''
+        order by id desc
+    &lt;/select&gt;'''
+}
+
+// ------------------------------------------------------------------------ sql
+static def sql(fields, base_Column_List) {
+    def str = '''\t&lt;sql id=&quot;''' + base_Column_List + '''&quot;&gt;
+        @inner@
+    &lt;/sql&gt; '''
+
+    def inner = ''
+    fields.each() {
+        inner += ('\t\t' + it.sqlFieldName + ',\n')
+    }
+
+    return str.replace(&quot;@inner@&quot;, inner.substring(0, inner.length() - 2))
+
+}
+
+static def testNotNullStrWhere(fields) {
+    def inner = ''
+    fields.each {
+        inner += '''
+        &lt;if test=&quot;''' + it.name + ''' != null&quot;&gt;
+            and ''' + it.sqlFieldName + ''' = #{''' + it.name + '''}
+        &lt;/if&gt;\n'''
+    }
+
+    return inner
+}
+
+static def testNotNullStrSet(fields) {
+    def inner = ''
+    fields.each {
+        inner += '''
+        &lt;if test=&quot;''' + it.name + ''' != null&quot;&gt;
+            #{''' + it.name + '''},
+        &lt;/if&gt;\n'''
+    }
+
+    return inner
+}
+
+static def testNotNullStr(fields) {
+    def inner1 = ''
+    fields.each {
+        inner1 += '''
+        &lt;if test = &quot;''' + it.name + ''' != null&quot; &gt;
+        \t''' + it.sqlFieldName + ''',
+        &lt;/if&gt;\n'''
+    }
+
+    return inner1
+}
+</code></pre>
+<h2 id="generatedaogroovy">GenerateDao.groovy</h2>
+<pre><code class="language-groovy">package src
+
+import com.intellij.database.model.DasTable
+import com.intellij.database.util.Case
+import com.intellij.database.util.DasUtil
+
+/*
+ * Available context bindings:
+ *   SELECTION   Iterable&lt;DasObject&gt;
+ *   PROJECT     project
+ *   FILES       files helper
+ */
+
+packageName = &quot;**;&quot; // 需手动配置 生成的 dao 所在包位置
+
+FILES.chooseDirectoryAndSave(&quot;Choose directory&quot;, &quot;Choose where to store generated files&quot;) { dir -&gt;
+    SELECTION.filter { it instanceof DasTable }.each { generate(it, dir) }
+}
+
+def generate(table, dir) {
+    def baseName = javaName(table.getName(), true)
+    new File(dir, baseName + &quot;Mapper.java&quot;).withPrintWriter { out -&gt; generateInterface(out, baseName) }
+}
+
+def generateInterface(out, baseName) {
+    def date = new Date().format(&quot;yyyy/MM/dd&quot;)
+    out.println &quot;package $packageName&quot;
+    out.println &quot;import cn.xx.entity.${baseName}Entity;&quot; // 需手动配置
+    out.println &quot;import org.springframework.stereotype.Repository;&quot;
+    out.println &quot;&quot;
+    out.println &quot;/**&quot;
+    out.println &quot; * Created on $date.&quot;
+    out.println &quot; *&quot;
+    out.println &quot; * @author GX&quot; // 可自定义
+    out.println &quot; */&quot;
+    out.println &quot;@Repository&quot;
+    out.println &quot;public interface ${baseName}Dao extends BaseDao&lt;${baseName}Entity&gt; {&quot; // 可自定义
+    out.println &quot;&quot;
+    out.println &quot;}&quot;
+}
+
+def javaName(str, capitalize) {
+    def s = com.intellij.psi.codeStyle.NameUtil.splitNameIntoWords(str)
+            .collect { Case.LOWER.apply(it).capitalize() }
+            .join(&quot;&quot;)
+            .replaceAll(/[^\p{javaJavaIdentifierPart}[_]]/, &quot;_&quot;)
+    name = capitalize || s.length() == 1 ? s : Case.LOWER.apply(s[0]) + s[1..-1]
+}
+</code></pre>
+<h2 id="生成jparepositorygroovy">生成JpaRepository.groovy</h2>
+<pre><code class="language-groovy">import com.intellij.database.model.DasTable
+import com.intellij.database.model.ObjectKind
+import com.intellij.database.util.Case
+
+packageName = &quot;com.gx.dao;&quot;
+packageEntityName = &quot;com.gx.entity&quot;
+
+FILES.chooseDirectoryAndSave(&quot;Choose directory&quot;, &quot;Choose where to store generated files&quot;) { dir -&gt;
+    SELECTION.filter { it instanceof DasTable &amp;&amp; it.getKind() == ObjectKind.TABLE }.each { generate(it, dir) }
+}
+
+def generate(table, dir) {
+    def entityName = javaName(table.getName(), true)
+    def className = entityName + &quot;Repository&quot;
+    new File(dir, className + &quot;.java&quot;).withPrintWriter { out -&gt; generate(out, table, className, entityName) }
+}
+
+def generate(out, table, className, entityName) {
+    out.println &quot;package $packageName&quot;
+    out.println &quot;&quot;
+    out.println &quot;import org.springframework.stereotype.Repository;&quot;
+    out.println &quot;import org.springframework.data.jpa.repository.JpaRepository;&quot;
+    out.println &quot;import org.springframework.data.jpa.repository.JpaSpecificationExecutor;&quot;
+    out.println &quot;&quot;
+    out.println &quot;import $packageEntityName.$entityName;&quot;
+    out.println &quot;&quot;
+    out.println &quot;@Repository&quot;
+    out.println &quot;public interface $className extends JpaRepository&lt;$entityName, Long&gt;, JpaSpecificationExecutor&lt;$entityName&gt; {&quot;
+    out.println &quot;&quot;
+    out.println &quot;}&quot;
+}
+
+def javaName(str, capitalize) {
+    def s = str.split(/(?&lt;=[^\p{IsLetter}])/).collect { Case.LOWER.apply(it).capitalize() }
+            .join(&quot;&quot;).replaceAll(/[^\p{javaJavaIdentifierPart}]/, &quot;_&quot;).replaceAll(/_/, &quot;&quot;)
+    capitalize || s.length() == 1 ? s : Case.LOWER.apply(s[0]) + s[1..-1]
+}
+</code></pre>
+<h2 id="参考">参考：</h2>
+<p><a href="https://www.cnblogs.com/gaomanito/p/10682260.html">idea + groovy + mybatis 自动生成 Dao、mappings 和 实体类</a></p>
+<p><a href="https://juejin.im/post/5ca5d01f5188257e1d45707a#heading-4">Intellij IDEA 通过数据库生成 POJO</a></p>
+
+							</div>
+							<div class="wow bounceInDown vt-post-tags">
+								
+								<a href="https://xinrong2019.github.io/tag/UHFxbje98/" rel="tag">工具</a>
+								
+							</div>
+							<nav class="navigation3 post-navigation3" role="navigation">
+
+								<div class="nav-links3">
+									
+									
+									<div class="wow bounceInRight nav-next3"><a href="https://xinrong2019.github.io/post/why-how-whathuang-jin-quan-si-wei-mo-shi/"
+											rel="next"> “WHY-HOW-WHAT”黄金圈思维模式</a></div>
+									
+								</div>
+							</nav>
+							<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
+								<div class="author-avatar pull-left"><img
+										src="https://xinrong2019.github.io//images/avatar.png"></div>
+								
+								<div class="author-description">
+									<div class="author-title">
+										<div class="author-link" rel="author">Kim</div>
+									</div>
+									
+									
+									<p class="author-bio">Time waits for no one.</p>
+								</div>
+							</div>
+							
+						</div>
+					</article>
+					<div id="marlin_lite_about_widget-2" class="wow bounceInUp widget marlin_lite_about_widget"
+						data-wow-delay="0.1s">
+
+						
+						
+						<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '2f13af052cedc58f1f20',
+    clientSecret: 'ce03139f08944b2398d0f580a3d00ff58958c242',
+    repo: 'xinrong2019.github.io',
+    owner: 'xinrong2019',
+    admin: ['xinrong2019'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+						
+						
+						
+						<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://xinrong2019.github.io//media/scripts/Valine.min.js'></script>
+
+<div class="comment"></div>
+<script>
+        new Valine({
+            // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+            av: AV, 
+            el: '.comment',
+            lang: 'zh-cn',
+            
+            
+     	
+      	
+          
+        });
+    </script> 
+
+
+					</div>
+				</div>
+				<div class="tocc col l3 hide-on-med-and-down">
+
+    <div class="toc-widget">
+
+        <div class="toc-title"></div>
+
+        <div id="toc-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.5.0/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '.entry-summary',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('.entry-summary').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+
+    $(function () {
+        var bt;
+        bt = $('.toc-widget');
+        if ($(document).width() > 480) {
+            $(window).scroll(function () {
+                var st;
+                st = $(window).scrollTop();
+                if (st > 450) {
+                    return bt.css('display', 'block');
+                } else {
+                    return bt.css('display', 'none');
+                }
+            })
+        }
+    });
+</script>
+			</div>
+		</div>
+		<footer id="colophon" class="site-footer">
+	<div class="container">
+		<div class="copyright">
+			Created by Kim.
+			<br>
+			<b>Theme: </b>
+			<a href="https://github.com/alterfang/gridea-theme-pan" target="_blank" title="Pan">
+				<span><b>Pan</b></span>
+			</a>
+			<b>. Powered by </b>
+			<a href="https://gridea.dev/" target="_blank" title="Gridea">
+				<span><b>Gridea</b></span>
+			</a>
+		</div>
+	</div><!-- .container -->
+</footer><!-- #colophon -->
+	</div>
+
+	<script src="https://cdn.bootcss.com/fitvids/1.2.0/jquery.fitvids.min.js"></script>
+<script type='text/javascript' src='https://xinrong2019.github.io//media/scripts/marlin-scripts.js'></script>
+<script src="//tokinx.github.io/lately/lately.min.js"></script>
+<script type='text/javascript' src="https://xinrong2019.github.io//media/scripts/mouse/love.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/color-thief-don@2.0.2/src/color-thief.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@1.1.0/dist/Meting.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script>
+
+
+
+<script>
+  jQuery(document).ready(function () {
+    $.lately({
+      'target': '.lately-a,.lately-b,.lately-c'
+    })
+  });
+</script>
+<style type="text/css">
+  /* 一键到顶部 */
+  a.back_to_top {
+    text-decoration: none;
+    position: fixed;
+    bottom: 65px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.back_to_top span {
+    color: #888;
+  }
+
+  a.back_to_top:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.back_to_top:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .back_to_top {
+      display: none !important;
+    }
+  }
+
+  /* 一键到底部 */
+
+  a.down_to_bottom {
+    text-decoration: none;
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    background: #f0f0f0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    transition-duration: .5s;
+    transition-propety: background-color;
+    display: none;
+  }
+
+  a.down_to_bottom span {
+    color: #888;
+  }
+
+  a.down_to_bottom:hover {
+    cursor: pointer;
+    background: #dfdfdf;
+  }
+
+  a.down_to_bottom:hover span {
+    color: #555;
+  }
+
+  @media print,
+  screen and (max-width: 580px) {
+    .down_to_bottom {
+      display: none !important;
+    }
+  }
+</style>
+
+
+<a id="back_to_top" href="#" class="back_to_top"><span><i class="iconfont icon-xiangshang"></i></span>
+</a>
+
+<a id="down_to_bottom" href="#" class="down_to_bottom"><span><i class="iconfont icon-xiangxia"></i></span>
+</a>
+
+<script src="//instant.page/3.0.0" type="module" defer
+  integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+<script>
+  function getScrollTop() {
+    var scrollTop = 0,
+      bodyScrollTop = 0,
+      documentScrollTop = 0;
+    if (document.body) {
+      bodyScrollTop = document.body.scrollTop;
+    }
+    if (document.documentElement) {
+      documentScrollTop = document.documentElement.scrollTop;
+    }
+    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+    return scrollTop;
+  };
+
+  function getScrollHeight() {
+    var scrollHeight = 0,
+      bodyScrollHeight = 0,
+      documentScrollHeight = 0;
+    if (document.body) {
+      bSH = document.body.scrollHeight;
+    }
+    if (document.documentElement) {
+      dSH = document.documentElement.scrollHeight;
+    }
+    scrollHeight = (bSH - dSH > 0) ? bSH : dSH;
+    return scrollHeight;
+  };
+
+  function getWindowHeight() {
+    var windowHeight = 0;
+    if (document.compatMode == "CSS1Compat") {
+      windowHeight = document.documentElement.clientHeight;
+    } else {
+      windowHeight = document.body.clientHeight;
+    }
+    return windowHeight;
+  };
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block');
+          } else {
+            return bt.css('display', 'none');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: 0
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+
+  $(document).ready((function (_this) {
+    return function () {
+      var bt;
+      bt = $('#down_to_bottom');
+      if ($(document).width() > 480) {
+        $(window).scroll(function () {
+          var st;
+          st = $(window).scrollTop();
+          if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+            return bt.css('display', 'none');
+          } else {
+            return bt.css('display', 'block');
+          }
+        });
+        return bt.click(function () {
+          $('body,html').animate({
+            scrollTop: $('body,html')[0].scrollHeight
+          }, 800);
+          return false;
+        });
+      }
+    };
+  })(this));
+</script>
+	<script data-no-instant>
+		(function ($) {
+			$.extend({
+				adamsOverload: function () {
+					$('.navigation:eq(0)').remove();
+					$("").attr("rel", "external");
+					$("a[rel='external'],a[rel='external nofollow']").attr("target", "_blank");
+					$("a.vi").attr("rel", "");
+					$.viewImage({
+						'target': 'img',
+						'exclude': '.vsmile-icons img,.gallery img',
+						'delay': 300
+					});
+					$.lately({
+						'target': '.commentmetadata a,.infos time,.post-list time'
+					});
+					prettyPrint();
+
+					$('ul.links li a').each(function () {
+						if ($(this).parent().find('.bg').length == 0) {
+							$(this).parent().append(
+								'<!---<div class="bg" style="background-image:url(https://c3.glgoo.top/s2/favicons?domain=' +
+								$(this).attr("href") + ')"></div>--->')
+						}
+					});
+				}
+			});
+		})(jQuery);
+		jQuery.adamsOverload();
+	</script>
+
+</body>
+
+</html>

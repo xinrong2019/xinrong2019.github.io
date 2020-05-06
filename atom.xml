@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://xinrong2019.github.io/</id>
     <title>Eucaly</title>
-    <updated>2020-05-05T13:28:10.970Z</updated>
+    <updated>2020-05-06T13:28:12.646Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://xinrong2019.github.io/"/>
     <link rel="self" href="https://xinrong2019.github.io/atom.xml"/>
@@ -10,6 +10,493 @@
     <logo>https://xinrong2019.github.io/images/avatar.png</logo>
     <icon>https://xinrong2019.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Eucaly</rights>
+    <entry>
+        <title type="html"><![CDATA[IDEA中自定义数据库逆向代码生成脚本]]></title>
+        <id>https://xinrong2019.github.io/post/idea-zhong-zi-ding-yi-shu-ju-ku-ni-xiang-dai-ma-sheng-cheng-jiao-ben/</id>
+        <link href="https://xinrong2019.github.io/post/idea-zhong-zi-ding-yi-shu-ju-ku-ni-xiang-dai-ma-sheng-cheng-jiao-ben/">
+        </link>
+        <updated>2020-05-06T13:27:37.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="toc">TOC</h2>
+<p>[TOC]</p>
+<h2 id="逆向生成脚本在哪">逆向生成脚本在哪</h2>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/bN9CU0_2020_05_06_19_02_34.png" alt="" loading="lazy"></figure>
+<p>说明：</p>
+<p>图中2，选择表的时候支持多选，Very Good!</p>
+<p>3就是执行脚步，会弹窗提示你保存到哪</p>
+<p>4是定位到脚本路径，自定义的脚本就放这个目录下</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/ArbaGv_2020_05_06_19_06_17.png" alt="" loading="lazy"></figure>
+<h2 id="测试groovy脚步">测试Groovy脚步</h2>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/obhC46_2020_05_06_19_08_55.png" alt="" loading="lazy"></figure>
+<p>建一个groovy console就可以测试脚本了，比如，我要测试字符串方法</p>
+<pre><code class="language-groovy">str = &quot;T_D_12&quot;
+str.startsWith(&quot;T_D_&quot;)
+
+str.substring(4)
+</code></pre>
+<p>点击左上角运行按钮</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/HYq7tK_2020_05_06_19_11_15.png" alt="" loading="lazy"></figure>
+<p>输出结果</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic/sBle3d_2020_05_06_19_11_58.png" alt="" loading="lazy"></figure>
+<h2 id="generatepojoswithlombokgroovy">GeneratePojosWithLombok.groovy</h2>
+<pre><code class="language-groovy">import com.intellij.database.model.DasTable
+import com.intellij.database.util.Case
+import com.intellij.database.util.DasUtil
+
+import java.time.LocalDate
+
+/*
+ * Available context bindings:
+ *   SELECTION   Iterable&lt;DasObject&gt;
+ *   PROJECT     project
+ *   FILES       files helper
+ */
+
+// 此处指定包路径，路径需要自行维护;
+packageName = &quot;com.xxx.xxx.entity;&quot;
+// 此处指定对应的类型映射，可按需修改，目前tinyint如果要映射到自定义枚举类型，只能手动修改
+typeMapping = [
+        (~/(?i)number/)                   : &quot;Long&quot;,
+        (~/(?i)int/)                      : &quot;Integer&quot;,
+        (~/(?i)tinyint/)                  : &quot;Boolean&quot;,
+        (~/(?i)float|double|decimal|real/): &quot;BigDecimal&quot;,
+        (~/(?i)time|datetime|timestamp/)  : &quot;DateTime&quot;,
+        (~/(?i)date/)                     : &quot;Date&quot;,
+        (~/(?i)/)                         : &quot;String&quot;
+]
+
+// 上面用到类和它的导入路径的之间的映射
+importMap = [
+        &quot;BigDecimal&quot; : &quot;java.math.BigDecimal&quot;,
+        &quot;LocalDate&quot; : &quot;java.time.LocalDate&quot;,
+        &quot;LocalDateTime&quot; : &quot;java.time.LocalDateTime&quot;,
+]
+
+// 导入路径列表，下面引用的时候会去重，也可以直接声明成一个 HashSet
+importList = []
+
+// 弹出选择文件的对话框
+FILES.chooseDirectoryAndSave(&quot;Choose directory&quot;, &quot;Choose where to store generated files&quot;) { dir -&gt;
+    SELECTION.filter { it instanceof DasTable }.each { generate(it, dir) }
+}
+
+def generate(table, dir) {
+    def className = javaName(table.getName(), true)
+    def fields = calcFields(table)
+    new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(dir, className + &quot;.java&quot;)), &quot;utf-8&quot;)).withPrintWriter { out -&gt; generate(out, className, fields, table) }
+}
+
+// 从这里开始，拼实体类的具体逻辑代码
+def generate(out, className, fields, table) {
+    out.println &quot;package $packageName&quot;
+    out.println &quot;&quot;
+    out.println &quot;&quot;
+    // 引入所需的包
+    out.println &quot;import lombok.Data;&quot;
+    out.println &quot;import javax.persistence.Id;&quot;
+    out.println &quot;import javax.persistence.Table;&quot;
+    out.println &quot;import javax.persistence.GeneratedValue;&quot;
+    out.println &quot;import tk.mybatis.mapper.annotation.KeySql;&quot;
+    out.println &quot;import cc.ewell.holisticnursing.product.enr.utils.CustomIdentityGenerator;&quot;
+    // 去重后导入列表
+    importList.unique().each() { pkg -&gt;
+        out.println &quot;import &quot; + pkg + &quot;;&quot;
+    }
+    out.println &quot;&quot;
+    // 添加类注释
+    out.println &quot;/**&quot;
+    // 如果添加了表注释，会加到类注释上
+    if (isNotEmpty(table.getComment())) {
+        out.println &quot; * &quot; + table.getComment()
+    }
+    out.println &quot; *&quot;
+    out.println &quot; * @author xxx&quot;
+    out.println &quot; * @date &quot; + LocalDate.now()
+    out.println &quot; */&quot;
+    // 添加类注解
+    out.println &quot;@Data&quot;
+    out.println &quot;@Table(name = \&quot;${table.getName()}\&quot;)&quot;
+    out.println &quot;public class $className {&quot;
+    out.println &quot;&quot;
+    boolean isId = true
+    // 遍历字段，按下面的规则生成
+    fields.each() {
+        // 输出注释
+        if (isNotEmpty(it.comment)) {
+            out.println &quot;\t/**&quot;
+            out.println &quot;\t * ${it.comment}&quot;
+            out.println &quot;\t */&quot;
+        }
+        // 这边默认第一个字段为主键，实际情况大多数如此，遇到特殊情况可能需要手动修改
+        if (isId) {
+            out.println &quot;\t@Id&quot;
+            out.println &quot;\t@KeySql(genId = CustomIdentityGenerator.class)&quot;
+            isId = false
+        }
+        out.println &quot;\tprivate ${it.type} ${it.name};&quot;
+        out.println &quot;&quot;
+    }
+    out.println &quot;&quot;
+    out.println &quot;}&quot;
+}
+
+def calcFields(table) {
+    DasUtil.getColumns(table).reduce([]) { fields, col -&gt;
+        def spec = Case.LOWER.apply(col.getDataType().getSpecification())
+        def typeStr = typeMapping.find { p, t -&gt; p.matcher(spec).find() }.value
+        if (importMap.containsKey(typeStr)) {
+            importList.add(importMap.get(typeStr))
+        }
+        fields += [[
+                           name   : javaName(col.getName(), false),
+                           type   : typeStr,
+                           comment: col.getComment()
+                   ]]
+    }
+}
+
+def isNotEmpty(content) {
+    return content != null &amp;&amp; content.toString().trim().length() &gt; 0
+}
+
+def javaName(str, capitalize) {
+    if(str.startsWith(&quot;T_D_&quot;) || str.startsWith(&quot;T_C_&quot;)){
+        str = str.substring(4);//特殊表名前缀截取
+    }
+    def s = com.intellij.psi.codeStyle.NameUtil.splitNameIntoWords(str)
+            .collect { Case.LOWER.apply(it).capitalize() }
+            .join(&quot;&quot;)
+            .replaceAll(/[^\p{javaJavaIdentifierPart}[_]]/, &quot;_&quot;)
+    capitalize || s.length() == 1 ? s : Case.LOWER.apply(s[0]) + s[1..-1]
+}
+</code></pre>
+<h2 id="generatedaoxmlgroovy">GenerateDaoXml.groovy</h2>
+<pre><code class="language-groovy">package src
+
+import com.intellij.database.model.DasTable
+import com.intellij.database.util.Case
+import com.intellij.database.util.DasUtil
+
+/*
+ * Available context bindings:
+ *   SELECTION   Iterable&lt;DasObject&gt;
+ *   PROJECT     project
+ *   FILES       files helper
+ */
+
+// entity(dto)、mapper(dao) 与数据库表的对应关系在这里手动指明,idea Database 窗口里只能选下列配置了的 mapper
+// tableName(key) : [mapper(dao),entity(dto)]
+typeMapping = [
+        (~/(?i)int/)                      : &quot;INTEGER&quot;,
+        (~/(?i)float|double|decimal|real/): &quot;DOUBLE&quot;,
+        (~/(?i)datetime|timestamp/)       : &quot;TIMESTAMP&quot;,
+        (~/(?i)date/)                     : &quot;TIMESTAMP&quot;,
+        (~/(?i)time/)                     : &quot;TIMESTAMP&quot;,
+        (~/(?i)/)                         : &quot;VARCHAR&quot;
+]
+
+basePackage = &quot;com.chitic.bank.mapping&quot; // 包名需手动填写
+
+FILES.chooseDirectoryAndSave(&quot;Choose directory&quot;, &quot;Choose where to store generated files&quot;) { dir -&gt;
+    SELECTION.filter { it instanceof DasTable }.each { generate(it, dir) }
+}
+
+def generate(table, dir) {
+    def baseName = mapperName(table.getName(), true)
+    def fields = calcFields(table)
+    new File(dir, baseName + &quot;Mapper.xml&quot;).withPrintWriter { out -&gt; generate(table, out, baseName, fields) }
+}
+
+def generate(table, out, baseName, fields) {
+    def baseResultMap = 'BaseResultMap'
+    def base_Column_List = 'Base_Column_List'
+    def date = new Date().format(&quot;yyyy/MM/dd&quot;)
+    def tableName = table.getName()
+
+    def dao = basePackage + &quot;.dao.${baseName}Mapper&quot;
+    def to = basePackage + &quot;.to.${baseName}TO&quot;
+
+    out.println mappingsStart(dao)
+    out.println resultMap(baseResultMap, to, fields)
+    out.println sql(fields, base_Column_List)
+    out.println selectById(tableName, fields, baseResultMap, base_Column_List)
+    out.println deleteById(tableName, fields)
+    out.println delete(tableName, fields, to)
+    out.println insert(tableName, fields, to)
+    out.println update(tableName, fields, to)
+    out.println selectList(tableName, fields, to, base_Column_List, baseResultMap)
+    out.println mappingsEnd()
+
+}
+
+static def resultMap(baseResultMap, to, fields) {
+
+    def inner = ''
+    fields.each() {
+        inner += '\t\t&lt;result column=&quot;' + it.sqlFieldName + '&quot; jdbcType=&quot;' + it.type + '&quot; property=&quot;' + it.name + '&quot;/&gt;\n'
+    }
+
+    return '''\t&lt;resultMap id=&quot;''' + baseResultMap + '''&quot; type=&quot;''' + to + '''&quot;&gt;
+        &lt;id column=&quot;id&quot; jdbcType=&quot;INTEGER&quot; property=&quot;id&quot;/&gt;
+''' + inner + '''\t&lt;/resultMap&gt;
+'''
+}
+
+def calcFields(table) {
+    DasUtil.getColumns(table).reduce([]) { fields, col -&gt;
+        def spec = Case.LOWER.apply(col.getDataType().getSpecification())
+        def typeStr = typeMapping.find { p, t -&gt; p.matcher(spec).find() }.value
+        fields += [[
+                           comment     : col.getComment(),
+                           name        : mapperName(col.getName(), false),
+                           sqlFieldName: col.getName(),
+                           type        : typeStr,
+                           annos       : &quot;&quot;]]
+    }
+
+}
+
+def mapperName(str, capitalize) {
+    def s = com.intellij.psi.codeStyle.NameUtil.splitNameIntoWords(str)
+            .collect { Case.LOWER.apply(it).capitalize() }
+            .join(&quot;&quot;)
+            .replaceAll(/[^\p{javaJavaIdentifierPart}[_]]/, &quot;_&quot;)
+    name = capitalize || s.length() == 1 ? s : Case.LOWER.apply(s[0]) + s[1..-1]
+}
+
+// ------------------------------------------------------------------------ mappings
+static def mappingsStart(mapper) {
+    return '''&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot; &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;''' + mapper + '''&quot;&gt;
+'''
+}
+
+// ------------------------------------------------------------------------ mappings
+static def mappingsEnd() {
+    return '''&lt;/mapper&gt;'''
+}
+
+// ------------------------------------------------------------------------ selectById
+static def selectById(tableName, fields, baseResultMap, base_Column_List) {
+    return '''
+    &lt;select id=&quot;selectById&quot; parameterType=&quot;java.lang.Integer&quot; resultMap=&quot;''' + baseResultMap + '''&quot;&gt;
+        select
+        &lt;include refid=&quot;''' + base_Column_List + '''&quot;/&gt;
+        from ''' + tableName + '''
+        where id = #{id}
+    &lt;/select&gt;'''
+}
+
+// ------------------------------------------------------------------------ insert
+static def insert(tableName, fields, parameterType) {
+
+    return '''
+    &lt;insert id=&quot;insert&quot; parameterType=&quot;''' + parameterType + '''&quot;&gt;
+        insert into ''' + tableName + '''
+        &lt;trim prefix=&quot;(&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
+            ''' + testNotNullStr(fields) + '''
+        &lt;/trim&gt;
+        &lt;trim prefix=&quot;values (&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
+            ''' + testNotNullStrSet(fields) + '''
+        &lt;/trim&gt;
+    &lt;/insert&gt;
+'''
+
+}
+// ------------------------------------------------------------------------ update
+static def update(tableName, fields, parameterType) {
+
+    return '''
+    &lt;update id=&quot;update&quot; parameterType=&quot;''' + parameterType + '''&quot;&gt;
+        update ''' + tableName + '''
+        &lt;set&gt;
+            ''' + testNotNullStrWhere(fields) + '''
+        &lt;/set&gt;
+        where id = #{id}
+    &lt;/update&gt;'''
+}
+
+// ------------------------------------------------------------------------ deleteById
+static def deleteById(tableName, fields) {
+
+    return '''
+    &lt;delete id=&quot;deleteById&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
+        delete
+        from ''' + tableName + '''
+        where id = #{id}
+    &lt;/delete&gt;'''
+}
+
+// ------------------------------------------------------------------------ delete
+static def delete(tableName, fields, parameterType) {
+
+    return '''
+    &lt;delete id=&quot;delete&quot; parameterType=&quot;''' + parameterType + '''&quot;&gt;
+        delete from ''' + tableName + '''
+        where 1 = 1
+        ''' + testNotNullStrWhere(fields) + '''
+    &lt;/delete&gt;'''
+}
+
+// ------------------------------------------------------------------------ selectList
+static def selectList(tableName, fields, parameterType, base_Column_List, baseResultMap) {
+
+    return '''
+    &lt;select id=&quot;selectList&quot; parameterType=&quot;''' + parameterType + '''&quot; resultMap=&quot;''' + baseResultMap + '''&quot;&gt;
+        select
+        &lt;include refid=&quot;''' + base_Column_List + '''&quot;/&gt;
+                from ''' + tableName + '''
+        where 1 = 1
+        ''' + testNotNullStrWhere(fields) + '''
+        order by id desc
+    &lt;/select&gt;'''
+}
+
+// ------------------------------------------------------------------------ sql
+static def sql(fields, base_Column_List) {
+    def str = '''\t&lt;sql id=&quot;''' + base_Column_List + '''&quot;&gt;
+        @inner@
+    &lt;/sql&gt; '''
+
+    def inner = ''
+    fields.each() {
+        inner += ('\t\t' + it.sqlFieldName + ',\n')
+    }
+
+    return str.replace(&quot;@inner@&quot;, inner.substring(0, inner.length() - 2))
+
+}
+
+static def testNotNullStrWhere(fields) {
+    def inner = ''
+    fields.each {
+        inner += '''
+        &lt;if test=&quot;''' + it.name + ''' != null&quot;&gt;
+            and ''' + it.sqlFieldName + ''' = #{''' + it.name + '''}
+        &lt;/if&gt;\n'''
+    }
+
+    return inner
+}
+
+static def testNotNullStrSet(fields) {
+    def inner = ''
+    fields.each {
+        inner += '''
+        &lt;if test=&quot;''' + it.name + ''' != null&quot;&gt;
+            #{''' + it.name + '''},
+        &lt;/if&gt;\n'''
+    }
+
+    return inner
+}
+
+static def testNotNullStr(fields) {
+    def inner1 = ''
+    fields.each {
+        inner1 += '''
+        &lt;if test = &quot;''' + it.name + ''' != null&quot; &gt;
+        \t''' + it.sqlFieldName + ''',
+        &lt;/if&gt;\n'''
+    }
+
+    return inner1
+}
+</code></pre>
+<h2 id="generatedaogroovy">GenerateDao.groovy</h2>
+<pre><code class="language-groovy">package src
+
+import com.intellij.database.model.DasTable
+import com.intellij.database.util.Case
+import com.intellij.database.util.DasUtil
+
+/*
+ * Available context bindings:
+ *   SELECTION   Iterable&lt;DasObject&gt;
+ *   PROJECT     project
+ *   FILES       files helper
+ */
+
+packageName = &quot;**;&quot; // 需手动配置 生成的 dao 所在包位置
+
+FILES.chooseDirectoryAndSave(&quot;Choose directory&quot;, &quot;Choose where to store generated files&quot;) { dir -&gt;
+    SELECTION.filter { it instanceof DasTable }.each { generate(it, dir) }
+}
+
+def generate(table, dir) {
+    def baseName = javaName(table.getName(), true)
+    new File(dir, baseName + &quot;Mapper.java&quot;).withPrintWriter { out -&gt; generateInterface(out, baseName) }
+}
+
+def generateInterface(out, baseName) {
+    def date = new Date().format(&quot;yyyy/MM/dd&quot;)
+    out.println &quot;package $packageName&quot;
+    out.println &quot;import cn.xx.entity.${baseName}Entity;&quot; // 需手动配置
+    out.println &quot;import org.springframework.stereotype.Repository;&quot;
+    out.println &quot;&quot;
+    out.println &quot;/**&quot;
+    out.println &quot; * Created on $date.&quot;
+    out.println &quot; *&quot;
+    out.println &quot; * @author GX&quot; // 可自定义
+    out.println &quot; */&quot;
+    out.println &quot;@Repository&quot;
+    out.println &quot;public interface ${baseName}Dao extends BaseDao&lt;${baseName}Entity&gt; {&quot; // 可自定义
+    out.println &quot;&quot;
+    out.println &quot;}&quot;
+}
+
+def javaName(str, capitalize) {
+    def s = com.intellij.psi.codeStyle.NameUtil.splitNameIntoWords(str)
+            .collect { Case.LOWER.apply(it).capitalize() }
+            .join(&quot;&quot;)
+            .replaceAll(/[^\p{javaJavaIdentifierPart}[_]]/, &quot;_&quot;)
+    name = capitalize || s.length() == 1 ? s : Case.LOWER.apply(s[0]) + s[1..-1]
+}
+</code></pre>
+<h2 id="生成jparepositorygroovy">生成JpaRepository.groovy</h2>
+<pre><code class="language-groovy">import com.intellij.database.model.DasTable
+import com.intellij.database.model.ObjectKind
+import com.intellij.database.util.Case
+
+packageName = &quot;com.gx.dao;&quot;
+packageEntityName = &quot;com.gx.entity&quot;
+
+FILES.chooseDirectoryAndSave(&quot;Choose directory&quot;, &quot;Choose where to store generated files&quot;) { dir -&gt;
+    SELECTION.filter { it instanceof DasTable &amp;&amp; it.getKind() == ObjectKind.TABLE }.each { generate(it, dir) }
+}
+
+def generate(table, dir) {
+    def entityName = javaName(table.getName(), true)
+    def className = entityName + &quot;Repository&quot;
+    new File(dir, className + &quot;.java&quot;).withPrintWriter { out -&gt; generate(out, table, className, entityName) }
+}
+
+def generate(out, table, className, entityName) {
+    out.println &quot;package $packageName&quot;
+    out.println &quot;&quot;
+    out.println &quot;import org.springframework.stereotype.Repository;&quot;
+    out.println &quot;import org.springframework.data.jpa.repository.JpaRepository;&quot;
+    out.println &quot;import org.springframework.data.jpa.repository.JpaSpecificationExecutor;&quot;
+    out.println &quot;&quot;
+    out.println &quot;import $packageEntityName.$entityName;&quot;
+    out.println &quot;&quot;
+    out.println &quot;@Repository&quot;
+    out.println &quot;public interface $className extends JpaRepository&lt;$entityName, Long&gt;, JpaSpecificationExecutor&lt;$entityName&gt; {&quot;
+    out.println &quot;&quot;
+    out.println &quot;}&quot;
+}
+
+def javaName(str, capitalize) {
+    def s = str.split(/(?&lt;=[^\p{IsLetter}])/).collect { Case.LOWER.apply(it).capitalize() }
+            .join(&quot;&quot;).replaceAll(/[^\p{javaJavaIdentifierPart}]/, &quot;_&quot;).replaceAll(/_/, &quot;&quot;)
+    capitalize || s.length() == 1 ? s : Case.LOWER.apply(s[0]) + s[1..-1]
+}
+</code></pre>
+<h2 id="参考">参考：</h2>
+<p><a href="https://www.cnblogs.com/gaomanito/p/10682260.html">idea + groovy + mybatis 自动生成 Dao、mappings 和 实体类</a></p>
+<p><a href="https://juejin.im/post/5ca5d01f5188257e1d45707a#heading-4">Intellij IDEA 通过数据库生成 POJO</a></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[“WHY-HOW-WHAT”黄金圈思维模式]]></title>
         <id>https://xinrong2019.github.io/post/why-how-whathuang-jin-quan-si-wei-mo-shi/</id>
@@ -3886,279 +4373,6 @@ source ~/.zshrc
        &lt;/profiles&gt;
        &lt;/settings&gt; 
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Gradle高级应用]]></title>
-        <id>https://xinrong2019.github.io/post/gao-ji-ying-yong/</id>
-        <link href="https://xinrong2019.github.io/post/gao-ji-ying-yong/">
-        </link>
-        <updated>2020-02-01T12:50:42.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="构建脚本介绍">构建脚本介绍</h2>
-<p>Gradle构建中的两个基本概念是项目（project）和任务（task），每个构建至少包含一个项目，项目中包含一个或多个任务。</p>
-<p>在多项目构建中，一个项目可以依赖于其他项目；类似的，任务可以形成一个依赖关系图来确保他们的执行顺序。</p>
-<h4 id="项目-任务关系">项目-任务关系</h4>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/AmQKRF_2020_2_1_10_2_34.png" alt="" loading="lazy"></figure>
-<p>上图是一个项目任务关系图。</p>
-<ol>
-<li>Project1依赖Project2</li>
-<li>Project1中，TaskA依赖TaskB和TaskC</li>
-<li>Project2中，TaskF依赖TaskE，TaskE依赖TaskD</li>
-</ol>
-<h3 id="项目">项目</h3>
-<p>一个项目代表一个正在构建的组件（比如一个jar文件），当构建启动后，Gradle会基于<code>build.gradle</code>实例化一个<code>org.gradle.api.Project</code>类，并且能够通过project变量使其隐式可用。</p>
-<ul>
-<li><code>group</code>、<code>name</code>、<code>version</code></li>
-<li><code>apply</code>、<code>dependencies</code>、<code>repositories</code>、<code>task</code></li>
-<li>属性的其他配置方式：<code>ext</code>、<code>gradle.properties</code></li>
-</ul>
-<h3 id="任务">任务</h3>
-<p>任务对应<code>org.gradle.api.Task</code>。主要包括任务动作和任务依赖。任务动作定义了一个最小的工作单元。可以依赖于其他任务、动作序列和执行条件。</p>
-<p>任务中的方法举例：</p>
-<ul>
-<li>dependsOn</li>
-<li>doFirst、doLast</li>
-</ul>
-<h2 id="自定义任务">自定义任务</h2>
-<h3 id="自动创建test目录结构">自动创建test目录结构</h3>
-<h4 id="1在buildgradle文件中添加任务">1.在build.gradle文件中，添加任务</h4>
-<pre><code class="language-groovy">def createDir = {
-    path -&gt;
-        File dir = new File(path)
-        if(!dir.exists()){
-            dir.mkdirs()
-        }
-}
-
-task makeJavaDir(){
-    def paths = ['src/test/java','src/test/resources']
-    doFirst {
-        paths.forEach(createDir)
-    }
-}
-</code></pre>
-<h4 id="2重新导入依赖">2.重新导入依赖</h4>
-<p>不重新导入依赖，可能会看不到自定义任务</p>
-<h4 id="3在tasks-other下执行makejavadir">3.在<code>Tasks-&gt;other</code>下执行makeJavaDir</h4>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/37C9t4_2020_2_1_10_49_46.png" style="zoom:50%;" />
-<h3 id="自定义创建web目录">自定义创建web目录</h3>
-<h4 id="1在buildgradle文件中添加任务-2">1.在build.gradle文件中，添加任务</h4>
-<pre><code class="language-groovy">task makeWebDir(){
-    dependsOn 'makeJavaDir'//依赖任务makeJavaDir
-    def paths = ['src/main/webapp','src/test/webapp']
-    doLast {
-        paths.forEach(createDir)
-    }
-}
-</code></pre>
-<p>这里第二行我们使用dependsOn方法，依赖我们上一个任务makeJavaDir。这样在创建web目录时，可以把test目录也创建好。</p>
-<h4 id="2重新导入依赖-2">2.重新导入依赖</h4>
-<p>不重新导入依赖，可能会看不到自定义任务</p>
-<h4 id="3在tasks-other下执行makewebdir">3.在<code>Tasks-&gt;other</code>下执行makeWebDir</h4>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/74RzQr_2020_2_1_10_57_59.png" style="zoom:50%;" />
-<h2 id="构建的生命周期">构建的生命周期</h2>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/KHdsaR_2020_2_1_12_4_29.png" style="zoom:50%;" />
-<p>理解构建的生命周期，生命周期通常会暴露扩展点，以供开发者使用，影响构建的行为，创建灵活的功能。</p>
-<figure data-type="image" tabindex="2"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/OQTojI_2020_2_1_12_8_2.png" alt="" loading="lazy"></figure>
-<h3 id="初始化">初始化</h3>
-<p>初始化项目，决定有哪些项目参与到构建过程中</p>
-<h3 id="配置">配置</h3>
-<p>生成Task的执行关系和执行图</p>
-<h3 id="执行">执行</h3>
-<p>执行Task的动作</p>
-<h2 id="依赖管理">依赖管理</h2>
-<h3 id="概述">概述</h3>
-<p>几乎所有的基于JVM的软件项目都需要依赖外部类库来重用现有的功能。自动化的依赖管理可以明确依赖的版本，可以解决因传递性依赖带来的版本冲突。</p>
-<h3 id="工件坐标">工件坐标</h3>
-<ul>
-<li>group、name、version</li>
-</ul>
-<h3 id="常用仓库">常用仓库</h3>
-<ul>
-<li>mavenLocal/mavenCentral/jcenter</li>
-<li>自定义maven仓库</li>
-<li>文件仓库</li>
-</ul>
-<h3 id="依赖的传递性">依赖的传递性</h3>
-<p>B依赖A，如果C依赖B，那么C依赖A</p>
-<h3 id="自动化依赖管理">自动化依赖管理</h3>
-<p>首次使用jar，会从远程仓库下载到本地仓库；</p>
-<p>如果多次使用相同的jar，会缓存到本地缓存</p>
-<h3 id="依赖阶段配置">依赖阶段配置</h3>
-<ul>
-<li>compile、runtime</li>
-<li>testCompile、testRuntime</li>
-</ul>
-<h3 id="依赖阶段关系">依赖阶段关系</h3>
-<h3 id="添加logback编译时依赖">添加logback编译时依赖</h3>
-<pre><code class="language-groovy">compile 'ch.qos.logback:logback-classic:1.2.1'
-</code></pre>
-<h2 id="解决版本冲突">解决版本冲突</h2>
-<h3 id="版本冲突例子">版本冲突例子</h3>
-<figure data-type="image" tabindex="3"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/dkmvOq_2020_2_1_14_1_56.png" alt="" loading="lazy"></figure>
-<h3 id="解决冲突">解决冲突</h3>
-<ul>
-<li>查看依赖报告</li>
-</ul>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/UWAqfx_2020_2_1_14_11_6.png" style="zoom:50%;" />
-<ul>
-<li>排除传递性依赖</li>
-<li>强制指定一个版本</li>
-</ul>
-<p>注意：gradle会默认解决版本冲突，使用最高版本的冲突依赖。</p>
-<ul>
-<li>修改默认解决策略</li>
-</ul>
-<pre><code class="language-groovy">configuration.all{
-  resolutionStrategy{
-    failOnVersionConflict()
-  }
-}
-</code></pre>
-<p>让版本冲突出现时报错，让我们知道。</p>
-<h4 id="排除传递性依赖">排除传递性依赖</h4>
-<pre><code class="language-groovy">compile('org.hibernate:hibernate-core:3.6.3.final'){
-  exclude group:&quot;org.slf4j&quot;,module:&quot;slf4j-api&quot;
-  //transitive = false
-}
-</code></pre>
-<p>其中module，就是name。</p>
-<h4 id="强制指定一个版本">强制指定一个版本</h4>
-<pre><code class="language-groovy">configuration.all{
-  resolutionStrategy{
-    force 'org.slf4j:slf4j-api:1.7.24'
-  }
-}
-</code></pre>
-<h2 id="多项目构建介绍">多项目构建介绍</h2>
-<h3 id="项目模块化">项目模块化</h3>
-<p>在企业项目中，包层次和类关系比较复杂，把代码拆分成模块通常是最佳实践，这需要你清晰的划分功能的边界，比如把业务逻辑和数据持久化拆分开来。项目符合高内聚低耦合时，模块化就变得很容易，这是一条非常好的软件开发实践。</p>
-<h3 id="todo模块依赖关系">TODO模块依赖关系</h3>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/gZTQAv_2020_2_1_14_46_12.png" style="zoom:50%;" />
-<h3 id="配置要求">配置要求</h3>
-<ul>
-<li>所有项目应用Java插件</li>
-<li>web子项目打包成war</li>
-<li>所有项目添加logback日志功能</li>
-<li>统一配置公共属性</li>
-</ul>
-<h3 id="项目拆分gradle多项目构建">项目拆分，gradle多项目构建</h3>
-<h4 id="1新建两个模块都是gradle项目">1.新建两个模块，都是gradle项目</h4>
-<h5 id="11-右键点击根目录todonew-module">1.1 右键点击根目录todo，<code>new-&gt;Module</code></h5>
-<figure data-type="image" tabindex="4"><img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/EOKycA_2020_2_1_17_59_9.png" alt="" loading="lazy"></figure>
-<h5 id="12-新建gradle模块点击next">1.2 新建gradle模块，点击next</h5>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/K7u7Gl_2020_2_1_18_1_18.png" style="zoom:50%;" />
-<h5 id="13-填入模块名然后next再next">1.3 填入模块名，然后next，再next</h5>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/ERaQT2_2020_2_1_18_2_21.png" style="zoom:50%;" />
-<h5 id="14-按照上面三步建立model-repository和web模块">1.4 按照上面三步建立<code>model</code>、<code>repository</code>和<code>web</code>模块</h5>
-<h5 id="15-根目录下的settinggradle文件中会有gradle管理的项目描述">1.5 根目录下的<code>setting.gradle</code>文件中会有gradle管理的项目描述</h5>
-<pre><code class="language-groovy">rootProject.name = 'todo'
-include 'model'
-include 'repository'
-include 'web'
-</code></pre>
-<h5 id="16添加模块依赖">1.6添加模块依赖</h5>
-<p>我们的项目repository模块依赖model模块，web模块依赖repository模块。</p>
-<p>所以需要在repository模块中添加model模块的依赖，在web模块中添加repository模块依赖。</p>
-<pre><code class="language-groovy">dependencies {
-    compile project(&quot;:model&quot;)
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-</code></pre>
-<pre><code class="language-groovy">dependencies {
-    compile project(&quot;:repository&quot;)
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-</code></pre>
-<h2 id="多项目构建实战">多项目构建实战</h2>
-<h3 id="1所有项目中应用java插件">1.所有项目中应用Java插件</h3>
-<p>将子模块的java插件配置都删除，在根项目中使用allprojects方法应用</p>
-<pre><code class="language-groovy">group 'com.kim.gradle'
-version '1.0-SNAPSHOT'
-
-allprojects {
-    apply plugin:'java'
-    sourceCompatibility = 1.8
-}
-
-repositories {
-    mavenCentral()
-}
-//省略其他配置
-</code></pre>
-<h3 id="2web子项目打包成war">2.web子项目打包成war</h3>
-<p>个性化需求，给web子模块应用war插件</p>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/AmW1hy_2020_2_1_18_24_36.png" style="zoom:50%;" />
-<h3 id="3所有项目添加logback日志功能包括junit">3.所有项目添加logback日志功能，包括Junit</h3>
-<pre><code class="language-groovy">allprojects {
-    apply plugin:'java'
-    sourceCompatibility = 1.8
-}
-subprojects {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        compile 'ch.qos.logback:logback-classic:1.2.1'
-        testCompile 'junit:junit:4.12'
-    }
-}
-</code></pre>
-<p>这里用subprojects可以达到同样的效果</p>
-<h3 id="4统一配置group和version">4.统一配置group和version</h3>
-<p>在根目录下新建<code>gradle.properties</code>文件，加入这两个属性。</p>
-<pre><code class="language-properties">group=com.kim.gradle
-version=1.0-SNAPSHOT
-</code></pre>
-<p>同时，子模块中删除这两个属性。</p>
-<h3 id="5执行root项目的clean任务">5.执行root项目的clean任务</h3>
-<p>执行root项目的clean任务，观察执行顺序。</p>
-<pre><code class="language-groovy">&gt; Task :clean
-&gt; Task :model:clean UP-TO-DATE
-&gt; Task :repository:clean UP-TO-DATE
-&gt; Task :web:clean
-</code></pre>
-<h2 id="自动化测试">自动化测试</h2>
-<h3 id="1测试配置">1.测试配置</h3>
-<pre><code class="language-groovy">dependencies {
-    testCompile 'junit:junit:4.12'
-}
-</code></pre>
-<h3 id="2测试发现">2.测试发现</h3>
-<p>gradle是如何发现哪些类或方法是测试类的呢</p>
-<ul>
-<li>任何继承自junit.framework.TestCase或groovy.util.GroovyTestCase的类</li>
-<li>任何被@RunWith注解的类</li>
-<li>任何至少包含一个被@Test注解的类</li>
-</ul>
-<h2 id="发布">发布</h2>
-<h3 id="配置发布插件">配置发布插件</h3>
-<pre><code class="language-groovy">allprojects {
-    apply plugin:'java'
-    sourceCompatibility = 1.8
-
-    apply plugin: 'maven-publish'
-
-    publishing {
-        publications {
-            myPublish(MavenPublication){
-                from components.java
-            }
-        }
-        repositories {
-            maven {
-                name &quot;myRepo&quot;
-                url &quot;&quot;
-            }
-        }
-    }
-}
-</code></pre>
-<h3 id="发布到本地仓库">发布到本地仓库</h3>
-<img src="https://gitee.com/jinxin.70/oss/raw/master/uPic2/uWkXKt_2020_2_1_19_20_25.png" style="zoom:50%;" />
-<h3 id="发布到公司私服">发布到公司私服</h3>
-<p>在发布插件配置中配置公司私服的url，然后执行publish这个任务</p>
-<p><a href="https://github.com/SixGodFlowerDewWater1029/gradle">项目源码</a></p>
 ]]></content>
     </entry>
 </feed>
